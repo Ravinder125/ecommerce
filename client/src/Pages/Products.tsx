@@ -1,7 +1,10 @@
+import { DashboardLayout } from "../components"
 
 const Products = () => {
   return (
-    <div>Products</div>
+    <DashboardLayout>
+      <div>Products</div>
+    </DashboardLayout>
   )
 }
 

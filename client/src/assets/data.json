@@ -1,0 +1,65 @@
+{
+    "categories": [
+        {
+            "heading": "Jeans",
+            "value": 50
+        },
+        {
+            "heading": "Shirts",
+            "value": 80
+        },
+        {
+            "heading": "Jackets",
+            "value": 100
+        },
+        {
+            "heading": "Jeans",
+            "value": 40
+        },
+        {
+            "heading": "Shirts",
+            "value": 30
+        },
+        {
+            "heading": "Jackets",
+            "value": 10
+        }
+    ],
+    "transactions": [
+        {
+            "id": "7",
+            "amount": 48,
+            "quantity": 2,
+            "discount": 3,
+            "status": "completed"
+        },
+        {
+            "id": "8",
+            "amount": 65,
+            "quantity": 1,
+            "discount": 6,
+            "status": "pending"
+        },
+        {
+            "id": "9",
+            "amount": 73,
+            "quantity": 1,
+            "discount": 8,
+            "status": "completed"
+        }
+    ],
+    "users": [
+        {
+            "heading": "Jeans",
+            "count": 90
+        },
+        {
+            "heading": "Shirts",
+            "count": 110
+        },
+        {
+            "heading": "Jackets",
+            "count": 130
+        }
+    ]
+}

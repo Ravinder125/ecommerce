@@ -1,4 +1,5 @@
 @use "mixin";
+@use 'dashboard';
 @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
@@ -6,6 +7,7 @@
     line-height: 1.5;
     font-weight: 400;
 }
+
 
 * {
     font-family: var(--font-family);
@@ -27,10 +29,24 @@ a {
     color: rgb(0, 195, 0);
 }
 
-.adminContainer {
+.dashboard-layout {
     @include mixin.grid(1fr 4fr, 2rem);
-    height: 100vh;
+    min-height: 100vh;
     background-color: rgb(247, 247, 247);
+
+    >div>header {
+        @include mixin.flex(row, unset, space-between);
+        padding: 0.5rem 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-radius: 0.5rem;
+        margin-bottom: 2rem;
+        margin-right: 1rem;
+
+        >input {
+            @include mixin.inputStyle(unset, 0.3rem 1rem, rgba(128, 128, 128, 0.13), 1px solid rgba(128, 128, 128, 0.322));
+            border-radius: 0.4rem;
+        }
+    }
 
     >aside {
         width: 100%;
@@ -68,7 +84,80 @@ a {
 
                 a {
                     color: rgba(0, 0, 0, 0.825);
-                    @include mixin.flex(row, 0.5rem, start)
+                    @include mixin.flex(row, 0.5rem)
+                }
+            }
+        }
+    }
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+
+    * {
+        border: 1px solid white;
+        outline: 1px solid white;
+    }
+
+    th,
+    td {
+        padding: 8px;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    th {
+        font-weight: bold;
+        color: #0000009e;
+        font-size: 1.1rem;
+        font-weight: 400;
+        padding: 2rem 1rem;
+    }
+
+    tbody {
+        tr {
+            box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.93);
+
+            &:first-child {
+                border-left: none;
+            }
+
+            &:last-child {
+                border-right: none;
+            }
+        }
+
+        td {
+            padding: 1rem;
+
+            img {
+                width: 4rem;
+                height: 4rem;
+                object-fit: contain;
+                border-radius: 10px;
+            }
+
+            a {
+                text-decoration: none;
+                background-color: rbga(44, 104, 255, 0.455);
+                color: rgba(44, 104, 255);
+                padding: 0.25rem 0.5rem;
+                border-radius: 10px;
+            }
+
+            button {
+                width: 2rem;
+                height: 2rem;
+                font-size: 1.1rem;
+                border: none;
+                outline: none;
+                background-color: transparent;
+                cursor: pointer;
+                color: rgb(255, 44, 44);
+
+                &:hover {
+                    opacity: 0.6;
                 }
             }
         }

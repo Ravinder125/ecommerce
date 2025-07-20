@@ -1,13 +1,13 @@
-@mixin heading($spacing: 3px, $weight: 300, $case: upperCase) {
+@mixin heading($spacing: 3px, $weight: 400, $case: upperCase) {
     letter-spacing: $spacing;
     font-weight: $weight;
     text-transform: $case;
 }
 
 @mixin flex($dir: row,
-    $gap: 1rem,
     $justifyContent: start,
     $alignCenter: center,
+    $gap: 1rem,
     $case: upperCase) {
     display: flex;
     flex-direction: $dir ;
@@ -29,10 +29,7 @@
     gap: 1rem;
 }
 
-@mixin inputStyle($w: 100%,
-    $p: 1rem,
-    $bgColor: inherit,
-    $border: none) {
+@mixin inputStyle($w: 100%, $p: 1rem, $bgColor: inherit, $border: none) {
     padding: $p;
     width: $w;
     border: $border;

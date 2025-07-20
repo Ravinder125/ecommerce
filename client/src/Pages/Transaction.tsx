@@ -1,7 +1,10 @@
+import { DashboardLayout } from "../components"
 
 const Transaction = () => {
   return (
-    <div>Transaction</div>
+    <DashboardLayout>
+      <div>Transaction</div>
+    </DashboardLayout>
   )
 }
 
