@@ -1,8 +1,6 @@
 @use "mixin";
 
 .dashboard {
-    overflow-y: auto;
-
     .bar {
         @include mixin.flex(row, unset);
         height: 4rem;

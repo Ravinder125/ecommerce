@@ -5,7 +5,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
     return (
         <div className="dashboard-layout">
             <AdminSideBar />
-            <div>
+            <div className="dashboard-container">
                 {children}
             </div>
         </div>

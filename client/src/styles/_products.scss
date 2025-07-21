@@ -1,0 +1,26 @@
+@use "mixin";
+
+.dashboard-product--box {
+    @include mixin.square(100%);
+    background-color: #fff;
+    padding: 2rem;
+    overflow: auto;
+}
+
+.create-product--btn {
+    position: fixed;
+    right: 2rem;
+    top: 2rem;
+    @include mixin.square(2.5rem);
+    @include mixin.flex(row, center, center, 0);
+    border-radius: 50%;
+    background-color: rgba(30, 200, 20, 1);
+    color: whitesmoke;
+    transition: opacity 300ms;
+
+    &:hover {
+        opacity: 0.8;
+    }
+
+
+}
