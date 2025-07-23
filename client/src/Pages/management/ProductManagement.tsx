@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent, type MouseEvent } from "react"
+import { useRef, useState, type ChangeEvent, type FormEvent } from "react"
 import { DashboardLayout } from "../../components"
 import { MdOutlineFileUpload } from "react-icons/md"
 
@@ -10,12 +10,30 @@ const ProductManagement = () => {
         stock: number,
         image: string | null | ArrayBuffer,
     }
+    const [productData, setProductData] = useState<FormData>({
+        name: "",
+        price: 0,
+        stock: 0,
+        image: ""
+    })
+
     const [formData, setFormData] = useState<FormData>({
         name: "",
         price: 0,
         stock: 0,
         image: ""
     })
+
+
+    const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        const { value, name, type } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === "number"
+                ? Number(value)
+                : value
+        }))
+    }
 
     const changeImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
         const file: File | undefined = ref.current?.files?.[0]
@@ -30,32 +48,43 @@ const ProductManagement = () => {
         }
     }
 
+    const submitHandler = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const payload: FormData = {
+            name: formData.name,
+            price: formData.price,
+            stock: formData.stock,
+            image: formData.image
+        }
+        setProductData(payload)
+    }
+
     return (
         <DashboardLayout>
             <main className="management">
                 <section>
                     <strong>Id - jajdsjlkasdkfl</strong>
-                    <img src={
-                        typeof formData.image === "string" ? formData.image : ""}
-                        alt="New Image" />
+                    <img src={typeof productData.image === "string" ? productData.image : " "} alt="New Image" />
 
-                    <p>{formData.name}</p>
+
+                    <p>{productData.name}</p>
                     {
-                        formData.stock > 0
-                            ? <span className="green">Available</span>
+                        productData.stock > 0
+                            ? <span className="green">{productData.stock}{" "}Available</span>
                             : <span className="red">Not Available</span>
                     }
-                    <h3>{`$${formData.price}`}</h3>
+                    <h2>{`$${productData.price}`}</h2>
                 </section>
                 <article>
-                    <form>
-                        <h2>New Product</h2>
+                    <form onSubmit={submitHandler}>
+                        <h2>Manage Products</h2>
                         <div>
                             <label htmlFor="Name">Name</label>
                             <input
                                 type="text"
                                 name="name"
                                 value={formData.name}
+                                onChange={(e) => inputChangeHandler(e)}
                                 placeholder="Enter product name"
                                 required
                             />
@@ -63,9 +92,11 @@ const ProductManagement = () => {
                         <div>
                             <label htmlFor="Price">Price</label>
                             <input
-                                type="text"
+                                type="number"
                                 name="price"
+                                min={0}
                                 value={formData.price}
+                                onChange={(e) => inputChangeHandler(e)}
                                 placeholder="Enter product price"
                                 required
                             />
@@ -73,9 +104,11 @@ const ProductManagement = () => {
                         <div>
                             <label htmlFor="Stock">Stock</label>
                             <input
-                                type="text"
+                                type="number"
                                 name="stock"
+                                min={0}
                                 value={formData.stock}
+                                onChange={(e) => inputChangeHandler(e)}
                                 placeholder="Enter product Stock"
                                 required
                             />
@@ -97,11 +130,11 @@ const ProductManagement = () => {
                         </div>
                         <div>
                             {formData.image && <img src={
-                                typeof formData.image === "string" ? formData.image : ""}
+                                typeof formData.image === "string" ? formData.image : " "}
                                 alt="New Image" />
                             }
                         </div>
-                        <button type="submit">Submit</button>
+                        <button type="submit" className="submit-btn">Update</button>
                     </form>
                 </article>
             </main>

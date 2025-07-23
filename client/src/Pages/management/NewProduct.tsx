@@ -1,21 +1,59 @@
-import { useRef, useState, type ChangeEvent, type MouseEvent } from "react"
+import { useRef, useState, type ChangeEvent, type FormEvent, type FormEventHandler, type MouseEvent } from "react"
 import { DashboardLayout } from "../../components"
 import { MdOutlineFileUpload } from "react-icons/md"
+import z, { mime } from "zod"
+
+
+const ProductDataSchema = z.object({
+    name: z
+        .string()
+        .nonempty({ message: "Name is required" }),
+    price: z
+        .number()
+        // .min(1, { message: "Price cannot be lower than 1" })
+        .nonnegative({ message: "Price cannot be empty" })
+        .nonoptional({ message: "Price cannot be optional" }),
+    stock: z
+        .number()
+        // .min(1, { message: "stock cannot be lower than 1" })
+        .nonnegative({ message: "Price cannot be empty" })
+        .nonoptional({ message: "Price cannot be optional" }),
+    image: z
+        .file()
+        .min(6250)
+        .max(625000)
+        .mime(["image/jpg", "image/jpeg", "image/webp", "image/png"])
+})
+
 
 const NewProduct = () => {
-    const ref = useRef<HTMLInputElement>(null)
+
     type FormData = {
         name: string,
         price: number,
         stock: number,
         image: string | null | ArrayBuffer,
     }
+
+    const [error, setError] = useState<string>("")
+    const ref = useRef<HTMLInputElement>(null)
     const [formData, setFormData] = useState<FormData>({
         name: "",
         price: 0,
         stock: 0,
         image: ""
     })
+
+    const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        const { value, name, type } = e.target;
+        console.log(value, name, "happening")
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === "number"
+                ? Number(value)
+                : value?.trim()
+        }))
+    }
 
     const changeImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
         const file: File | undefined = ref.current?.files?.[0]
@@ -30,11 +68,15 @@ const NewProduct = () => {
         }
     }
 
+    const submitHandler = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+    }
+
     return (
         <DashboardLayout>
             <main className="management">
                 <article>
-                    <form>
+                    <form onSubmit={(event) => submitHandler(event)}>
                         <h2>New Product</h2>
                         <div>
                             <label htmlFor="Name">Name</label>
@@ -42,6 +84,7 @@ const NewProduct = () => {
                                 type="text"
                                 name="name"
                                 value={formData.name}
+                                onChange={(e) => inputChangeHandler(e)}
                                 placeholder="Enter product name"
                                 required
                             />
@@ -49,9 +92,10 @@ const NewProduct = () => {
                         <div>
                             <label htmlFor="Price">Price</label>
                             <input
-                                type="text"
+                                type="number"
                                 name="price"
                                 value={formData.price}
+                                onChange={(e) => inputChangeHandler(e)}
                                 placeholder="Enter product price"
                                 required
                             />
@@ -59,9 +103,10 @@ const NewProduct = () => {
                         <div>
                             <label htmlFor="Stock">Stock</label>
                             <input
-                                type="text"
+                                type="number"
                                 name="stock"
                                 value={formData.stock}
+                                onChange={(e) => inputChangeHandler(e)}
                                 placeholder="Enter product Stock"
                                 required
                             />
@@ -77,7 +122,6 @@ const NewProduct = () => {
                                 ref={ref}
                                 onChange={changeImageHandler}
                                 type="file"
-                                name="name"
                                 required
                             />
                         </div>
@@ -87,7 +131,8 @@ const NewProduct = () => {
                                 alt="New Image" />
                             }
                         </div>
-                        <button type="submit">Submit</button>
+                        {error && <div>{error}</div>}
+                        <button type="submit" className="submit-btn">Create New</button>
                     </form>
                 </article>
             </main>

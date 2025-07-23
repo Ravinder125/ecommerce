@@ -36,11 +36,11 @@ const months = [
 interface BarChartProps {
     horizontal?: boolean,
     data_1: number[],
-    data_2: number[],
+    data_2?: number[],
     title_1: string,
-    title_2: string,
+    title_2?: string,
     bgColor_1: string,
-    bgColor_2: string,
+    bgColor_2?: string,
     labels?: string[],
 }
 
@@ -81,7 +81,6 @@ export function BarChart({
         }
     };
 
-
     const data: ChartData<"bar", number[], string> = {
         labels,
         datasets: [
@@ -104,7 +103,7 @@ export function BarChart({
         ]
     };
 
-    return <Bar options={options} data={data} />;
+    return <Bar width={horizontal ? "200%" : ""} options={options} data={data} />;
 }
 
 interface DoughnutChartProps {
@@ -148,5 +147,40 @@ export const DoughnutChart = ({
         cutout
     };
     return <Doughnut data={doughnutData} options={doughnutOptions} />
+}
+
+
+interface PieChartProps {
+    data: number[],
+    backgroundColor: string[],
+    offset?: number[],
+    labels: string[]
+}
+
+export const PieChart = ({
+    data,
+    backgroundColor,
+    labels,
+    offset,
+}: PieChartProps) => {
+    const pieChartData: ChartData<"pie", number[], string> = {
+        labels,
+        datasets: [{
+            data,
+            backgroundColor,
+            borderWidth: 1,
+            offset,
+        }]
+    };
+
+    const pieChartOptions: ChartOptions<"pie"> = {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false,
+            }
+        },
+    };
+    return <PieChart data={pieChartData} options={pieChartOptions} />
 }
 

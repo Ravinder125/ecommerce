@@ -74,7 +74,7 @@ const Customers = () => {
     columns,
     data,
     "dashboard-product--box",
-    "Products",
+    "Customers",
   );
   return (
     <DashboardLayout>
