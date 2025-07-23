@@ -1,7 +1,6 @@
+import { useState } from "react";
 import { AiOutlineSortAscending, AiOutlineSortDescending } from "react-icons/ai";
-import { FaDiagramNext } from "react-icons/fa6";
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
-import { MdLastPage } from "react-icons/md";
 import {
     useTable,
     useSortBy,
@@ -16,7 +15,7 @@ function TableHOC<T extends object>(
     data: T[],
     containerClassName: string,
     heading: string,
-    showPagination: boolean = false
+    showPageNum = 7,
 ) {
     const options: TableOptions<T> = {
         columns,
@@ -25,6 +24,7 @@ function TableHOC<T extends object>(
             pageSize: 6
         }
     };
+
 
     const {
         getTableBodyProps,
@@ -77,7 +77,7 @@ function TableHOC<T extends object>(
                     </tbody>
                 </table>
 
-                {showPagination && (
+                {pageCount >= showPageNum && (
                     <div className="table-pagination">
                         {pageCount > 2 && (
                             <>

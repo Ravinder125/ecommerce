@@ -37,6 +37,24 @@
     outline: none;
 }
 
+@mixin btn($width: 100%,
+    $p: 1rem,
+    $fontSize: 1.1rem,
+    $color: white,
+    $bgColor: inherit,
+    $border: none,
+    $borderRadius: 8px,
+) {
+    width: $width;
+    padding: $p;
+    font-size: $fontSize;
+    background-color: $bgColor;
+    color: $color;
+    border: $border;
+    border-radius: $borderRadius;
+    cursor: pointer;
+}
+
 @mixin posCenter {
     position: absolute;
     left: 50%;
