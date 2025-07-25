@@ -16,7 +16,7 @@ const Cart = lazy(() => import("./pages/Cart"))
 const Products = lazy(() => import("./pages/Products"))
 const NewProduct = lazy(() => import("./pages/management/NewProduct"))
 const ProductManagement = lazy(() => import("./pages/management/ProductManagement"))
-const Customers = lazy(() => import("./pages/Customers"))
+const Customers = lazy(() => import("./pages/Customers")) 
 
 // Transaction Management routes
 const Transaction = lazy(() => import("./pages/Transaction"))
