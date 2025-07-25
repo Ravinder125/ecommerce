@@ -11,7 +11,7 @@ import {
     ArcElement,
 
 } from 'chart.js';
-import { Bar, Doughnut } from 'react-chartjs-2';
+import { Bar, Doughnut, Pie } from 'react-chartjs-2';
 
 ChartJS.register(
     CategoryScale,
@@ -181,6 +181,6 @@ export const PieChart = ({
             }
         },
     };
-    return <PieChart data={pieChartData} options={pieChartOptions} />
+    return <Pie data={pieChartData} options={pieChartOptions} />
 }
 
