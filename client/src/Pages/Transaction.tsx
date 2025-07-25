@@ -77,13 +77,13 @@ const arr: DataType[] = [
   },
 ];
 
-const Customers = () => {
+const Transaction = () => {
   const [data] = useState<DataType[]>(arr);
   const Table = TableHOC<DataType>(
     columns,
     data,
     "dashboard-product--box",
-    "Products",
+    "Transaction",
   );
   return (
     <DashboardLayout>
@@ -97,4 +97,4 @@ const Customers = () => {
   )
 }
 
-export default Customers
+export default Transaction
