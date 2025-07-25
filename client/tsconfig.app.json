@@ -25,8 +25,4 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": [
-    "src",
-    "src/types/react-table-config.d.ts"
-  ]
 }
