@@ -1,4 +1,4 @@
-import { useState, type ReactElement } from "react";
+import { useState } from "react";
 import { DashboardLayout } from "../components"
 import { TableHOC } from "../components"
 import { Link } from "react-router-dom";

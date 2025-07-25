@@ -13,6 +13,13 @@
         width: 80%;
         margin: 4rem auto;
 
+        >div {
+            max-width: 25rem;
+            margin-inline: auto;
+            margin-top: 6rem;
+            margin-bottom: -1rem;
+        }
+
         >h2 {
             margin: 2rem 0;
             text-align: center;
