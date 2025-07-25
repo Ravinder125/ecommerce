@@ -31,7 +31,7 @@ function App() {
       {/* Header */}
       <Suspense fallback={<Loader />}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Dashboard />} />
           <Route path="/search" element={<Search />} />
           <Route path="/cart" element={<Cart />} />
 
