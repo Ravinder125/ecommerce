@@ -1,7 +1,7 @@
-import { useRef, useState, type ChangeEvent, type FormEvent, type FormEventHandler, type MouseEvent } from "react"
+import { useRef, useState, type ChangeEvent, type FormEvent, } from "react"
 import { DashboardLayout } from "../../components"
 import { MdOutlineFileUpload } from "react-icons/md"
-import z, { mime } from "zod"
+import z from "zod"
 
 
 const ProductDataSchema = z.object({
@@ -10,19 +10,33 @@ const ProductDataSchema = z.object({
         .nonempty({ message: "Name is required" }),
     price: z
         .number()
-        // .min(1, { message: "Price cannot be lower than 1" })
-        .nonnegative({ message: "Price cannot be empty" })
-        .nonoptional({ message: "Price cannot be optional" }),
+        .min(1, { message: "Price cannot be lower than 1" })
+        .nonnegative({ message: "Price cannot be empty" }),
     stock: z
         .number()
-        // .min(1, { message: "stock cannot be lower than 1" })
-        .nonnegative({ message: "Price cannot be empty" })
-        .nonoptional({ message: "Price cannot be optional" }),
+        .min(1, { message: "stock cannot be lower than 1" })
+        .nonnegative({ message: "Price cannot be empty" }),
     image: z
-        .file()
-        .min(6250)
-        .max(625000)
-        .mime(["image/jpg", "image/jpeg", "image/webp", "image/png"])
+        .string()
+        .nonempty({ message: "Name is required" }),
+})
+
+
+const imageSchema = z.object({
+    image: z
+        .any()
+        .refine((file) => file instanceof File, "Image is required"
+        )
+        // .refine((file) => file?.size >= 6250,
+        //     "File is too small (min 6kb)",
+        // )
+        .refine((file) => file?.size <= 6000000,
+            "File is too large (max 6MB)"
+        )
+        .refine((file) =>
+            ["image/jpg", "image/jpeg", "image/png", "image/webp"].indexOf(file?.type) !== -1,
+            "Only JPG, PNG, or WEBP image are allowed"
+        )
 })
 
 
@@ -55,8 +69,14 @@ const NewProduct = () => {
         }))
     }
 
-    const changeImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    const changeImageHandler = () => {
+        setError("")
         const file: File | undefined = ref.current?.files?.[0]
+        const result = imageSchema.safeParse({ image: file })
+        if (!result.success) {
+            setError(result.error.issues?.[0].message)
+            return;
+        }
         const reader: FileReader = new FileReader();
         if (file) {
             reader.readAsDataURL(file);
@@ -67,9 +87,21 @@ const NewProduct = () => {
             }
         }
     }
-
     const submitHandler = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+        e.preventDefault();
+        setError("")
+
+        const payload: FormData = {
+            name: formData.name,
+            price: formData.price,
+            stock: formData.stock,
+            image: formData.image
+        }
+        const result = ProductDataSchema.safeParse(payload)
+        if (!result.success) {
+            setError(result?.error?.issues?.[0].message)
+            return;
+        }
     }
 
     return (
@@ -131,7 +163,7 @@ const NewProduct = () => {
                                 alt="New Image" />
                             }
                         </div>
-                        {error && <div>{error}</div>}
+                        {error && <div className="error-msg">{error}</div>}
                         <button type="submit" className="submit-btn">Create New</button>
                     </form>
                 </article>

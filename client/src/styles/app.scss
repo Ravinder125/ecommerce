@@ -46,6 +46,11 @@ td {
     color: rgb(34, 38, 43);
 }
 
+.error-msg {
+    color: rgba(255, 0, 0, 0.8);
+    font-size: 0.8rem
+}
+
 .submit-btn {
     @include mixin.btn(100%,
         1rem,
@@ -55,7 +60,7 @@ td {
         none,
         8px,
     );
-    margin: 2rem auto;
+    margin: 1rem auto;
 
 
     &:hover {

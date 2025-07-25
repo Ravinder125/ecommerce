@@ -1,19 +1,19 @@
-import { BarChart, DashboardLayout } from "../../components"
+import { DashboardLayout } from "../../components"
 
-const months: string[] = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-];
+// const months: string[] = [
+//     "January",
+//     "February",
+//     "March",
+//     "April",
+//     "May",
+//     "June",
+//     "July",
+//     "August",
+//     "September",
+//     "October",
+//     "November",
+//     "December",
+// ];
 
 const PieCharts = () => {
     return (

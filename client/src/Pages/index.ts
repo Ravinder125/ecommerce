@@ -13,4 +13,5 @@ export {
     NewProduct,
     Products,
     Transaction,
+    Customers,
 }
