@@ -1,113 +1,105 @@
+import {
+    useReactTable,
+    getCoreRowModel,
+    getSortedRowModel,
+    getPaginationRowModel,
+    flexRender,
+    type ColumnDef,
+} from "@tanstack/react-table";
+
 import { AiOutlineSortAscending, AiOutlineSortDescending } from "react-icons/ai";
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
-import {
-    useTable,
-    useSortBy,
-    usePagination,
-    type Column,
-    type TableOptions,
-    type ColumnInstance,
-} from "react-table";
 
 function TableHOC<T extends object>(
-    columns: Column<T>[],
+    columns: ColumnDef<T, any>[],
     data: T[],
     containerClassName: string,
     heading: string,
-    showPageNum = 7,
+    showPageNum = 7
 ) {
-    const options: TableOptions<T> = {
-        columns,
+    const table = useReactTable<T>({
         data,
+        columns,
         initialState: {
-            pageSize: 6
-        }
-    };
-
-
-    const {
-        getTableBodyProps,
-        getTableProps,
-        headerGroups,
-        page,
-        prepareRow,
-        nextPage,
-        previousPage,
-        canNextPage,
-        pageCount,
-        gotoPage,
-        state: { pageIndex },
-        canPreviousPage,
-    } = useTable<T>(options, useSortBy, usePagination,);
+            pagination: {
+                pageSize: 6,
+            },
+        },
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+    });
 
     return function HOC() {
         return (
             <div className={containerClassName}>
                 <h2 className="heading">{heading}</h2>
-                <table className="table" {...getTableProps()}>
+
+                <table className="table">
                     <thead>
-                        {headerGroups.map(headerGroup => (
-                            <tr {...headerGroup.getHeaderGroupProps()}>
-                                {headerGroup.headers.map(column => {
-                                    const col = column as ColumnInstance<T>; // ✅ casting to access sort props
-                                    return (
-                                        <th {...col.getHeaderProps(col.getSortByToggleProps())}>
-                                            {col.render("Header")}
-                                            {" "}
-                                            {col.isSorted ? (col.isSortedDesc ? <AiOutlineSortAscending /> : <AiOutlineSortDescending />) : ""}
-                                        </th>
-                                    );
-                                })}
+                        {table.getHeaderGroups().map(headerGroup => (
+                            <tr key={headerGroup.id}>
+                                {headerGroup.headers.map(header => (
+                                    <th
+                                        key={header.id}
+                                        onClick={header.column.getToggleSortingHandler()}
+                                        className="cursor-pointer"
+                                    >
+                                        {flexRender(header.column.columnDef.header, header.getContext())}
+                                        {header.column.getIsSorted() === "asc" && <AiOutlineSortAscending />}
+                                        {header.column.getIsSorted() === "desc" && <AiOutlineSortDescending />}
+                                    </th>
+                                ))}
                             </tr>
                         ))}
                     </thead>
 
-                    <tbody {...getTableBodyProps()}>
-                        {page.map(row => {
-                            prepareRow(row);
-                            return (
-                                <tr {...row.getRowProps()}>
-                                    {row.cells.map(cell => (
-                                        <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                                    ))}
-                                </tr>
-                            );
-                        })}
+                    <tbody>
+                        {table.getRowModel().rows.map(row => (
+                            <tr key={row.id}>
+                                {row.getVisibleCells().map(cell => (
+                                    <td key={cell.id}>
+                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
 
-                {pageCount >= showPageNum && (
+                {table.getPageCount() >= showPageNum && (
                     <div className="table-pagination">
-                        {pageCount > 2 && (
-                            <>
-                                <button disabled={pageIndex === 0}
-                                    onClick={() => gotoPage(0)}>
-                                    First
-                                </button>
-                            </>
+                        {table.getPageCount() > 2 && (
+                            <button disabled={!table.getCanPreviousPage()} onClick={() => table.setPageIndex(0)}>
+                                First
+                            </button>
                         )}
+
                         <button
-                            disabled={!canPreviousPage}
-                            onClick={previousPage}>
+                            disabled={!table.getCanPreviousPage()}
+                            onClick={() => table.previousPage()}
+                        >
                             <GrFormPrevious />
                         </button>
+
                         <span>
-                            {pageIndex + 1} of page {pageCount}
+                            {table.getState().pagination.pageIndex + 1} of page {table.getPageCount()}
                         </span>
+
                         <button
-                            disabled={!canNextPage}
-                            onClick={nextPage}>
+                            disabled={!table.getCanNextPage()}
+                            onClick={() => table.nextPage()}
+                        >
                             <GrFormNext />
                         </button>
 
-                        {pageCount > 2 && (
-                            <>
-                                <button
-                                    disabled={pageIndex + 1 === pageCount}
-                                    onClick={() => gotoPage(pageCount - 1)}>
-                                    Last
-                                </button>
-                            </>
+                        {table.getPageCount() > 2 && (
+                            <button
+                                disabled={!table.getCanNextPage()}
+                                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                            >
+                                Last
+                            </button>
                         )}
                     </div>
                 )}

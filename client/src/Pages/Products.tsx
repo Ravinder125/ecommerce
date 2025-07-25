@@ -1,7 +1,7 @@
 import { useState, type ReactElement } from "react";
 import { DashboardLayout } from "../components"
 import { TableHOC } from "../components"
-import type { Column } from "react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 
@@ -13,26 +13,26 @@ interface DataType {
   action: ReactElement,
 }
 
-const columns: Column<DataType>[] = [
+const columns: ColumnDef<DataType>[] = [
   {
-    Header: "Image",
-    accessor: "image",
+    header: "Image",
+    accessorKey: "image",
   },
   {
-    Header: "Name",
-    accessor: "name",
+    header: "Name",
+    accessorKey: "name",
   },
   {
-    Header: "Price",
-    accessor: "price",
+    header: "Price",
+    accessorKey: "price",
   },
   {
-    Header: "Stock",
-    accessor: "stock",
+    header: "Stock",
+    accessorKey: "stock",
   },
   {
-    Header: "Action",
-    accessor: "action",
+    header: "Action",
+    accessorKey: "action",
   },
 ]
 

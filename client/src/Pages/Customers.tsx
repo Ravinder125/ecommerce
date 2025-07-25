@@ -1,9 +1,9 @@
 import { useState, type ReactElement } from "react";
 import { DashboardLayout } from "../components"
 import { TableHOC } from "../components"
-import type { Column } from "react-table";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
+import type { ColumnDef } from "@tanstack/react-table";
 
 interface DataType {
   avatar: ReactElement;
@@ -13,26 +13,26 @@ interface DataType {
   action: ReactElement,
 }
 
-const columns: Column<DataType>[] = [
+const columns: ColumnDef<DataType>[] = [
   {
-    Header: "Avatar",
-    accessor: "avatar",
+    header: "Avatar",
+    accessorKey: "avatar"
   },
   {
-    Header: "Name",
-    accessor: "name",
+    header: "Name",
+    accessorKey: "name",
   },
   {
-    Header: "Email",
-    accessor: "email",
+    header: "Email",
+    accessorKey: "email",
   },
   {
-    Header: "Gender",
-    accessor: "gender",
+    header: "Gender",
+    accessorKey: "gender",
   },
   {
-    Header: "Action",
-    accessor: "action",
+    header: "Action",
+    accessorKey: "action",
   },
 ]
 
@@ -80,7 +80,7 @@ const Customers = () => {
     <DashboardLayout>
       <main>
         {Table()}
-        <Link to="/admin/customers/ned" className="create-product--btn">
+        <Link to="/admin/customers/new" className="create-product--btn">
           <FaPlus />
         </Link>
       </main>
