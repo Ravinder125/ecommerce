@@ -30,6 +30,8 @@ function TableHOC<T extends object>(
         getPaginationRowModel: getPaginationRowModel(),
     });
 
+    console.log(data)
+
     return function HOC() {
         return (
             <div className={containerClassName}>

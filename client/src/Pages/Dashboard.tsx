@@ -15,7 +15,6 @@ import { BiMaleFemale } from "react-icons/bi"
 
 const Dashboard = () => {
   // console.log(Math.abs(40 / 100)* 360)
-  console.log(data)
   return (
     <DashboardLayout>
       <main className="dashboard">

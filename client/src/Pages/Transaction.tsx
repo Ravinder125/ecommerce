@@ -10,8 +10,8 @@ interface DataType {
   amount: number,
   discount: number,
   quantity: string,
-  action: ReactElement,
-  status: ReactElement,
+  status: string,
+  id: string,
 }
 
 const columns: ColumnDef<DataType>[] = [
@@ -34,10 +34,18 @@ const columns: ColumnDef<DataType>[] = [
   {
     header: "Status",
     accessorKey: "status",
+    cell: ({ row }) => {
+      const status = row.original.status;
+      return <span className={`${status === "Processing" ? "purple" : status === "Shipped" ? "green" : "red"}`}>{status}</span>
+    }
+
   },
   {
     header: "Action",
     accessorKey: "action",
+    cell: ({ row }) => (
+      <Link to={`admin/transactions/view/${row.original.id}`}>View</Link>
+    )
   },
 ]
 
@@ -48,32 +56,32 @@ const arr: DataType[] = [
     amount: 250,
     discount: 10,
     quantity: "2 items",
-    action: <Link to="/orders/1">View</Link>,
-    status: <span style={{ color: "green" }}>Completed</span>,
+    status: "Processing",
+    id: "ravi-kumar",
   },
   {
     user: "Anjali Sharma",
     amount: 520,
     discount: 15,
     quantity: "5 items",
-    action: <Link to="/orders/2">View</Link>,
-    status: <span style={{ color: "orange" }}>Pending</span>,
+    status: "Processing",
+    id: "ravi-kumar",
   },
   {
     user: "Suresh Mehta",
     amount: 130,
     discount: 5,
     quantity: "1 item",
-    action: <Link to="/orders/3">View</Link>,
-    status: <span style={{ color: "red" }}>Cancelled</span>,
+    status: "Shipped",
+    id: "ravi-kumar",
   },
   {
     user: "Neha Verma",
     amount: 340,
     discount: 20,
     quantity: "3 items",
-    action: <Link to="/orders/4">View</Link>,
-    status: <span style={{ color: "blue" }}>Processing</span>,
+    status: "Cancelled",
+    id: "ravi-kumar",
   },
 ];
 

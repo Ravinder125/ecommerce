@@ -6,17 +6,20 @@ import { FaPlus } from "react-icons/fa6";
 import type { ColumnDef } from "@tanstack/react-table";
 
 interface DataType {
-  avatar: ReactElement;
+  avatar: string;
   name: string,
   email: string,
   gender: string,
-  action: ReactElement,
+  id: string,
 }
 
 const columns: ColumnDef<DataType>[] = [
   {
     header: "Avatar",
-    accessorKey: "avatar"
+    accessorKey: "avatar",
+    cell: ({ row }) => (
+      <img src={row.original.avatar} alt={`${row.original.name} image`} />
+    )
   },
   {
     header: "Name",
@@ -33,38 +36,41 @@ const columns: ColumnDef<DataType>[] = [
   {
     header: "Action",
     accessorKey: "action",
+    cell: ({ row }) => (
+      <Link to={`/ customers / edit / ${row.original.id}`}>Edit</Link>
+    )
   },
 ]
 
 
 const arr: DataType[] = [
   {
-    avatar: <img src="https://i.pravatar.cc/40?img=1" alt="Avatar" />,
+    avatar: "https://i.pravatar.cc/40?img=1",
     name: "Ravi Kumar",
     email: "1234567890",
     gender: "Male",
-    action: <Link to="/edit/1">Edit</Link>,
+    id: "ravi-kumar",
   },
   {
-    avatar: <img src="https://i.pravatar.cc/40?img=2" alt="Avatar" />,
+    avatar: "https://i.pravatar.cc/40?img=2",
     name: "Anjali Sharma",
     email: "9876543210",
     gender: "Female",
-    action: <Link to="/edit/2">Edit</Link>,
+    id: "ravi-kumar",
   },
   {
-    avatar: <img src="https://i.pravatar.cc/40?img=3" alt="Avatar" />,
+    avatar: "https://i.pravatar.cc/40?img=3",
     name: "Suresh Mehta",
     email: "1122334455",
     gender: "Male",
-    action: <Link to="/edit/3">Edit</Link>,
+    id: "ravi-kumar",
   },
   {
-    avatar: <img src="https://i.pravatar.cc/40?img=4" alt="Avatar" />,
+    avatar: "https://i.pravatar.cc/40?img=4",
     name: "Neha Verma",
     email: "9988776655",
     gender: "Female",
-    action: <Link to="/edit/4">Edit</Link>,
+    id: "ravi-kumar",
   },
 ];
 
