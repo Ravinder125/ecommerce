@@ -325,12 +325,18 @@ td {
         box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.216);
 
         >form {
-            @include mixin.flex(column, unset, center, 2rem);
+            // @include mixin.flex(column, unset, center, 2rem);
             margin: auto;
 
             >h2 {
                 text-decoration: uppercase;
+                text-align: center;
                 letter-spacing: 2px;
+                margin: 0 0 3rem 0;
+            }
+
+            >div {
+                margin: 2rem 0;
             }
 
             >div:has(img) {
@@ -346,15 +352,15 @@ td {
             #file-upload {
                 @include mixin.flex(row, center, center, unset);
                 cursor: pointer;
-                background-color: rgba(128, 128, 128, 0.11);
-                padding: 1rem 2rem;
+                background-color: rgba(128, 128, 128, 0.034);
+                padding: 0.7rem 1rem;
                 border-radius: 8px;
                 border: 1px solid rgba(128, 128, 128, 0.342);
                 transition: all 300ms;
 
                 &:hover {
-                    background-color: rgba(128, 128, 128, 0.8);
-                    color: white;
+                    background-color: rgba(128, 128, 128, 0.164);
+                    color: rgba(0, 0, 0, 0.993);
                     border: 1px solid rgba(0, 0, 0, 0.233);
                 }
 

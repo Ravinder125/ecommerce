@@ -39,7 +39,6 @@ const imageSchema = z.object({
         )
 })
 
-
 const NewProduct = () => {
 
     type FormData = {
