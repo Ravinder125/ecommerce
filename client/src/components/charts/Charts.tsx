@@ -155,7 +155,7 @@ interface PieChartProps {
     backgroundColor: string[],
     offset?: number[],
     labels: string[]
-}
+} 
 
 export const PieChart = ({
     data,
