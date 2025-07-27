@@ -42,7 +42,6 @@
     $fontSize: 1.1rem,
     $color: white,
     $bgColor: inherit,
-    $border: none,
     $borderRadius: 8px,
 ) {
     width: $width;
@@ -50,9 +49,7 @@
     font-size: $fontSize;
     background-color: $bgColor;
     color: $color;
-    border: $border;
     border-radius: $borderRadius;
-    cursor: pointer;
 }
 
 @mixin posCenter {

@@ -59,17 +59,17 @@ export const ADMIN_SIDEBAR_DATA: AdminSideBarData = {
     ],
     APP: [
         {
-            url: "/admin/app/stopwatch",
+            url: "/admin/apps/stopwatch",
             label: "Stop Watch",
             Icon: FaStopwatch,
         },
         {
-            url: "/admin/app/coupon",
+            url: "/admin/apps/coupon",
             label: "Coupon",
             Icon: RiCoupon3Fill,
         },
         {
-            url: "/admin/app/toss",
+            url: "/admin/apps/toss",
             label: "Toss",
             Icon: FaGamepad,
         },

@@ -2,6 +2,7 @@
 @use "dashboard";
 @use "product";
 @use "chart";
+@use "dashboardapps";
 @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
@@ -51,13 +52,17 @@ td {
     font-size: 0.8rem
 }
 
+button {
+    cursor: pointer;
+    border: none
+}
+
 .submit-btn {
     @include mixin.btn(100%,
         1rem,
         1.1rem,
         white,
         rgb(5, 107, 244),
-        none,
         8px,
     );
     margin: 1rem auto;
@@ -69,7 +74,6 @@ td {
             1.1rem,
             white,
             rgba(5, 107, 244, 0.9),
-            none,
             8px,
         );
     }

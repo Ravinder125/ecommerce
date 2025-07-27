@@ -48,15 +48,15 @@ const BarCharts = () => {
                 <section>
                     <LineChart
                         data={[
-                            24000, 14440, 24100, 34000, 90000, 200000, 25600, 44700, 990000, 144000, 1255478, 120000,
+                            9000, 12000, 12000, 9000, 1000, 5000, 4000, 1200, 1100, 1500, 1100, 1200,
                         ]}
-                        label="Revenue"
-                        borderColor={"hsl(129, 80%, 40%)"}
-                        backgroundColor={"rgba(0,150, 0,0.5)"}
+                        label="Discount"
+                        borderColor={"hsla(29, 80%, 40%, 0.4)"}
+                        backgroundColor={"hsl(29, 80%,40%)"}
                         labels={months}
 
                     />
-                    <h2>Total Products (SKU)</h2>
+                    <h2>Discount Allotted</h2>
                 </section>
             </main>
 
