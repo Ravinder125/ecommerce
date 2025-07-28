@@ -33,13 +33,13 @@ const Dashboard = () => {
             color="rgb(0,115, 355)"
             percent={40}
             amount={true}
-            value={340000000000}
+            value={15000}
           />
           <WidgetItem
             heading="Users"
             color="rgb(0,198, 202)"
             percent={-14}
-            value={400}
+            value={1500}
           />
           <WidgetItem
             heading="Transactions"
@@ -51,7 +51,7 @@ const Dashboard = () => {
             heading="Products"
             color="rgb(76,0, 255)"
             percent={40}
-            value={340000000000}
+            value={3000}
           />
         </section>
 

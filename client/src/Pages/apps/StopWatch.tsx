@@ -26,9 +26,9 @@ const StopWatch = () => {
     }
 
     useEffect(() => {
-        let intervalID: number;
+        let intervalID: number | undefined;
         if (isActive) {
-            intervalID = setInterval(() => {
+            intervalID = window.setInterval(() => {
                 setTime((prev) => prev + 1);
             }, 1000);
         }

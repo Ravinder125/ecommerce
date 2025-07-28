@@ -31,6 +31,7 @@
     .widget-container {
         @include mixin.flex(row, space-between, stretch, 2rem);
         padding: 2rem 2rem 2rem 0;
+        overflow-x: auto;
 
         .widget {
             min-width: 16rem;
@@ -81,6 +82,8 @@
     .graph-container {
         @include mixin.flex(row, unset, unset, 2rem);
         padding: 0 2rem 2rem 0;
+        max-width: 100%;
+        overflow-y: auto;
 
         >div {
             background-color: white;

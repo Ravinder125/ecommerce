@@ -1,0 +1,163 @@
+@use "mixin";
+
+@media screen and (width <=1300px) {
+    .dashboard-layout {
+        grid-template-columns: 1fr !important;
+        position: relative;
+
+        >aside {
+            position: absolute;
+            max-width: 300px;
+            left: -100%;
+            transition: all 300ms;
+
+            >.sidebar-btn--container {
+                position: relative;
+
+                >.sidebar-btn {
+                    display: block;
+                    position: absolute;
+                    font-size: 1.5rem;
+                    right: 0;
+                    top: 0;
+                    background-color: rgba(0, 0, 0, 0.144);
+                    padding: 0.5rem;
+                    @include mixin.flex(row, center, center, 0);
+                    border-radius: 50%;
+                }
+            }
+
+        }
+
+        >.dashboard-container {
+
+            >.sidebar-btn {
+                display: block;
+                position: fixed;
+                font-size: 1.5rem;
+                left: 1rem;
+                top: 5rem;
+                background-color: rgba(0, 0, 0, 0.144);
+                padding: 0.5rem;
+                @include mixin.flex(row, center, center, 0);
+                border-radius: 50%;
+            }
+
+            .dashboard {
+
+                >.widget-container,
+                .graph-container,
+                .transaction-container {
+                    padding: 2rem;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (width <=1200px) {
+    .dashboard-layout {
+        overflow: auto;
+    }
+
+    .dashboard {
+
+        .widget-container,
+        .graph-container {
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            flex-wrap: wrap;
+
+
+            >.dashboard-categories {
+                max-width: 40rem;
+                max-height: 30rem;
+                overflow-y: auto
+            }
+
+        }
+    }
+}
+
+
+
+@media screen and (width <=1000px) {
+    .transaction-container {
+        @include mixin.flex(column, center, center, 1rem);
+        height: 100%;
+        padding: 0;
+    }
+}
+
+@media screen and (width <=750px) {
+    .management {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 1rem !important;
+
+        >section {
+            max-width: 400px !important;
+        }
+    }
+
+    .chart-container {
+        padding: 0;
+
+        >h1 {
+            margin: 0;
+            text-align: center;
+        }
+
+        >section {
+            margin: 8rem auto;
+        }
+    }
+
+    .dashboard-app--container>section {
+
+        .coupon-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stopwatch {
+            align-items: center;
+        }
+
+        code {
+            display: grid;
+            place-items: center;
+        }
+    }
+}
+
+@media screen and (width <=500px) {
+    .management {
+        padding: 1rem !important;
+
+        >section {
+            width: 100%;
+            overflow: auto;
+        }
+    }
+
+    .dashboard-app--container {
+        padding: 2rem;
+    }
+}
+
+
+@media screen and (width <=400px) {
+    .transaction-container>div:not(.transaction-container)>.transaction-box {
+        max-width: 20rem;
+        padding: 2rem;
+        overflow: auto;
+    }
+
+    .dashboard-app--container>section .stopwatch>button {
+        margin: 1rem;
+    }
+}

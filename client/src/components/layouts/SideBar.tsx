@@ -2,11 +2,23 @@
 import { Link, useLocation, type Location } from "react-router-dom"
 import { ADMIN_SIDEBAR_DATA } from "../../utils/data"
 import type { IconType } from "react-icons";
+import { MdOutlineClose } from "react-icons/md";
 
-const AdminSideBar = () => {
+const AdminSideBar = ({ isOpen, onClose }: { isOpen: boolean, onClose: Function }) => {
     const location = useLocation();
     return (
-        <aside>
+        <aside style={{
+            left: isOpen ? "0%" : "-100%"
+        }}>
+            <div className="sidebar-btn--container">
+                <button
+                    className="sidebar-btn"
+                    onClick={() => onClose()}
+                >
+                    <MdOutlineClose />
+                </button>
+            </div>
+
             <h2>Logo.</h2>
             <DashboardSideBar location={location} />
             <ChartsSideBar location={location} />

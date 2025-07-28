@@ -55,7 +55,7 @@ function App() {
           {/* Management */}
           <Route path="/admin/products/new" element={<NewProduct />} />
           <Route path="/admin/products/:id" element={<ProductManagement />} />
-          <Route path="/admin/transaction/:id" element={<TransactionManagement />} />
+          <Route path="/admin/transactions/:id" element={<TransactionManagement />} />
 
           {/* Apps */}
           <Route path="/admin/apps/stopwatch" element={<StopWatch />} />

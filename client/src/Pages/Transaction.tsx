@@ -44,7 +44,7 @@ const columns: ColumnDef<DataType>[] = [
     header: "Action",
     accessorKey: "action",
     cell: ({ row }) => (
-      <Link to={`admin/transactions/view/${row.original.id}`}>View</Link>
+      <Link to={`/admin/transactions/${row.original.id}`}>View</Link>
     )
   },
 ]
