@@ -7,10 +7,19 @@ import {
 import { Loader } from './components'
 
 // Routes
+
+
+// Auth Routes 
+const Signup = lazy(() => import("./pages/auth/Signup"))
+const Login = lazy(() => import("./pages/auth/Login"))
+
+
 const Home = lazy(() => import("./pages/Home"))
 const Dashboard = lazy(() => import("./pages/Dashboard"))
 const Search = lazy(() => import("./pages/Search"))
 const Cart = lazy(() => import("./pages/Cart"))
+const Shipping = lazy(() => import("./pages/Shipping"))
+
 
 // Product Management routes
 const Products = lazy(() => import("./pages/Products"))
@@ -36,10 +45,22 @@ function App() {
       {/* Header */}
       <Suspense fallback={<Loader />}>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          {/* Auth Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
           <Route path="/search" element={<Search />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/home" element={<Home />} />
+
+          {/* Private Routes (Users) */}
+          <Route>
+            <Route path="/shipping" element={<Shipping />} />
+          </Route>
+
+
+          {/* <Route path="/home" element={<Home />} /> */}
 
           <Route path="/admin/products" element={<Products />} />
           <Route path="/admin/dashboard" element={<Dashboard />} />

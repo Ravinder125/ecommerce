@@ -1,9 +1,15 @@
-@use "mixin";
-@use "dashboard";
-@use "product";
-@use "chart";
-@use "dashboardapps";
-@use "mediaquery";
+@use "admin-styles/mixin";
+@use "variables" as *;
+@use "_home";
+@use "cart";
+@use "shipping";
+@use "auth-styles/login";
+@use "admin-styles/dashboard";
+@use "admin-styles/product";
+@use "admin-styles/chart";
+@use "admin-styles/dashboardapps";
+@use "admin-styles/mediaquery";
+
 @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
@@ -12,8 +18,10 @@
     font-weight: 400;
 }
 
+
 body {
     font-family: var(--font-family);
+    // user-select: none;
 }
 
 * {
@@ -58,25 +66,106 @@ button {
     border: none
 }
 
+
+
+.heading {
+    @include mixin.heading;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+
+.header {
+    margin: 1rem 0;
+
+    >nav {
+        padding: 0.5rem 1rem;
+        @include mixin.flex(row, flex-end, stretch, 1.2rem);
+
+        a {
+            color: $color2;
+            letter-spacing: 2px;
+            font-size: 1.2rem;
+
+            &:hover {
+                color: $color3;
+            }
+        }
+
+        button {
+            border: none;
+            font-size: 1.2rem;
+            background-color: transparent;
+
+            &:hover {
+                color: $color3;
+            }
+
+        }
+
+        dialog {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            width: 100px;
+            position: absolute;
+            left: calc(100% - 100px);
+            top: 3%;
+
+            >div {
+                @include mixin.flex(column, flex-start, center, 0.25rem);
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .submit-btn {
-    @include mixin.btn(100%,
-        1rem,
-        1.1rem,
-        white,
-        rgb(5, 107, 244),
-        8px,
-    );
+    @include mixin.btn;
     margin: 1rem auto;
+    font-size: 1.1rem;
+    background-color: rgb(5, 107, 244);
+    color: white;
 
 
     &:hover {
-        @include mixin.btn(100%,
-            1rem,
-            1.1rem,
-            white,
-            rgba(5, 107, 244, 0.9),
-            8px,
-        );
+        @include mixin.btn;
+        font-size: 1.1rem;
+        background-color: rgba(5, 107, 244, 0.9);
+        color: white;
     }
 }
 

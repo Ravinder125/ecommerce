@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react"
-import AdminSideBar from "./SideBar"
+import AdminSideBar from "../SideBar"
 import { GiHamburgerMenu } from "react-icons/gi"
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
