@@ -22,7 +22,7 @@ function TableHOC<T extends object>(
         columns,
         initialState: {
             pagination: {
-                pageSize: 6,
+                pageSize: 8,
             },
         },
         getCoreRowModel: getCoreRowModel(),
@@ -30,7 +30,6 @@ function TableHOC<T extends object>(
         getPaginationRowModel: getPaginationRowModel(),
     });
 
-    console.log(data)
 
     return function HOC() {
         return (

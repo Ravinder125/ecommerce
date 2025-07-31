@@ -19,6 +19,8 @@ const Dashboard = lazy(() => import("./pages/Dashboard"))
 const Search = lazy(() => import("./pages/Search"))
 const Cart = lazy(() => import("./pages/Cart"))
 const Shipping = lazy(() => import("./pages/Shipping"))
+const Orders = lazy(() => import("./pages/Orders"))
+const OrderDetails = lazy(() => import("./pages/OrderDetails"))
 
 
 // Product Management routes
@@ -57,6 +59,8 @@ function App() {
           {/* Private Routes (Users) */}
           <Route>
             <Route path="/shipping" element={<Shipping />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/orders/:id" element={<OrderDetails />} />
           </Route>
 
 

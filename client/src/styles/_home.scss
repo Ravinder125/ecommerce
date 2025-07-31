@@ -2,7 +2,7 @@
 @use "admin-styles/mixin" as *;
 
 .home {
-    padding: 2rem;
+    padding: 2rem 2rem 2rem 4rem;
     display: flex;
     flex-direction: column;
     height: calc(100vh - 5rem);
@@ -34,7 +34,7 @@
         width: 100%;
         flex: 1;
         display: flex;
-        flex-wrap: wrap;
+        // flex-wrap: wrap;
         gap: 1rem;
         overflow-x: auto;
 

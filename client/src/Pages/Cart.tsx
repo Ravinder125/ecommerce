@@ -5,20 +5,106 @@ import CardItem from "./CardItem";
 import { Link } from "react-router-dom";
 
 
-const cartItems = [{
-    "_id": "prod-sony-wh1000xm6-black",
-    "name": "Sony WH‑1000XM6 Wireless Headphones (Black)",
-    "price": 44900,
-    "image": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcT31zHhgLfXB3uvyu7PVbeZ9QwNZURG_KWXpHFoiFKKzLWvv4a99WW-ddoHuGPeACY5wi39S8yt_vXWZ60x2HpBOUcK6ebKCMotO8O1KQLtZi1zx1-Z6ZEGON4",
-    "quantity": 1,
-},
-{
-    "_id": "prod-razer-deathadder-v3",
-    "name": "Razer DeathAdder V3 HyperSpeed Mouse",
-    "price": 8499,
-    "image": "https://m.media-amazon.com/images/I/71fRKz9pUnL.jpg",
-    "quantity": 2,
-}];
+const cartItems = [
+    {
+        "_id": "prod-sony-wh1000xm6-black",
+        "name": "Sony WH‑1000XM6 Wireless Headphones (Black)",
+        "price": 44900,
+        "image": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcT31zHhgLfXB3uvyu7PVbeZ9QwNZURG_KWXpHFoiFKKzLWvv4a99WW-ddoHuGPeACY5wi39S8yt_vXWZ60x2HpBOUcK6ebKCMotO8O1KQLtZi1zx1-Z6ZEGON4",
+        "quantity": 1,
+    },
+    {
+        "_id": "prod-razer-deathadder-v3",
+        "name": "Razer DeathAdder V3 HyperSpeed Mouse",
+        "price": 8499,
+        "image": "https://m.media-amazon.com/images/I/71fRKz9pUnL.jpg",
+        "quantity": 2,
+    },
+    {
+        "_id": "prod-sony-wh1000xm6-black",
+        "name": "Sony WH‑1000XM6 Wireless Headphones (Black)",
+        "price": 44900,
+        "image": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcT31zHhgLfXB3uvyu7PVbeZ9QwNZURG_KWXpHFoiFKKzLWvv4a99WW-ddoHuGPeACY5wi39S8yt_vXWZ60x2HpBOUcK6ebKCMotO8O1KQLtZi1zx1-Z6ZEGON4",
+        "quantity": 1,
+    },
+    {
+        "_id": "prod-razer-deathadder-v3",
+        "name": "Razer DeathAdder V3 HyperSpeed Mouse",
+        "price": 8499,
+        "image": "https://m.media-amazon.com/images/I/71fRKz9pUnL.jpg",
+        "quantity": 2,
+    },
+    {
+        "_id": "prod-sony-wh1000xm6-black",
+        "name": "Sony WH‑1000XM6 Wireless Headphones (Black)",
+        "price": 44900,
+        "image": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcT31zHhgLfXB3uvyu7PVbeZ9QwNZURG_KWXpHFoiFKKzLWvv4a99WW-ddoHuGPeACY5wi39S8yt_vXWZ60x2HpBOUcK6ebKCMotO8O1KQLtZi1zx1-Z6ZEGON4",
+        "quantity": 1,
+    },
+    {
+        "_id": "prod-razer-deathadder-v3",
+        "name": "Razer DeathAdder V3 HyperSpeed Mouse",
+        "price": 8499,
+        "image": "https://m.media-amazon.com/images/I/71fRKz9pUnL.jpg",
+        "quantity": 2,
+    },
+    {
+        "_id": "prod-sony-wh1000xm6-black",
+        "name": "Sony WH‑1000XM6 Wireless Headphones (Black)",
+        "price": 44900,
+        "image": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcT31zHhgLfXB3uvyu7PVbeZ9QwNZURG_KWXpHFoiFKKzLWvv4a99WW-ddoHuGPeACY5wi39S8yt_vXWZ60x2HpBOUcK6ebKCMotO8O1KQLtZi1zx1-Z6ZEGON4",
+        "quantity": 1,
+    },
+    {
+        "_id": "prod-razer-deathadder-v3",
+        "name": "Razer DeathAdder V3 HyperSpeed Mouse",
+        "price": 8499,
+        "image": "https://m.media-amazon.com/images/I/71fRKz9pUnL.jpg",
+        "quantity": 2,
+    },
+    {
+        "_id": "prod-sony-wh1000xm6-black",
+        "name": "Sony WH‑1000XM6 Wireless Headphones (Black)",
+        "price": 44900,
+        "image": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcT31zHhgLfXB3uvyu7PVbeZ9QwNZURG_KWXpHFoiFKKzLWvv4a99WW-ddoHuGPeACY5wi39S8yt_vXWZ60x2HpBOUcK6ebKCMotO8O1KQLtZi1zx1-Z6ZEGON4",
+        "quantity": 1,
+    },
+    {
+        "_id": "prod-razer-deathadder-v3",
+        "name": "Razer DeathAdder V3 HyperSpeed Mouse",
+        "price": 8499,
+        "image": "https://m.media-amazon.com/images/I/71fRKz9pUnL.jpg",
+        "quantity": 2,
+    },
+    {
+        "_id": "prod-sony-wh1000xm6-black",
+        "name": "Sony WH‑1000XM6 Wireless Headphones (Black)",
+        "price": 44900,
+        "image": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcT31zHhgLfXB3uvyu7PVbeZ9QwNZURG_KWXpHFoiFKKzLWvv4a99WW-ddoHuGPeACY5wi39S8yt_vXWZ60x2HpBOUcK6ebKCMotO8O1KQLtZi1zx1-Z6ZEGON4",
+        "quantity": 1,
+    },
+    {
+        "_id": "prod-razer-deathadder-v3",
+        "name": "Razer DeathAdder V3 HyperSpeed Mouse",
+        "price": 8499,
+        "image": "https://m.media-amazon.com/images/I/71fRKz9pUnL.jpg",
+        "quantity": 2,
+    },
+    {
+        "_id": "prod-sony-wh1000xm6-black",
+        "name": "Sony WH‑1000XM6 Wireless Headphones (Black)",
+        "price": 44900,
+        "image": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcT31zHhgLfXB3uvyu7PVbeZ9QwNZURG_KWXpHFoiFKKzLWvv4a99WW-ddoHuGPeACY5wi39S8yt_vXWZ60x2HpBOUcK6ebKCMotO8O1KQLtZi1zx1-Z6ZEGON4",
+        "quantity": 1,
+    },
+    {
+        "_id": "prod-razer-deathadder-v3",
+        "name": "Razer DeathAdder V3 HyperSpeed Mouse",
+        "price": 8499,
+        "image": "https://m.media-amazon.com/images/I/71fRKz9pUnL.jpg",
+        "quantity": 2,
+    },
+];
 const subTotal = 4000;
 const tax = Math.round(subTotal * 0.18);
 const shippingCharges = 200;

@@ -1,5 +1,6 @@
 @use "admin-styles/mixin";
 @use "variables" as *;
+@use "search";
 @use "_home";
 @use "cart";
 @use "shipping";
@@ -36,15 +37,36 @@ a {
 }
 
 .red {
+    border: 1px solid #ff0000b3;
+    background: #ff000017;
+    padding: 0.3rem;
+    border-radius: 5px;
     color: red;
 }
 
+.yellow {
+
+    border: 1px solid rgb(255 195 0);
+    background: rgb(255 167 0 / 9%);
+    padding: 0.3rem;
+    border-radius: 5px;
+    color: #ffaf00;
+}
+
 .green {
-    color: rgb(0, 195, 0);
+    border: 1px solid rgba(0, 255, 0, 1);
+    background: rgba(0, 255, 0, 0.090196);
+    padding: 0.3rem;
+    border-radius: 5px;
+    color: green;
 }
 
 .purple {
-    color: purple
+    border: 1px solid rgb(42 0 255);
+    background: rgb(3 0 255 / 9%);
+    padding: 0.3rem;
+    border-radius: 5px;
+    color: #0b0080;
 }
 
 p {
@@ -72,6 +94,21 @@ button {
     @include mixin.heading;
     margin: 1rem 0;
     text-align: center;
+}
+
+
+.container {
+    max-width: 1367px;
+    width: 100%;
+    padding: 1rem;
+    margin: auto;
+    overflow: auto;
+
+    >h1 {
+        @include mixin.heading;
+        margin: 1rem 0;
+        text-align: center;
+    }
 }
 
 
@@ -157,6 +194,8 @@ button {
     @include mixin.btn;
     margin: 1rem auto;
     font-size: 1.1rem;
+    padding: 0.9rem 5rem;
+    border-radius: 8px;
     background-color: rgb(5, 107, 244);
     color: white;
 
@@ -341,6 +380,7 @@ button {
     @include mixin.flex(row, center, center, 1.5rem);
     padding: 2rem;
     margin-inline: auto;
+    width: 100%;
 
     >button {
         @include mixin.flex;

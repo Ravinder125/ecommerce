@@ -4,8 +4,8 @@ import { FaUser } from "react-icons/fa6"
 import { Link } from "react-router-dom"
 
 const user = {
-    _id: "",
-    role: "user"
+    _id: "alsdjf",
+    role: "admin"
 }
 
 const Header = () => {

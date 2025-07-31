@@ -11,10 +11,6 @@ const images = [
     "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
 ]
 
-
-
-
-
 const Home = () => {
     const [showImageIndex, setShowImageIndex] = useState(0)
 
