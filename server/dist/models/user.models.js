@@ -21,7 +21,7 @@ const UserSchema = new mongoose.Schema({
     },
     avatarId: {
         type: String,
-        required: [true, "Avatar Public ID is required"]
+        required: [true, "Avatar public ID is required"]
     },
     role: {
         type: String,

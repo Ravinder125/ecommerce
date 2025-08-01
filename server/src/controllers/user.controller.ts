@@ -5,7 +5,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { RegisterUserRequestBody } from "../types/types.js";
 import { validationResult } from "express-validator";
 import { ApiError } from "../utils/ApiError.js";
-import { deleteOnCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 
 export const registerUser = asyncHandler(
