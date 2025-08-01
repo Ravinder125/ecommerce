@@ -16,17 +16,20 @@
     "watch": "tsc -w"
   },
   "dependencies": {
+    "cloudinary": "^2.7.0",
     "compression": "^1.8.1",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
     "mongoose": "^8.17.0",
+    "multer": "^2.0.2",
     "validator": "^13.15.15"
   },
   "devDependencies": {
     "@types/compression": "^1.8.1",
     "@types/express": "^5.0.3",
     "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.0.0",
     "@types/node": "^24.1.0",
     "@types/validator": "^13.15.2",
     "morgan": "^1.10.1",

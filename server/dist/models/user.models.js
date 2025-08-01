@@ -19,6 +19,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: [true, "Avatar is required"]
     },
+    avatarId: {
+        type: String,
+        required: [true, "Avatar Public ID is required"]
+    },
     role: {
         type: String,
         enum: ["admin", "user"],

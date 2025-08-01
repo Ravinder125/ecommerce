@@ -8,7 +8,7 @@ const app = express();
 
 // Middlewares
 app.use(express.json())
-app.use(express.urlencoded())
+// app.use(express.urlencoded())
 app.use(morgan("dev"))
 app.use(compression({ threshold: 1024 }))
 
@@ -30,7 +30,7 @@ connectDB()
 
 const port = process.env.PORT;
 app.listen(port, () => {
-    console.log(`Server is listing on http://localhost:${port}`)
+    console.log(`Server is listening on http://localhost:${port}`)
 })
 
 export default app

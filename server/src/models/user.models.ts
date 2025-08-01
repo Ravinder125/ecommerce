@@ -6,6 +6,7 @@ interface IUser extends Document {
     _id: string;
     name: string;
     avatar: string;
+    avatarId: string;
     email: string;
     role: "admin" | "user";
     gender: "male" | "female";
@@ -35,6 +36,10 @@ const UserSchema = new mongoose.Schema({
     avatar: {
         type: String,
         required: [true, "Avatar is required"]
+    },
+    avatarId: {
+        type: String,
+        required: [true, "Avatar Public ID is required"]
     },
     role: {
         type: String,

@@ -5,6 +5,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { RegisterUserRequestBody } from "../types/types.js";
 import { validationResult } from "express-validator";
 import { ApiError } from "../utils/ApiError.js";
+import { deleteOnCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 
 
 export const registerUser = asyncHandler(
@@ -17,15 +18,23 @@ export const registerUser = asyncHandler(
             const errMessages = errors.array().map(e => e.msg)
             throw new ApiError(400, "Validation Error", errMessages)
         }
-        const { name, email, avatar, gender, role, _id, dob } = req.body;
 
+        const { name, email, gender, role, _id, dob } = req.body;
+        console.log(new Date(dob))
         const isUserExists = await User.findById(_id)
         if (isUserExists) throw new ApiError(400, "User already exists")
+
+        const localFilePath = req.file?.path;
+        if (!localFilePath) throw new ApiError(400, "Avatar is required");
+        const uploadImage = await uploadOnCloudinary(localFilePath);
+        if (!uploadImage) throw new ApiError(500, "Error while uploading image on Cloudinary")
+        const { public_id, url } = uploadImage;
 
         const user = await User.create({
             name,
             email,
-            avatar,
+            avatar: url,
+            avatarId: public_id,
             gender,
             role,
             _id,
@@ -38,8 +47,7 @@ export const registerUser = asyncHandler(
     })
 
 export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
-    const users = await User.find();
-    console.log(users)
+    const users = await User.find({});
     return res.status(200).json(
         new ApiResponse(200, users, "Successfully fetched users")
     )
