@@ -1,4 +1,4 @@
-export interface NewUserRequestBody {
+export interface RegisterUserRequestBody {
     name: string;
     email: string;
     avatar: string;
