@@ -20,7 +20,6 @@ export const registerUser = asyncHandler(
         }
 
         const { name, email, gender, role, _id, dob } = req.body;
-        console.log(new Date(dob))
         const isUserExists = await User.findById(_id)
         if (isUserExists) throw new ApiError(400, "User already exists")
 

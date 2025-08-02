@@ -10,7 +10,7 @@ declare global {
         interface Request {
             user?: RegisterUserRequestBody;
         }
-}
+    }
 }
 
 export const adminOnly = asyncHandler(

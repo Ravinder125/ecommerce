@@ -5,7 +5,10 @@ export const connectDB = async () => {
         await mongoose.connect(DB_URI, { dbName: "ecommerce" });
     }
     catch (error) {
-        console.error("DB connection failed:", error);
+        if (error instanceof Error) {
+            console.error("DB connection failed:", error.message);
+        }
+        console.log("Db connection failed", error);
         process.exit(1);
     }
 };

@@ -13,10 +13,12 @@ app.use(compression({ threshold: 1024 }));
 app.get("/api/v1/health", (_, res) => res.send("Api working with /api/v1"));
 // Importing Routes
 import userRouter from './routes/user.routes.js';
-import { connectDB } from "./config/db.js";
+import productRouter from './routes/product.routes.js';
 // route - /api/v1/users/register
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/products", productRouter);
 // DB connection
+import { connectDB } from "./config/db.js";
 connectDB()
     .then(() => console.log("DB is connected"))
     .catch((e) => console.error("DB Connection failed", e.message));

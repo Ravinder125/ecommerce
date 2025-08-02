@@ -4,10 +4,10 @@ import { Request } from 'express';
 import path from 'path';
 
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
+    destination: function (res, req, cb) {
         cb(null, "./public/temp")
     },
-    filename: function (req, file, cb) {
+    filename: function (_, file, cb) {
         const ext = path.extname(file.originalname);
         cb(null, `${Date.now()}-${file.fieldname}${ext}`);
     },
@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
 
 // File Filter
 const fileFilter = (
-    req: Request,
+    _: Request,
     file: Express.Multer.File,
     cb: multer.FileFilterCallback
 ) => {

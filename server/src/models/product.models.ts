@@ -15,6 +15,7 @@ type ImagesType = {
 }
 
 export interface IProduct extends Document {
+    owner: string;
     name: string;
     description: string;
     price: number;
@@ -42,11 +43,15 @@ const ReviewSchema = new mongoose.Schema<IReview>(
 
 const ProductSchema = new mongoose.Schema<IProduct>(
     {
+        owner: {
+            type: String,
+            trim: true,
+            required: [true, "Owner ID is required"]
+        },
         name: {
             type: String,
             required: [true, "Product name is required"],
-            trim: true,
-            maxlength: [120, "Product name cannot exceed 120 characters"],
+            maxlength: [200, "Product name cannot exceed 120 characters"],
         },
         description: {
             type: String,
@@ -78,7 +83,7 @@ const ProductSchema = new mongoose.Schema<IProduct>(
         images: [{
             image: String,
             public_id: String,
-            required: true,
+            _id: false,
         }],
         ratings: {
             type: Number,
@@ -88,7 +93,7 @@ const ProductSchema = new mongoose.Schema<IProduct>(
         numOfReviews: {
             type: Number,
             default: 0,
-            min: [0, "Number of Reviews cannot be empty"]
+            min: [0, "Number of Reviews cannot be negative"]
         },
         reviews: [ReviewSchema],
 

@@ -7,3 +7,12 @@ export interface RegisterUserRequestBody {
     _id: string;
     dob: Date;
 }
+
+export interface CreateProductRequestBody {
+    name: string;
+    description: string;
+    price: number;
+    stock: number;
+    category: string;
+    brand: string;
+}
