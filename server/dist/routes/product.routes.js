@@ -1,10 +1,12 @@
 import { Router } from 'express';
 import { adminOnly } from '../middlewares/auth.middleware.js';
-import { createNewProduct, deleteProduct, getAllCategories, getLatestProducts, getSingleProduct, updateProduct, updateProductImages } from '../controllers/product.controller.js';
+import { createNewProduct, deleteProduct, getAdminProducts, getAllCategories, getAllProduct, getLatestProducts, getSingleProduct, updateProduct, updateProductImages } from '../controllers/product.controller.js';
 import { body } from 'express-validator';
 import { upload } from '../middlewares/multer.middleware.js';
 const router = Router();
-router.route("/").post(adminOnly, upload.array("image", 5), [
+router
+    .route("/")
+    .post(adminOnly, upload.array("image", 5), [
     body("name")
         .notEmpty().withMessage("Product name is required")
         .isString().withMessage("Product name must be string ")
@@ -26,7 +28,9 @@ router.route("/").post(adminOnly, upload.array("image", 5), [
         .notEmpty().withMessage("Product stock is required")
         .isNumeric().withMessage("Product stock must be a number")
         .isLength({ max: 999999, min: 0 }).withMessage("Product stock can neither exceed 6 digit nor be negative"),
-], createNewProduct);
+], createNewProduct)
+    .get(getAllProduct);
+router.route("/admin/").get(adminOnly, getAdminProducts);
 router.route("/latest").get(adminOnly, getLatestProducts);
 router.route("/categories").get(getAllCategories);
 router

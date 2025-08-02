@@ -62,12 +62,34 @@ export const getSingleProduct = asyncHandler(async (req, res) => {
         throw new ApiError(400, "No product found");
     return res.status(200).json(new ApiResponse(200, product, "Product fetched successfully"));
 });
+export const getAdminProducts = asyncHandler(async (req, res) => {
+    const products = await Product.find({ owner: req.user?._id });
+    if (!products)
+        throw new ApiError(400, "No product not found");
+    return res.status(200).json(new ApiResponse(200, products, "All admin products fetched successfully"));
+});
 export const getAllProduct = asyncHandler(async (req, res) => {
-    const filterOptions = req.user?.role === "admin"
-        ? { owner: req.user._id, }
-        : {};
-    const product = await Product.find(filterOptions);
-    return res.status(200).json(new ApiResponse(200, product, "Product fetched successfully"));
+    const { price, category, search, sort } = req.query;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(process.env.PRODUCT_PER_PAGE) || 8;
+    const skip = (page - 1) * limit;
+    const baseQuery = {};
+    if (price)
+        baseQuery.price = { $lte: price };
+    if (search)
+        baseQuery.name = { $regex: search, $options: "i" };
+    if (category)
+        baseQuery.category = category;
+    const productPromise = Product
+        .find(baseQuery)
+        .sort(sort && { sort: sort === "asc" ? 1 : -1 })
+        .skip(skip);
+    const [products, filterOnlyProducts] = await Promise.all([
+        productPromise,
+        Product.find(baseQuery),
+    ]);
+    const totalPage = Math.ceil(filterOnlyProducts.length / limit);
+    return res.status(200).json(new ApiResponse(200, { products, totalPage }, "Product fetched successfully"));
 });
 export const updateProduct = asyncHandler(async (req, res) => {
     const errors = validationResult(req);

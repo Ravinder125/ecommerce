@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { Product } from "../models/product.models.js";
-import { CreateProductRequestBody } from "../types/types.js";
+import {
+    BaseQuery,
+    CreateProductRequestBody,
+    RequestProductQuery
+} from "../types/types.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -92,15 +96,42 @@ export const getSingleProduct = asyncHandler(async (req: Request, res: Response)
     )
 })
 
-export const getAllProduct = asyncHandler(async (req: Request, res: Response) => {
-    const filterOptions = req.user?.role === "admin"
-        ? { owner: req.user._id, }
-        : {}
-    const product = await Product.find(filterOptions);
+export const getAdminProducts = asyncHandler(async (req: Request, res: Response) => {
+    const products = await Product.find({ owner: req.user?._id });
+    if (!products) throw new ApiError(400, "No product not found");
     return res.status(200).json(
-        new ApiResponse(200, product, "Product fetched successfully")
+        new ApiResponse(200, products, "All admin products fetched successfully")
     )
 })
+
+export const getAllProduct = asyncHandler(
+    async (req: Request<{}, {}, {}, RequestProductQuery>, res: Response) => {
+        const { price, category, search, sort } = req.query;
+
+        const page = Number(req.query.page) || 1;
+        const limit = Number(process.env.PRODUCT_PER_PAGE) || 8;
+        const skip = (page - 1) * limit
+
+        const baseQuery: BaseQuery = {};
+        if (price) baseQuery.price = { $lte: price }
+        if (search) baseQuery.name = { $regex: search, $options: "i" }
+        if (category) baseQuery.category = category;
+
+        const productPromise = Product
+            .find(baseQuery)
+            .sort(sort && { sort: sort === "asc" ? 1 : -1 })
+            .skip(skip)
+            
+        const [products, filterOnlyProducts] = await Promise.all([
+            productPromise,
+            Product.find(baseQuery),
+        ])
+
+        const totalPage = Math.ceil(filterOnlyProducts.length / limit);
+        return res.status(200).json(
+            new ApiResponse(200, { products, totalPage }, "Product fetched successfully")
+        )
+    })
 
 export const updateProduct = asyncHandler(
     async (
@@ -182,3 +213,5 @@ export const deleteProduct = asyncHandler(async (req: Request, res: Response) =>
         new ApiResponse(200, null, "Product deleted successfully"))
 }
 )
+
+
