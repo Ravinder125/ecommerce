@@ -52,7 +52,6 @@ export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
     )
 })
 
-
 export const getUser = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await User.findById(id);

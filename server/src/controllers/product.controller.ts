@@ -11,10 +11,52 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { deleteOnCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import { fileCleanup } from "../utils/fileCleanup.js";
+import { cache, invalidateCache } from "../utils/cacheService.js";
+// import { faker } from "@faker-js/faker";
 
 
+// const baseRedisKey: string = `ecom/products/`
+// const deletePreRedisData = () => {
+//     return {
+//         deleteLatestProducts: async (userId: string) => {
+//             try {
+//                 await cache.del(`${baseRedisKey}/latest-products/${userId}`)
+//             } catch (error) {
+//                 console.error("Error while deleting latest Products: ", error)
+//             }
+//         },
+//         deleteAllProducts: async (userId: string) => {
+//             try {
+//                 await cache.del(`${baseRedisKey}/all-products/${userId}`)
+//             } catch (error) {
+//                 console.error("Error while deleting latest all products: ", error)
+//             }
+//         },
+//         deleteSingleProduct: async (productId: string) => {
+//             try {
+//                 await cache.del(`${baseRedisKey}/product/${productId}`)
+//             } catch (error) {
+//                 console.error("Error while deleting product: ", error)
+//             }
+//         },
+//         deleteAdminProducts: async (userId: string) => {
+//             try {
+//                 await cache.del(`${baseRedisKey}/admin-products/${userId}`)
+//             } catch (error) {
+//                 console.error("Error while deleting Admin Products")
+//             }
+//         }
+//     }
+// }
+// const {
+//     deleteAllProducts,
+//     deleteLatestProducts,
+//     deleteSingleProduct,
+//     deleteAdminProducts,
+// } = deletePreRedisData();
 
 export const createNewProduct = asyncHandler(
+
     async (
         req: Request<{}, {}, CreateProductRequestBody>,
         res: Response) => {
@@ -57,48 +99,91 @@ export const createNewProduct = asyncHandler(
             price,
             stock,
             images: imagesInfo
-
         })
+
+        // const cacheKey = `latest-products`
+        // await cache.del(cacheKey)
+        // await cache.del("categories")
+
+        await invalidateCache({ product: true })
         return res.status(201).json(
             new ApiResponse(201, product, "Product successfully created")
         )
     })
 
 export const getLatestProducts = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?._id;
+    const userId = req.user?._id
+    const cacheKey = `latest-products`
+
+    let latestProducts = await cache.get(cacheKey)
+    if (latestProducts) {
+        return res.status(200).json(
+            new ApiResponse(200, latestProducts, "Latest products fetched successfully")
+        )
+    }
     const filterOptions = req.user?.role === "admin"
         ? {}
         : { owner: userId };
 
-    const latestProducts = await Product
+    latestProducts = await Product
         .find(filterOptions)
         .sort({ createdAt: -1 })
         .limit(10);
 
+    cache.set(cacheKey, latestProducts,)
     return res.status(200).json(
         new ApiResponse(200, latestProducts, "Latest products fetched successfully")
     );
 })
 
+export const getAllCategories = asyncHandler(async (_: Request, res: Response) => {
+    let categories //= //await cache.get("categories")
+    // if (categories) {
+    //     return res.status(200).json(
+    //         new ApiResponse(200, categories, "Categories fetched successfully")
+    //     )
+    // }
 
-export const getAllCategories = asyncHandler(async (req: Request, res: Response) => {
-    const categories = await Product.distinct("category")
+    categories = await Product.distinct("category")
     return res.status(200).json(
         new ApiResponse(200, categories, "Categories fetched successfully")
     );
 })
 
 export const getSingleProduct = asyncHandler(async (req: Request, res: Response) => {
-    const product = await Product.findById(req.params.id);
+    // const cacheKey = `product:${req.params?.id}`;
+    let product //= await cache.get(cacheKey);
+
+    // if (product) {
+    //     return res.status(200).json(
+    //         new ApiResponse(200, product, "Product fetched successfully")
+    //     )
+    // }
+
+    product = await Product.findById(req.params.id);
     if (!product) throw new ApiError(400, "No product found")
+    // await cache.set(cacheKey, product)
+
     return res.status(200).json(
         new ApiResponse(200, product, "Product fetched successfully")
     )
 })
 
 export const getAdminProducts = asyncHandler(async (req: Request, res: Response) => {
-    const products = await Product.find({ owner: req.user?._id });
+    const userId = req.user?._id
+
+    // const cacheKey = `admin-products${userId}`
+    let products //= //await cache.get(cacheKey)
+    // if (products) {
+    //     return res.status(200).json(
+    //         new ApiResponse(200, products, "All admin products fetched successfully")
+    //     )
+    // }
+
+    products = await Product.find({ owner: userId });
     if (!products) throw new ApiError(400, "No product not found");
+
+    // await cache.set(cacheKey, products)
     return res.status(200).json(
         new ApiResponse(200, products, "All admin products fetched successfully")
     )
@@ -109,7 +194,7 @@ export const getAllProduct = asyncHandler(
         const { price, category, search, sort } = req.query;
 
         const page = Number(req.query.page) || 1;
-        const limit = Number(process.env.PRODUCT_PER_PAGE) || 8;
+        const limit = Number(process.env.PRODUCT_PER_PAGE)
         const skip = (page - 1) * limit
 
         const baseQuery: BaseQuery = {};
@@ -121,7 +206,7 @@ export const getAllProduct = asyncHandler(
             .find(baseQuery)
             .sort(sort && { sort: sort === "asc" ? 1 : -1 })
             .skip(skip)
-            
+
         const [products, filterOnlyProducts] = await Promise.all([
             productPromise,
             Product.find(baseQuery),
@@ -137,12 +222,6 @@ export const updateProduct = asyncHandler(
     async (
         req: Request<any>,
         res: Response) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            const errMessages = errors.array().map(e => e.msg)
-            throw new ApiError(400, "Validation Error", errMessages)
-        }
-
         if (!req.body) throw new ApiError(400, "At least one field is required")
 
         const { name, brand, category, description, price, stock } = req.body
@@ -158,7 +237,13 @@ export const updateProduct = asyncHandler(
         if (price) product.price = price;
         if (stock) product.stock = stock;
         if (price) product.price = price;
+
         await product.save();
+
+        // const cacheKey = `product:${req.params?.id}`;
+        // await cache.del(cacheKey)
+        // await cache.del(`latest-products`)
+        // await cache.del("categories")
 
         return res.status(200).json(
             new ApiResponse(200, product, "Product successfully created")
@@ -174,7 +259,7 @@ export const updateProductImages = asyncHandler(async (req: Request, res: Respon
 
     if (!product) {
         images.map((path) => fileCleanup(path))
-        throw new ApiError(400, "Product already exists")
+        throw new ApiError(400, "No Product found")
     }
 
     if (product.images?.length > 0) {
@@ -201,6 +286,11 @@ export const updateProductImages = asyncHandler(async (req: Request, res: Respon
     product.images = imagesInfo
     await product.save();
 
+    // const cacheKey = `product:${req.params?.id}`;
+    // await cache.del(cacheKey)
+    // await cache.del(`latest-products`)
+    // await cache.del("categories")
+
     return res.status(200).json(
         new ApiResponse(200, product, "Product images successfully updated")
     )
@@ -209,9 +299,55 @@ export const updateProductImages = asyncHandler(async (req: Request, res: Respon
 export const deleteProduct = asyncHandler(async (req: Request, res: Response) => {
     const product = await Product.findByIdAndDelete(req.params.id)
     if (!product) throw new ApiError(400, "No product found")
+
+    // const cacheKey = `product:${req.params?.id}`;
+    // await cache.del(cacheKey)
+    // await cache.del(`latest-products`)
+    // await cache.del("categories")
+    // await cache.del(`admin-products${req.user?._id}`)
     return res.status(200).json(
         new ApiResponse(200, null, "Product deleted successfully"))
 }
 )
 
+
+
+// faker: Faker Data generate
+// export const generateRandomProducts = async (count: number = 10) => {
+//     const products = [];
+
+//     for (let i = 0; i < count; i++) {
+//         const product = {
+//             owner: "sdfasdfasdf",
+//             name: faker.commerce.productName(),
+//             description: faker.commerce.productDescription(),
+//             brand: "uber",
+//             Images: [{ image: "../../public/61iryHxlcbL._SL1500_.jpg", public_id: "image" }],
+//             price: faker.commerce.price({ min: 1500, max: 80000, dec: 0 }),
+//             stock: faker.commerce.price({ min: 0, max: 100, dec: 0 }),
+//             category: faker.commerce.department(),
+//             createdAt: new Date(faker.date.past()),
+//             updatedAt: new Date(faker.date.recent()),
+//             _v: 0,
+//         }
+//         products.push(product)
+//     }
+//     await Product.create(products)
+//     console.log({ success: true })
+// }
+
+// generateRandomProducts(200)
+
+
+// const deleteRandomProducts = async (count: number = 10) => {
+//     const products = await Product.find({}).skip(2);
+
+//     for (let i = 0; i < count; i++) {
+//         const product = products[i];
+//         await product.deleteOne();
+//     }
+//     console.log({ success: true })
+// }
+
+// deleteRandomProducts(200)
 

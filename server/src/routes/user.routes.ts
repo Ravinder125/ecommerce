@@ -8,6 +8,7 @@ import {
 } from "../controllers/user.controller.js";
 import { adminOnly } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { createUser } from "../middlewares/validators/userValidator.middleware.js";
 
 const router = Router();
 
@@ -15,17 +16,7 @@ const router = Router();
 
 router.route("/register").post(
     upload.single("avatar"),
-    [
-        body("_id").notEmpty().isString().withMessage("_id is required"),
-        body("email")
-            .notEmpty().withMessage("Email is required")
-            .isEmail().withMessage("Invalid email"),
-        body("name").notEmpty().isString().withMessage("Name is required"),
-        body("gender").isIn(["male", "female"]).withMessage("Gender is required"),
-        body("dob")
-            .notEmpty().withMessage("Date of birth is required")
-            .isString().withMessage("Date of birth must be string"),
-    ],
+    createUser,
     registerUser,
 )
 router.route("/all").get(adminOnly, getAllUsers)
