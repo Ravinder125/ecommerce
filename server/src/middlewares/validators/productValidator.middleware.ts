@@ -1,6 +1,6 @@
 import { body } from "express-validator";
 
-export const createOrder = [
+export const createProduct = [
     body("name")
         .notEmpty().withMessage("Product name is required")
         .isString().withMessage("Product name must be string ")

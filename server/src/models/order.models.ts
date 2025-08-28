@@ -79,15 +79,15 @@ const OrderSchema = new mongoose.Schema<IOrder>(
         },
         discount: {
             type: Number,
-            required: [true, "Discount is required"]
+            default: 0,
         },
         taxPrice: {
             type: Number,
-            required: true,
+            required: [true, "Tax price is required"]
         },
         shippingCharge: {
             type: Number,
-            required: true,
+            default: 0
         },
         totalPrice: {
             type: Number,

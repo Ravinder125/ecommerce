@@ -11,9 +11,8 @@ import {
     updateProduct,
     updateProductImages
 } from '../controllers/product.controller.js';
-import { body } from 'express-validator';
 import { upload } from '../middlewares/multer.middleware.js';
-import { createOrder } from '../controllers/order.controller.js';
+import { createProduct } from '../middlewares/validators/productValidator.middleware.js';
 
 const router = Router();
 
@@ -24,7 +23,7 @@ router
     .post(
         adminOnly,
         upload.array("image", 5),
-        createOrder,
+        createProduct,
         createNewProduct
     )
     .get(getAllProduct)

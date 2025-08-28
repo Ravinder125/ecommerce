@@ -3,8 +3,7 @@ import { body } from "express-validator";
 
 export const createOrderValidator = [
     body("buyer")
-        .notEmpty().withMessage("Buyer ID is required")
-        .isMongoId().withMessage("Buyer ID must be a valid Mongo ID"),
+        .notEmpty().withMessage("Buyer ID is required"),
 
     body("orderItems.*.product")
         .notEmpty().withMessage("Product ID is required")

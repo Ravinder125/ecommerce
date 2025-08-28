@@ -11,9 +11,12 @@ export const asyncHandler = (fn: Function) => {
                 // Use type assertions to access custom properties, or provide fallbacks
                 const statusCode = (error as any).statusCode || 500;
                 const errors = (error as any).errors || undefined;
+
+                if (error.name === "CastError") error = "Invalid ID"
+                
                 res.status(statusCode).json({
                     success: false,
-                    message: error.message,
+                    message: error,
                     errors: errors
                 });
             } else {
