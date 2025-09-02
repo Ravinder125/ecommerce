@@ -6,8 +6,6 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { Order } from "../models/order.models.js";
 import { reduceStock } from "../utils/features.js";
-import { Product } from "../models/product.models.js";
-import mongoose from "mongoose";
 
 
 export const createOrder = asyncHandler(
