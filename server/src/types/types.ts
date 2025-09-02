@@ -80,3 +80,4 @@ export interface NewOrderRequestBody {
 
     orderStatus?: "Processing" | "Shipped" | "Delivered" | "Cancelled";
 }
+

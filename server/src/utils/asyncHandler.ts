@@ -1,30 +1,37 @@
-import { NextFunction, Request, Response } from "express"
+import { NextFunction, Request, Response, RequestHandler } from "express";
 
-
-export const asyncHandler = (fn: Function) => {
-    return async (req: Request, res: Response, next: NextFunction)
-        : Promise<void | Response<any, Record<string, any>>> => {
+export const asyncHandler = (
+    fn: RequestHandler
+) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
         try {
-            await fn(req, res, next);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                // Use type assertions to access custom properties, or provide fallbacks
-                const statusCode = (error as any).statusCode || 500;
-                const errors = (error as any).errors || undefined;
+            await Promise.resolve(fn(req, res, next));
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                const statusCode = (err as any).statusCode || 500;
+                const errors = (err as any).errors || undefined;
 
-                if (error.name === "CastError") error = "Invalid ID"
-                
+                let message = err.message;
+
+                // Handle common mongoose errors
+                if ((err as any).name === "CastError") {
+                    message = "Invalid ID format";
+                }
+                if ((err as any).name === "ValidationError") {
+                    message = "Validation failed";
+                }
+
                 res.status(statusCode).json({
                     success: false,
-                    message: error,
-                    errors: errors
+                    message,
+                    errors,
                 });
             } else {
                 res.status(500).json({
                     success: false,
-                    message: "An error occurred",
+                    message: "An unknown error occurred",
                 });
             }
         }
-    }
-}
+    };
+};

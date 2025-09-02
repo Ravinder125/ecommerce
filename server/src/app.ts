@@ -16,11 +16,13 @@ app.get("/api/v1/health", (_, res) => res.send("Api working with /api/v1"))
 import userRouter from './routes/user.routes.js'
 import productRouter from './routes/product.routes.js'
 import orderRouter from './routes/order.routes.js'
+import paymentRouter from './routes/payment.routes.js'
 
 // route - /api/v1/users/register
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/orders", orderRouter);
+app.use("/api/v1/payments", paymentRouter);
 
 // DB and Caching connection
 import { connectDB } from "./config/db.js";
