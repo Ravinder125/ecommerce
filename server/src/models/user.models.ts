@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import validator from 'validator'
 
 
-interface IUser extends Document {
+export interface IUser extends Document {
     _id: string;
     name: string;
     avatar: string;
@@ -59,18 +59,23 @@ const UserSchema = new mongoose.Schema({
     { timestamps: true }
 )
 
+// Allowing db queries to include virtual properies
+// UserSchema.set("toObject", { virtuals: true })
 
 UserSchema.virtual("age").get(function () {
+    if (!this.dob) return null; // Handle missing dob
+
     const today = new Date();
     const dob = this.dob;
-    let age = today.getFullYear() - dob.getFullYear()
-    if (today.getMonth() < dob.getMonth() || (
-        today.getMonth() === today.getDate() &&
-        today.getMonth() < dob.getDate())) {
-        return age--
-    }
-    return age;
-})
+    let age = today.getFullYear() - dob.getFullYear();
 
+    // Check if the birthday hasn't occurred this year
+    if (today.getMonth() < dob.getMonth() ||
+        (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) {
+        age -= 1;
+    }
+
+    return age;
+});
 
 export const User = mongoose.model<IUser>("User", UserSchema)

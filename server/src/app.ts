@@ -17,12 +17,14 @@ import userRouter from './routes/user.routes.js'
 import productRouter from './routes/product.routes.js'
 import orderRouter from './routes/order.routes.js'
 import paymentRouter from './routes/payment.routes.js'
+import dashboardRouter from './routes/stats.routes.js'
 
 // route - /api/v1/users/register
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/payments", paymentRouter);
+app.use("/api/v1/dashboard", dashboardRouter);
 
 // DB and Caching connection
 import { connectDB } from "./config/db.js";

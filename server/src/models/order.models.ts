@@ -9,6 +9,7 @@ export interface IOrder extends Document, NewOrderRequestBody {
     deliveredAt?: Date;
     createdAt: Date;
     updatedAt: Date;
+    _id: Types.ObjectId
 }
 
 const OrderItemSchema = new mongoose.Schema<IOrderItemType>({

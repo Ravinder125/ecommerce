@@ -27,6 +27,8 @@ export type RequestProductQuery = {
 }
 
 
+
+
 export interface BaseQuery {
     name?: {
         $regex: string;
