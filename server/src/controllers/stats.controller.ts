@@ -4,7 +4,11 @@ import { IOrder, Order } from "../models/order.models.js";
 import { IUser, User } from "../models/user.models.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Product } from "../models/product.models.js";
-import { getInventory, increment } from "../utils/features.js";
+import {
+    getBarChartData,
+    getInventory,
+    increment
+} from "../utils/features.js";
 
 type RevenueAgg = {
     _id: string
@@ -14,6 +18,11 @@ type RevenueAgg = {
 type OrderCountConfig = {
     _id: string,
     count: number
+}
+
+
+const getMonthBaseQuery = (prev: Date, current: Date) => {
+    return { createdAt: { $gte: prev, $lte: current } }
 }
 
 export const Dashboard = asyncHandler(async (req: Request, res: Response) => {
@@ -34,28 +43,37 @@ export const Dashboard = asyncHandler(async (req: Request, res: Response) => {
     // Queries
     const promises = [
         // Product counts
-        Product.countDocuments({ owner: id, createdAt: { $gte: thisMonth.start, $lte: thisMonth.end } }),
-        Product.countDocuments({ owner: id, createdAt: { $gte: lastMonth.start, $lte: lastMonth.end } }),
+        Product.countDocuments({
+            owner: id,
+            ...getMonthBaseQuery(thisMonth.start, thisMonth.end)
+        }),
+
+        Product.countDocuments({
+            owner: id,
+            ...getMonthBaseQuery(lastMonth.start, lastMonth.end)
+        }),
         Product.distinct("category"),
 
 
         // User counts
-        User.countDocuments({ createdAt: { $gte: thisMonth.start, $lte: thisMonth.end } }),
-        User.countDocuments({ createdAt: { $gte: lastMonth.start, $lte: lastMonth.end } }),
+        User.countDocuments(getMonthBaseQuery(thisMonth.start, thisMonth.end)),
+        User.countDocuments({ ...getMonthBaseQuery(lastMonth.start, lastMonth.end) }),
         User.countDocuments({ gender: "male" }),
         User.countDocuments({ gender: "female" }),
 
         // Order counts
-        Order.countDocuments({ createdAt: { $gte: thisMonth.start, $lte: thisMonth.end } }),
-        Order.countDocuments({ createdAt: { $gte: lastMonth.start, $lte: lastMonth.end } }),
+        Order.countDocuments(getMonthBaseQuery(thisMonth.start, thisMonth.end)),
+        Order.countDocuments({ ...getMonthBaseQuery(lastMonth.start, lastMonth.end) }),
 
         // Revenue aggregation
         Order.aggregate<RevenueAgg>([
-            { $match: { createdAt: { $gte: thisMonth.start, $lte: thisMonth.end } } },
+            { $match: getMonthBaseQuery(thisMonth.start, thisMonth.end) },
             { $group: { _id: null, total: { $sum: "$totalPrice" } } },
         ]),
         Order.aggregate<RevenueAgg>([
-            { $match: { createdAt: { $gte: lastMonth.start, $lte: lastMonth.end } } },
+            {
+                $match: { ...getMonthBaseQuery(lastMonth.start, lastMonth.end) }
+            },
             { $group: { _id: null, total: { $sum: "$totalPrice" } } },
         ]),
         Order.aggregate<RevenueAgg>([
@@ -162,10 +180,15 @@ export const Dashboard = asyncHandler(async (req: Request, res: Response) => {
 
 
     const sixMonthsList = new Date();
-    const months: string[] = Array.from({ length: 6 }, (_, i) => {
-        const d = new Date(sixMonthsList.getFullYear(), sixMonthsList.getMonth() - (4 - i), 1);
-        return d.toISOString().slice(0, 7); // "YYYY-MM"
-    });
+    const months: string[] = Array.from(
+        { length: 6 },
+        (_, i) => {
+            const d = new Date(
+                sixMonthsList.getFullYear(),
+                sixMonthsList.getMonth() - (4 - i), 1
+            );
+            return d.toISOString().slice(0, 7); // "YYYY-MM"
+        });
 
     // Map results by month for quick lookup
     const orderMap = new Map(lastSixMonthOrders.map(o => [o._id, o.count]));
@@ -218,7 +241,6 @@ export const Dashboard = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getPieCharts = asyncHandler(async (req: Request, res: Response) => {
-    const id = req?.user?._id;
 
     const promises = [
         // Orders count
@@ -338,9 +360,45 @@ export const getPieCharts = asyncHandler(async (req: Request, res: Response) => 
         new ApiResponse(200, charts, "Pie charts successfully fetched")
     )
 })
+
+export const getBarCharts = asyncHandler(async (req: Request, res: Response) => {
+    const today = new Date();
+
+    const sixMonthAgo = new Date();
+
+    sixMonthAgo.setMonth(sixMonthAgo.getMonth() - 6)
+
+    const twelveMonthAgo = new Date();
+    twelveMonthAgo.setMonth(twelveMonthAgo.getMonth() - 12)
+
+    const promises = [
+        Product.find(getMonthBaseQuery(sixMonthAgo, today)).select("createdAt"),
+        User.find(getMonthBaseQuery(sixMonthAgo, today)).select("createdAt"),
+        Order.find(getMonthBaseQuery(twelveMonthAgo, today)).select("createdAt"),
+    ]
+
+    const [
+        lastSixMonthProducts,
+        lastSixMonthUsers,
+        twelveMonthOrders,
+    ] = await Promise.all(promises) as [IUser[], any[], IOrder[]]
+
+    const productCounts = getBarChartData({ length: 6, today, docArray: lastSixMonthProducts })
+    const userCounts = getBarChartData({ length: 6, today, docArray: lastSixMonthUsers })
+    const orderCounts = getBarChartData({ length: 12, today, docArray: twelveMonthOrders })
+
+    const charts = {
+        users: userCounts,
+        product: productCounts,
+        orders: orderCounts,
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, charts, "Bar charts data successfully fetched")
+    )
+})
+
 export const getLineCharts = asyncHandler(async (req: Request, res: Response) => {
 
 })
-export const getBarCharts = asyncHandler(async (req: Request, res: Response) => {
 
-})

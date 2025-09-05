@@ -27,6 +27,32 @@ export const getInventory = async (categories: [string]): Promise<Record<string,
     ))
 
     return categories.map((c, i) => ({ [c]: categoriesCount[i] }))
+}
 
+interface MyDocument extends Document {
+    createdAt: Date;
+}
+
+type GetDataByMonthsProps = {
+    length: number,
+    today: Date
+    docArray: MyDocument[],
+}
+
+export const getBarChartData = ({ length, today, docArray }: GetDataByMonthsProps) => {
+    const data: number[] = new Array(length).fill(0);
+
+    docArray.forEach((order) => {
+        const creationDate = order.createdAt
+        const monthDiff = (today.getMonth() - creationDate.getMonth()
+            + 12) % 12;
+
+        if (monthDiff < length) {
+            data[length - monthDiff - 1] += 1;
+        }
+
+    })
+
+    return data
 
 }
