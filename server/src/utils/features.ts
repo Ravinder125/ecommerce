@@ -31,15 +31,18 @@ export const getInventory = async (categories: [string]): Promise<Record<string,
 
 interface MyDocument extends Document {
     createdAt: Date;
+    discount?: number;
+    totalPrice?: number
 }
 
 type GetDataByMonthsProps = {
     length: number,
     today: Date
     docArray: MyDocument[],
+    property?: "discount" | "totalPrice"
 }
 
-export const getBarChartData = ({ length, today, docArray }: GetDataByMonthsProps) => {
+export const getBarChartData = ({ length, today, docArray, property }: GetDataByMonthsProps) => {
     const data: number[] = new Array(length).fill(0);
 
     docArray.forEach((order) => {
@@ -48,7 +51,11 @@ export const getBarChartData = ({ length, today, docArray }: GetDataByMonthsProp
             + 12) % 12;
 
         if (monthDiff < length) {
-            data[length - monthDiff - 1] += 1;
+            if (property) {
+                data[length - monthDiff - 1] += order[property]!;
+            } else {
+                data[length - monthDiff - 1] += 1;
+            }
         }
 
     })

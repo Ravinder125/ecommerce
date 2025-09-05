@@ -399,6 +399,58 @@ export const getBarCharts = asyncHandler(async (req: Request, res: Response) => 
 })
 
 export const getLineCharts = asyncHandler(async (req: Request, res: Response) => {
+    const today = new Date();
+
+    const sixMonthAgo = new Date();
+    sixMonthAgo.setMonth(sixMonthAgo.getMonth() - 6)
+
+    const twelveMonthAgo = new Date();
+    twelveMonthAgo.setMonth(twelveMonthAgo.getMonth() - 12)
+
+    const promises = [
+        Product.find(getMonthBaseQuery(sixMonthAgo, today)).select("createdAt"),
+        User.find(getMonthBaseQuery(sixMonthAgo, today)).select("createdAt"),
+        Order.find(getMonthBaseQuery(twelveMonthAgo, today)).select(["createdAt", "totalPrice", "discount"]),
+    ]
+
+    const [
+        lastSixMonthProducts,
+        lastSixMonthUsers,
+        twelveMonthOrders,
+    ] = await Promise.all(promises) as [IUser[], any[], IOrder[]]
+
+    const productCounts = getBarChartData({
+        length: 12,
+        today,
+        docArray: lastSixMonthProducts
+    })
+    const userCounts = getBarChartData({
+        length: 12,
+        today,
+        docArray: lastSixMonthUsers
+    })
+    const discount = getBarChartData({
+        length: 12, today,
+        docArray: twelveMonthOrders,
+        property: "discount"
+    })
+    const revenue = getBarChartData({
+        length: 12, today,
+        docArray: twelveMonthOrders,
+        property: "totalPrice"
+    })
+
+    const charts = {
+        users: userCounts,
+        product: productCounts,
+        discount,
+        revenue
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, charts, "Bar charts data successfully fetched")
+    )
+
 
 })
 
