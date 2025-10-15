@@ -10,17 +10,34 @@ import { HiTrendingDown, HiTrendingUp } from "react-icons/hi"
 // import AdminSideBar from "../components/layouts/AdminSideBar"
 import data from '../assets/data.json'
 import { BiMaleFemale } from "react-icons/bi"
-
+import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md"
+import { useTheme } from '../context/themeContext'
 
 
 const Dashboard = () => {
   // console.log(Math.abs(40 / 100)* 360)
+  const { theme, toggleTheme } = useTheme()
+
   return (
     <DashboardLayout>
       <main className="dashboard">
         <div className="bar">
           <BsSearch />
           <input type="text" placeholder="Search for data, users" />
+          <div
+            className="theme-switch"
+            onClick={() => toggleTheme()}
+          >
+            <div style={{
+              right: theme === "dark" ? "50%" : "10px"
+            }}
+            >
+              {theme === "dark"
+                ? <MdOutlineDarkMode />
+                : <MdOutlineLightMode />
+              }
+            </div>
+          </div >
           <FaRegBell />
           <div>
             <FaRegUser />

@@ -21,7 +21,9 @@
                     font-size: 1.5rem;
                     right: 0;
                     top: 0;
-                    background-color: rgba(0, 0, 0, 0.144);
+                    // background-color: rgba(0, 0, 0, 0.144);
+                    background-color: var(--primary);
+                    color: var(--primary-foreground);
                     padding: 0.5rem;
                     @include mixin.flex(row, center, center, 0);
                     border-radius: 50%;
@@ -38,7 +40,9 @@
                 font-size: 1.5rem;
                 left: 1rem;
                 top: 5rem;
-                background-color: rgba(0, 0, 0, 0.144);
+                // background-color: rgba(0, 0, 0, 0.144);
+                background-color: var(--primary);
+                color: var(--primary-foreground);
                 padding: 0.5rem;
                 @include mixin.flex(row, center, center, 0);
                 border-radius: 50%;
@@ -158,7 +162,20 @@
         overflow: auto;
     }
 
-    .dashboard-app--container>section .stopwatch>button {
-        margin: 1rem;
+    .table {
+        td {
+            padding: 20px !important;
+        }
+
+
+        .dashboard-app--container>section .stopwatch>button {
+            margin: 1rem;
+        }
+
+        .dashboard-container {
+            .theme-switch {
+                display: none;
+            }
+        }
     }
 }

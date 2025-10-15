@@ -1,7 +1,7 @@
 @use "mixin";
 
 .dashboard-app--container {
-    background-color: white;
+    background-color: var(--card);
     padding: 4rem;
     height: 100%;
 
@@ -79,20 +79,27 @@
             @include mixin.grid(2fr 1fr, 2rem);
             padding: 3rem 2rem;
             // background-color: #505b660f;
+            background-color: var(--secondary);
             border-radius: 8px;
-            box-shadow: 3px 3px 4px 0px #80808075;
+            box-shadow: var(--shadow);
 
 
             >input {
                 padding: 1rem;
-                border: 1px solid rgba(0, 0, 0, 0.13);
+                border: 1px solid var(--border);
                 outline: none;
                 border-radius: 5px;
+                background-color: var(--input);
+                color: var(--foreground);
+
+                &::placeholder {
+                    color: var(--foreground);
+                }
             }
 
             >fieldset {
                 padding: 1rem;
-                border: 1px solid rgba(0, 0, 0, 0.359);
+                border: 1px solid var(--border);
                 border-radius: 5px;
                 @include mixin.flex(row, center, center, 0.5rem);
                 flex-wrap: wrap;
@@ -111,6 +118,8 @@
                 max-width: 300px;
                 margin: 1.5rem;
                 margin-left: auto;
+                background-color: var(--primary-foreground);
+                color: var(--primary);
             }
         }
 

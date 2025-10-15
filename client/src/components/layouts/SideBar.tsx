@@ -89,12 +89,12 @@ const Li = ({ url, label, location, Icon }: LiProps) => (
         style={{
             backgroundColor: location.pathname
                 .includes(url)
-                ? "rgba(0,115, 255,0.1)" : "white",
-            color: location.pathname.includes(url) ? "rgba(0,115, 255,1)" : "black"
+                ? "var(--sidebar-primary)" : "var(--sidebar-accent)",
+            color: location.pathname.includes(url) ? "var(--sidebar-primary-foreground)" : "var(--sidebar-accent-foreground)"
         }}
     >
         <Link style={{
-            color: location.pathname.includes(url) ? "rgba(0,115, 255,1)" : "black"
+            color: location.pathname.includes(url) ? "var(--sidebar-primary-foreground" : "var(--sidebar-accent-foreground)"
         }}
             to={url}>
             <Icon />

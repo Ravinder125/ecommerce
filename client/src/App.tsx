@@ -5,6 +5,7 @@ import {
   Route
 } from "react-router-dom"
 import { Loader } from './components'
+import { ThemeProvider } from "./context/themeContext"
 
 // Routes
 
@@ -43,52 +44,54 @@ const Toss = lazy(() => import("./pages/apps/Toss"))
 
 function App() {
   return (
-    <Router>
-      {/* Header */}
-      <Suspense fallback={<Loader />}>
-        <Routes>
-          {/* Auth Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+    <ThemeProvider>
+      <Router>
+        {/* Header */}
+        <Suspense fallback={<Loader />}>
+          <Routes>
+            {/* Auth Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
 
-          {/* Public Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/cart" element={<Cart />} />
+            {/* Public Routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/cart" element={<Cart />} />
 
-          {/* Private Routes (Users) */}
-          <Route>
-            <Route path="/shipping" element={<Shipping />} />
-            <Route path="/orders" element={<Orders />} />
-            <Route path="/orders/:id" element={<OrderDetails />} />
-          </Route>
+            {/* Private Routes (Users) */}
+            <Route>
+              <Route path="/shipping" element={<Shipping />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/orders/:id" element={<OrderDetails />} />
+            </Route>
 
 
-          {/* <Route path="/home" element={<Home />} /> */}
+            {/* <Route path="/home" element={<Home />} /> */}
 
-          <Route path="/admin/products" element={<Products />} />
-          <Route path="/admin/dashboard" element={<Dashboard />} />
-          <Route path="/admin/customers" element={<Customers />} />
-          <Route path="/admin/transaction" element={<Transaction />} />
+            <Route path="/admin/products" element={<Products />} />
+            <Route path="/admin/dashboard" element={<Dashboard />} />
+            <Route path="/admin/customers" element={<Customers />} />
+            <Route path="/admin/transaction" element={<Transaction />} />
 
-          {/* Charts */}
-          <Route path="/admin/charts/bar" element={<BarCharts />} />
-          <Route path="/admin/charts/pie" element={<PieCharts />} />
-          <Route path="/admin/charts/line" element={<LineCharts />} />
-          {/* Apps */}
+            {/* Charts */}
+            <Route path="/admin/charts/bar" element={<BarCharts />} />
+            <Route path="/admin/charts/pie" element={<PieCharts />} />
+            <Route path="/admin/charts/line" element={<LineCharts />} />
+            {/* Apps */}
 
-          {/* Management */}
-          <Route path="/admin/products/new" element={<NewProduct />} />
-          <Route path="/admin/products/:id" element={<ProductManagement />} />
-          <Route path="/admin/transactions/:id" element={<TransactionManagement />} />
+            {/* Management */}
+            <Route path="/admin/products/new" element={<NewProduct />} />
+            <Route path="/admin/products/:id" element={<ProductManagement />} />
+            <Route path="/admin/transactions/:id" element={<TransactionManagement />} />
 
-          {/* Apps */}
-          <Route path="/admin/apps/stopwatch" element={<StopWatch />} />
-          <Route path="/admin/apps/coupon" element={<Coupon />} />
-          <Route path="/admin/apps/toss" element={<Toss />} />
-        </Routes>
-      </Suspense>
-    </Router>
+            {/* Apps */}
+            <Route path="/admin/apps/stopwatch" element={<StopWatch />} />
+            <Route path="/admin/apps/coupon" element={<Coupon />} />
+            <Route path="/admin/apps/toss" element={<Toss />} />
+          </Routes>
+        </Suspense>
+      </Router>
+    </ThemeProvider>
   )
 }
 

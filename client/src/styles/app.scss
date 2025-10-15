@@ -10,6 +10,8 @@
 @use "admin-styles/chart";
 @use "admin-styles/dashboardapps";
 @use "admin-styles/mediaquery";
+@use "theme" as *;
+@use "admin-styles/mixin" as *;
 
 @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
 
@@ -36,29 +38,29 @@ a {
     color: black;
 }
 
+
+:where(.red, .yellow, .green) {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+    border-radius: 5px;
+}
+
 .red {
     border: 1px solid #ff0000b3;
     background: #ff000017;
-    padding: 0.3rem;
-    border-radius: 5px;
     color: red;
 }
 
 .yellow {
-
     border: 1px solid rgb(255 195 0);
     background: rgb(255 167 0 / 9%);
-    padding: 0.3rem;
-    border-radius: 5px;
     color: #ffaf00;
 }
 
 .green {
     border: 1px solid rgba(0, 255, 0, 1);
     background: rgba(0, 255, 0, 0.090196);
-    padding: 0.3rem;
-    border-radius: 5px;
-    color: green;
+    color: rgb(3, 196, 3);
 }
 
 .purple {
@@ -68,6 +70,29 @@ a {
     border-radius: 5px;
     color: #0b0080;
 }
+
+// Components
+
+.theme-switch {
+    background-color: var(--card);
+    color: var(--card-foreground);
+    padding: 8px 8px;
+    width: 5rem;
+    height: 2.2rem;
+    font-size: 23px;
+    position: relative;
+    border-radius: 15px;
+
+    >div {
+        position: absolute;
+        transform: translateY(-50%);
+        top: 58%;
+        right: 10px;
+        transition: all 0.3s;
+
+    }
+}
+
 
 p {
     color: rgb(80, 91, 102);
@@ -196,15 +221,14 @@ button {
     font-size: 1.1rem;
     padding: 0.9rem 5rem;
     border-radius: 8px;
-    background-color: rgb(5, 107, 244);
-    color: white;
-
+    width: 100%;
+    // background-color: rgb(5, 107, 244);
+    background-color: var(--primary);
+    // color: white;
+    color: var(--primary-foreground);
 
     &:hover {
-        @include mixin.btn;
-        font-size: 1.1rem;
-        background-color: rgba(5, 107, 244, 0.9);
-        color: white;
+        opacity: 0.9;
     }
 }
 
@@ -231,31 +255,37 @@ button {
 .dashboard-layout {
     @include mixin.grid(1fr 4fr, 2rem);
     min-height: 100vh;
-    background-color: rgb(247, 247, 247);
+    background-color: var(--background);
+    color: var(--foreground);
     position: relative;
     overflow-y: hidden;
 
     >div>header {
         @include mixin.flex(row, unset, space-between);
         padding: 0.5rem 1rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        // box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        background-color: var(--card);
         border-radius: 0.5rem;
         margin-bottom: 2rem;
         margin-right: 1rem;
 
         >input {
-            @include mixin.inputStyle(unset, 0.3rem 1rem, rgba(128, 128, 128, 0.13), 1px solid rgba(128, 128, 128, 0.322));
+            @include mixin.inputStyle(unset, 0.3rem 1rem, unset, 1px solid var(--ring));
             border-radius: 0.4rem;
+            background: var(--primary);
         }
     }
 
     >aside {
         width: 100%;
-        background-color: white;
+        // background-color: white;
+        background-color: var(--sidebar);
+        color: var(--sidebar-foreground);
         min-height: 100vh;
         padding: 1rem;
         z-index: 10;
         overflow-y: auto;
+        border: var(--sidebar-border);
 
         &::-webkit-scrollbar {
             display: none;
@@ -265,13 +295,13 @@ button {
             margin: 2rem;
 
             >h5 {
-                @include mixin.heading(2px);
+                @include heading(2px);
                 opacity: 0.8;
                 margin: 1rem 0;
             }
 
             >ul {
-                @include mixin.flex(column, unset, unset, 0.5rem);
+                @include flex(column, unset, unset, 0.5rem);
                 list-style: none;
 
                 >li {
@@ -285,7 +315,8 @@ button {
                 }
 
                 a {
-                    color: rgba(0, 0, 0, 0.825);
+                    // color: rgba(0, 0, 0, 0.825);
+                    color: var(--sidebar-foreground);
                     @include mixin.flex(row, 0.5rem)
                 }
             }
@@ -302,9 +333,15 @@ button {
 .table {
     border-collapse: collapse;
     width: 100%;
+    color: var(--foreground);
+    margin-bottom: 3rem;
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+
 
     * {
-        outline: 1px solid white;
+        outline: 1px solid var(--border);
+        color: var(--foreground);
     }
 
     th,
@@ -315,10 +352,12 @@ button {
     }
 
     th {
-        color: #0000009e;
-        font-size: 1.1rem;
+        // color: #0000009e;
+        color: var(--primary);
+        background-color: var(--secondary);
+        font-size: 0.9rem;
         font-weight: 400;
-        padding: 2rem 1rem;
+        padding: 10px;
     }
 
     tbody {
@@ -335,7 +374,8 @@ button {
         }
 
         td {
-            padding: 1rem;
+            padding: 1rem 0rem;
+            text-align: center;
 
             img {
                 width: 4rem;
@@ -345,16 +385,19 @@ button {
             }
 
             a {
+                @include mixin.btn(0.5rem 1rem);
                 text-decoration: none;
-                background-color: rgba(44, 104, 255, 0.205);
-                color: rgba(44, 104, 255, 1);
-                padding: 0.5rem 1rem;
+                // background-color: rgba(44, 104, 255, 0.205);
+                color: var(--primary-foreground);
+                background-color: var(--primary);
+                // color: var(--primary);
                 border-radius: 8px;
-                transition: all 300ms linear;
+                transition: all 200ms;
 
                 &:hover {
-                    color: whitesmoke;
-                    background-color: rgba(44, 104, 255, 1);
+                    // color: whitesmoke;
+                    // background-color: rgba(44, 104, 255, 1);
+                    opacity: 0.9;
                 }
             }
 
@@ -366,7 +409,8 @@ button {
                 outline: none;
                 background-color: transparent;
                 cursor: pointer;
-                color: rgb(255, 44, 44);
+                // color: rgb(255, 44, 44);
+                color: var(--char-5);
 
                 &:hover {
                     opacity: 0.6;
@@ -422,8 +466,12 @@ button {
         width: 100%;
         height: 85vh;
         max-width: 500px;
-        box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.216);
+        // box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.216);
+        background-color: var(--card);
+        box-shadow: var(--shadow);
         padding: 3rem;
+        border: 1px solid var(--border);
+
 
         >h2 {
             @include mixin.heading(2px, 400);
@@ -451,6 +499,7 @@ button {
             letter-spacing: 2px;
             text-transform: uppercase;
             font-size: 1.5rem;
+            color: var(--muted-foreground);
         }
     }
 
@@ -459,9 +508,11 @@ button {
         padding: 2rem;
         width: 100%;
         max-width: 400px;
-        background-color: whitesmoke;
+        // background-color: whitesmoke;
+        background-color: var(--card);
         border-radius: 5px;
         box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.216);
+        border: 1px solid var(--border);
 
         >form {
             // @include mixin.flex(column, unset, center, 2rem);
@@ -491,16 +542,18 @@ button {
             #file-upload {
                 @include mixin.flex(row, center, center, unset);
                 cursor: pointer;
-                background-color: rgba(128, 128, 128, 0.034);
+                // background-color: rgba(128, 128, 128, 0.034);
+                background-color: var(--secondary);
                 padding: 0.7rem 1rem;
                 border-radius: 8px;
                 border: 1px solid rgba(128, 128, 128, 0.342);
                 transition: all 300ms;
 
                 &:hover {
-                    background-color: rgba(128, 128, 128, 0.164);
-                    color: rgba(0, 0, 0, 0.993);
-                    border: 1px solid rgba(0, 0, 0, 0.233);
+                    // background-color: rgba(128, 128, 128, 0.164);
+                    // // color: rgba(0, 0, 0, 0.993);
+                    // border: 1px solid rgba(0, 0, 0, 0.233);
+                    opacity: 0.9;
                 }
 
                 >input {
@@ -524,9 +577,14 @@ button {
                 >input {
                     @include mixin.inputStyle(100%,
                         0.7rem,
-                        unset,
+                        var(--input),
                         1px solid rgba(13, 13, 13, 0.196));
                     border-radius: 5px;
+                    color: var(--foreground);
+
+                    &::placeholder {
+                        color: var(--muted-foreground);
+                    }
                 }
             }
 

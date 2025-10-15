@@ -2,7 +2,7 @@
 
 .dashboard-product--box {
     @include mixin.square(100%);
-    background-color: #fff;
+    background-color: var(--card);
     padding: 2rem;
     overflow: auto;
 }
