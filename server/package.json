@@ -16,10 +16,13 @@
     "watch": "tsc -w"
   },
   "dependencies": {
+    "@clerk/clerk-sdk-node": "^4.13.23",
+    "@clerk/express": "^1.7.39",
     "@faker-js/faker": "^9.9.0",
     "@upstash/redis": "^1.35.3",
     "cloudinary": "^2.7.0",
     "compression": "^1.8.1",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
@@ -27,10 +30,12 @@
     "multer": "^2.0.2",
     "node-cache": "^5.1.2",
     "redis": "^5.7.0",
+    "svix": "^1.77.0",
     "validator": "^13.15.15"
   },
   "devDependencies": {
     "@types/compression": "^1.8.1",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/morgan": "^1.9.10",
     "@types/multer": "^2.0.0",

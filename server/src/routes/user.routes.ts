@@ -1,4 +1,4 @@
-import { Router } from "express"
+import { Router, RequestHandler } from "express"
 import { body } from "express-validator";
 import {
     getAllUsers,
@@ -9,6 +9,7 @@ import {
 import { adminOnly } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { createUser } from "../middlewares/validators/userValidator.middleware.js";
+import { auth } from "../middlewares/clerkAuth.middlewares.js";
 
 const router = Router();
 
@@ -19,6 +20,9 @@ router.route("/register").post(
     createUser,
     registerUser,
 )
+
+router.route("/profile").get(auth, getUser)
+
 router.route("/all").get(adminOnly, getAllUsers)
 router
     .route("/:id")

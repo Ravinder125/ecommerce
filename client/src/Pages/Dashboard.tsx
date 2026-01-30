@@ -12,18 +12,32 @@ import data from '../assets/data.json'
 import { BiMaleFemale } from "react-icons/bi"
 import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md"
 import { useTheme } from '../context/themeContext'
+import { useState } from "react"
 
 
 const Dashboard = () => {
   // console.log(Math.abs(40 / 100)* 360)
   const { theme, toggleTheme } = useTheme()
+  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
 
   return (
     <DashboardLayout>
       <main className="dashboard">
-        <div className="bar">
-          <BsSearch />
-          <input type="text" placeholder="Search for data, users" />
+        <div className="bar" style={{ position: "relative", width: "calc(100vw - 16px)" }}>
+          <BsSearch onClick={() => setIsSearchOpen(true)} />
+          <input
+            type="text"
+            placeholder="Search for data, users"
+            style={{
+              display: isSearchOpen ? "inline-block" : "none",
+              position: isSearchOpen ? "absolute" : "static",
+              width: isSearchOpen ? "calc(100% - 18px)" : "auto",
+              zIndex: isSearchOpen ? 2 : 0
+            }}
+
+            onBlur={() => setIsSearchOpen(false)}
+
+          />
           <div
             className="theme-switch"
             onClick={() => toggleTheme()}

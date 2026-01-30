@@ -37,7 +37,7 @@ const columns: ColumnDef<DataType>[] = [
     header: "Action",
     accessorKey: "action",
     cell: ({ row }) => (
-      <Link to={`/ customers / edit / ${row.original.id}`}>Edit</Link>
+      <Link to={`/customers/edit/${row.original.id}`}>Edit</Link>
     )
   },
 ]

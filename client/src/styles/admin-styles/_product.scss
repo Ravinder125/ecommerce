@@ -23,7 +23,9 @@
 
     >p {
         margin: 0.5rem;
+        color: var(--muted-foreground)
     }
+
 
 
 }
@@ -40,5 +42,10 @@
 
     >span {
         margin-left: auto;
+        white-space: nowrap;
+    }
+
+    >a {
+        color: var(--foreground)
     }
 }

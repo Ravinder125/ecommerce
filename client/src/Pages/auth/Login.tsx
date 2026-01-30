@@ -1,14 +1,57 @@
-import { useState } from "react"
-import { FcGoogle } from "react-icons/fc";
+import { useState, type FormEvent } from "react"
+import { RedirectToOtherAuthPage } from "./Signup";
+import { InputBox } from "../../components/forms/InputBox";
+import { useSignIn } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Login = () => {
-    const [gender, setGender] = useState<string>("")
-    const [date, setDate] = useState<string>();
+    const [password, setPassword] = useState<string>("")
+    const [email, setEmail] = useState<string>("")
+    const { signIn, setActive, isLoaded } = useSignIn()
+    const [error, setError] = useState<string>("")
+
+    const navigate = useNavigate()
+
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        if (!isLoaded || !setActive || !signIn) return;
+
+        try {
+
+            const result = await signIn.create({
+                password,
+                identifier: email
+            })
+
+            if (result.status === "complete") {
+                await setActive({ session: result.createdSessionId })
+            }
+            toast.success("Successfully logged in")
+
+            // await signIn.prepareFirstFactor({
+            //     strategy: "email_code",
+            //     emailAddressId: email
+            // })
+            // navigate("/verify-email")
+
+        } catch (error: any) {
+            const errMessage = error.errors?.[0]?.message
+
+            console.error(errMessage);
+            toast.error(errMessage)
+
+        }
+
+    }
     return (
-        <div className="login">
-            <main>
-                <h1 className="heading">Login</h1>
-                <div>
+        <div className="auth-layout">
+            <div className="card">
+                <div className="card-header">
+                    <h2>Login Please</h2>
+                    <p>Enter you credentials to get yourself login</p>
+                </div>
+                {/* <div>
                     <label>Gender</label>
                     <select
                         value={gender}
@@ -18,22 +61,40 @@ const Login = () => {
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                     </select>
-                </div>
-                <div>
-                    <label>Date of Birth</label>
-                    <input
-                        type="date"
-                        value={date}
-                        onChange={({ target }) => setDate(target.value)}
+                </div> */}
+                <form onSubmit={handleSubmit}>
+                    <InputBox
+                        type="email"
+                        name="email"
+                        label="Email"
+                        value={email}
+                        placeholder="Enter your email"
+                        onChange={({ target }) => setEmail(target.value)}
+                        required
                     />
-                </div>
+                    <InputBox
+                        label="Password"
+                        type="password"
+                        name="password"
+                        value={password}
+                        placeholder="Enter your password"
+                        onChange={({ target }) => setPassword(target.value)}
+                        required
+                    />
+                    <RedirectToOtherAuthPage
+                        label="Signup here"
+                        para="Don't have an account"
+                        url="/signup"
+                    />
+                    <button className="submit-btn" type="submit">Login</button>
+                </form>
                 <div>
-                    <p>Already Signed In Once</p>
-                    <button>
+                    {/* <p>Already Signed In Once</p> */}
+                    {/* <button>
                         <FcGoogle /> <span>Sign in with Google</span>
-                    </button>
+                    </button> */}
                 </div>
-            </main>
+            </div>
         </div>
     )
 }

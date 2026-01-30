@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import validator from 'validator'
+import validator, { trim } from 'validator'
 
 
 export interface IUser extends Document {
@@ -35,11 +35,12 @@ const UserSchema = new mongoose.Schema({
     },
     avatar: {
         type: String,
-        required: [true, "Avatar is required"]
+        // required: [true, "Avatar is required"]
+        trim: true
     },
     avatarId: {
         type: String,
-        required: [true, "Avatar public ID is required"]
+        // required: [true, "Avatar public ID is required"]
     },
     role: {
         type: String,

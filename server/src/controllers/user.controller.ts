@@ -6,6 +6,7 @@ import { RegisterUserRequestBody } from "../types/types.js";
 import { validationResult } from "express-validator";
 import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import clerkClient from "@clerk/clerk-sdk-node";
 
 
 export const registerUser = asyncHandler(
@@ -53,12 +54,26 @@ export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
 })
 
 export const getUser = asyncHandler(async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const user = await User.findById(id);
-    if (!user) throw new ApiError(400, "No user Found")
-    return res.status(200).json(
-        new ApiResponse(200, user, "User fetched successfully")
-    )
+    // const { id } = req.params;
+    // const user = await User.findById(id);
+    // if (!user) throw new ApiError(400, "No user Found")
+    // return res.status(200).json(
+    //     new ApiResponse(200, user, "User fetched successfully")
+    // )
+    // const userId = (req as any).userId
+    // console.log(userId)
+    const userId = ((req as any).auth).userId
+    const user = await clerkClient.users.getUser(userId)
+
+    const data = {
+        id: user.id,
+        email: user.emailAddresses[0].emailAddress,
+        role: user.unsafeMetadata.role,
+        dob: user.unsafeMetadata.dob,
+        avatar: user.unsafeMetadata.avatar,
+    }
+
+    res.json(data)
 })
 
 export const deleteUser = asyncHandler(async (req: Request, res: Response) => {

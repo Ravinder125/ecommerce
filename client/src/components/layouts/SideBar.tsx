@@ -3,6 +3,7 @@ import { Link, useLocation, type Location } from "react-router-dom"
 import { ADMIN_SIDEBAR_DATA } from "../../utils/data"
 import type { IconType } from "react-icons";
 import { MdOutlineClose } from "react-icons/md";
+import type { ReactNode } from "react";
 
 const AdminSideBar = ({ isOpen, onClose }: { isOpen: boolean, onClose: Function }) => {
     const location = useLocation();
@@ -33,7 +34,7 @@ const DashboardSideBar = ({ location }: { location: Location }) => (
         <ul>
             {ADMIN_SIDEBAR_DATA.DASHBOARD.map(({ label, url, Icon }) => (
                 <Li
-                    key={label}
+                    key={url}
                     url={url}
                     label={label}
                     Icon={Icon}
@@ -50,7 +51,7 @@ const ChartsSideBar = ({ location }: { location: Location }) => (
         <ul>
             {ADMIN_SIDEBAR_DATA.CHARTS.map(({ label, url, Icon }) => (
                 <Li
-                    key={label}
+                    key={url}
                     url={url}
                     label={label}
                     location={location}
@@ -67,7 +68,7 @@ const AppSideBar = ({ location }: { location: Location }) => (
         <ul>
             {ADMIN_SIDEBAR_DATA.APP.map(({ label, url, Icon }) => (
                 <Li
-                    key={label}
+                    key={url}
                     url={url}
                     label={label}
                     location={location}
@@ -80,7 +81,7 @@ const AppSideBar = ({ location }: { location: Location }) => (
 
 interface LiProps {
     url: string,
-    label: string,
+    label: string | ReactNode,
     location: Location,
     Icon: IconType
 }

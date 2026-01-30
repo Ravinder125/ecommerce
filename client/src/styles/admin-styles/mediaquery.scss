@@ -149,6 +149,13 @@
         }
     }
 
+    .table {
+        td {
+            padding: 20px 20px !important;
+        }
+
+    }
+
     .dashboard-app--container {
         padding: 2rem;
     }
@@ -163,9 +170,6 @@
     }
 
     .table {
-        td {
-            padding: 20px !important;
-        }
 
 
         .dashboard-app--container>section .stopwatch>button {

@@ -1,0 +1,141 @@
+@use "../admin-styles/mixin" as *;
+@use "../variables" as *;
+
+
+.auth-layout {
+    min-height: 100vh;
+    width: 100%;
+    display: grid;
+    place-items: center;
+    background-color: var(--background);
+    padding: 1rem;
+
+    .card {
+        max-width: 30rem;
+        width: 80vw;
+        background-color: var(--card);
+        padding: 1.7rem;
+        border-radius: var(--radius);
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+        .card-header {
+            margin-bottom: 2rem;
+            text-align: center;
+            // line-height: 2.2rem;
+
+            >h2 {
+                margin-bottom: 0.7rem;
+                color: var(--secondary-foreground);
+            }
+
+            >p {
+                color: var(--muted-foreground);
+            }
+        }
+
+        form {
+            width: 100%;
+
+
+            >.input-box {
+                margin-top: 0.8rem;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+
+                >.image-input {
+                    background-color: var(--secondary);
+                    color: var(--secondary-foreground);
+                    font-size: 0.9rem;
+                    padding: 0.5rem 1rem;
+                    display: inline-flex;
+                    align-self: center;
+                    border-radius: 7px;
+
+                    &:hover {
+                        opacity: 0.9;
+                    }
+                }
+
+                >label {
+                    color: var(--foreground);
+                    font-size: 0.9rem;
+                }
+
+                >input[type="date"] {
+                    color-scheme: dark;
+                }
+
+                >input {
+                    background-color: inherit;
+                    color: var(--foreground);
+                    padding: 0.9rem;
+                    display: inline-flex;
+                    width: 100%;
+                    margin-top: 0.2rem;
+                    border: 3px solid var(--input);
+                    border-radius: 10px;
+                    box-shadow: var(--shadow);
+
+                    &::placeholder {
+                        color: var(--muted-foreground);
+                    }
+
+                    &:focus-visible {
+                        border: 3px solid var(--primary);
+                        outline: none;
+                    }
+                }
+
+                .image-preview {
+                    display: flex;
+                    justify-content: center;
+
+                    div {
+                        width: fit-content;
+                        position: relative;
+
+                        img {
+                            margin-top: 0.5rem;
+                            border-radius: 100%;
+                            @include square(5rem);
+                            object-fit: contain;
+                            background-color: white;
+                        }
+
+                        svg {
+                            position: absolute;
+                            right: 8px;
+                            top: 10px;
+                            font-size: 1.5rem;
+                            color: rgba(255, 17, 17, 0.911);
+
+                            &:hover {
+                                color: rgb(179, 7, 7);
+                            }
+                        }
+                    }
+                }
+            }
+
+            .redirect-other--page {
+                display: flex;
+                column-gap: 5px;
+                margin-top: 0.4rem;
+
+                p,
+                a {
+                    font-size: 0.8rem;
+                }
+            }
+
+            .submit-btn {
+                letter-spacing: 1px;
+                width: 100%;
+                margin-top: 2rem;
+                margin-inline: 0;
+            }
+
+        }
+    }
+}

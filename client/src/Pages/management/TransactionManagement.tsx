@@ -110,12 +110,14 @@ const TransactionManagement = () => {
 
                     <h5>Status Info</h5>
                     <p>Status:
-                        <span className={status === "Delivered"
-                            ? "purple"
-                            : status === "Shipped"
-                                ? "green"
-                                : "red"
-                        }>
+                        <span
+                            style={{ marginLeft: "5px" }}
+                            className={status === "Delivered"
+                                ? "purple"
+                                : status === "Shipped"
+                                    ? "green"
+                                    : "red"
+                            }>
                             {" "} {status}
                         </span>
                     </p>

@@ -1,9 +1,16 @@
 import express from "express";
 import dotenv from 'dotenv'
 import morgan from 'morgan'
+import cors, { CorsOptions } from 'cors'
 
 dotenv.config({ path: "./.env" })
 const app = express();
+const corsOptions: CorsOptions = {
+    origin: "http://localhost:5173",
+    credentials: true
+}
+
+app.use(cors(corsOptions))
 
 // Middlewares
 app.use(express.json())
@@ -18,6 +25,7 @@ import productRouter from './routes/product.routes.js'
 import orderRouter from './routes/order.routes.js'
 import paymentRouter from './routes/payment.routes.js'
 import dashboardRouter from './routes/stats.routes.js'
+import clerkRoute from './middlewares/clerkWebhook.js'
 
 // route - /api/v1/users/register
 app.use("/api/v1/users", userRouter);
@@ -25,13 +33,14 @@ app.use("/api/v1/products", productRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/payments", paymentRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
+// app.use("https://f662ebeabd71.ngrok-free.app", clerkRoute)
 
 // DB and Caching connection
 import { connectDB } from "./config/db.js";
-import { connectToRedis } from './config/redis.js';
+// import { connectToRedis } from './config/redis.js';
 
 connectDB();
-connectToRedis();
+// connectToRedis();
 
 const port = process.env.PORT;
 app.listen(port, () => {

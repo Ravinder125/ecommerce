@@ -59,7 +59,6 @@ const NewProduct = () => {
 
     const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         const { value, name, type } = e.target;
-        console.log(value, name, "happening")
         setFormData(prev => ({
             ...prev,
             [name]: type === "number"
