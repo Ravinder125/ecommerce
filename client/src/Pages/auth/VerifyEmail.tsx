@@ -9,6 +9,7 @@ export default function VerifyEmail() {
   const [code, setCode] = useState("");
   const navigate = useNavigate();
 
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -21,6 +22,7 @@ export default function VerifyEmail() {
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
         toast.success("Successfully signed in")
+        navigate("/complete-profile")
       }
     } catch (error: any) {
       const errMessage = error.errors?.[0]?.message

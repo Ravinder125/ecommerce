@@ -1,37 +1,55 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useUser, useAuth } from "@clerk/clerk-react";
 import axios from "axios";
 
-export const AuthSync = () => {
-  const { user, isLoaded } = useUser();
+const AuthSync = () => {
+  const { user, isLoaded, isSignedIn } = useUser();
   const { getToken } = useAuth();
 
-  const hasSynced = useRef(false);
+  // const hasSynced = useRef(false);
 
   useEffect(() => {
-    if (!isLoaded || !user) return;
-    if (hasSynced.current) return;
+    if (!isLoaded || !user || !isSignedIn) return;
+    // if (hasSynced.current) return;
 
-    hasSynced.current = true;
+    // hasSynced.current = true;
 
     const syncUser = async () => {
-      const token = await getToken();
-      if (!token) return;
+      try {
 
-      await axios.post(
-        "http://localhost:5000/api/v1/auth/profile",
-        {
-          name: user.fullName,
-          email: user.emailAddresses[0].emailAddress,
-          avatar: user.imageUrl,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+        const token = await getToken();
+        if (!token) return;
+
+        const data = JSON.parse(localStorage.getItem("temp-profile")!)
+        if (!data) {
+          throw new Error("No profile data found in localstorage ")
         }
-      );
+
+        // await user.setProfileImage(data.avatar)
+
+        await axios.post(
+          "http://localhost:5000/api/v1/users/register",
+          {
+            name: data.name,
+            email: user.emailAddresses[0].emailAddress,
+            avatar: data.avatar,
+            role: data.role,
+            gender: data.gender,
+            dob: data.dob
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              // 'Content-Type': 'multipart/form-data'
+            },
+          }
+        );
+
+      } catch (error: any) {
+        console.error(error)
+      } finally {
+        localStorage.removeItem("temp-profile")
+      }
     };
 
     syncUser();
@@ -39,3 +57,5 @@ export const AuthSync = () => {
 
   return null;
 };
+
+export default AuthSync

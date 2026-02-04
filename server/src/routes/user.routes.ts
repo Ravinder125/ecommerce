@@ -1,5 +1,4 @@
-import { Router, RequestHandler } from "express"
-import { body } from "express-validator";
+import Router from "express"
 import {
     getAllUsers,
     registerUser,
@@ -9,19 +8,25 @@ import {
 import { adminOnly } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { createUser } from "../middlewares/validators/userValidator.middleware.js";
-import { auth } from "../middlewares/clerkAuth.middlewares.js";
+// import { auth } from "../middlewares/clerkAuth.middlewares.js";
+import { requireAuth } from "../middlewares/requireAuth.js";
 
 const router = Router();
 
 // Routes
 
+
+
+
 router.route("/register").post(
-    upload.single("avatar"),
+    // upload.single("avatar"),
     createUser,
     registerUser,
 )
 
-router.route("/profile").get(auth, getUser)
+// router.route("/login").post()
+
+router.route("/profile").get(getUser)
 
 router.route("/all").get(adminOnly, getAllUsers)
 router

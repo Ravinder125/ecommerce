@@ -1,24 +1,29 @@
 import { useState, type FormEvent } from "react"
-import { RedirectToOtherAuthPage } from "./Signup";
+import { ExternalAuth, RedirectToOtherAuthPage } from "./Signup";
 import { InputBox } from "../../components/forms/InputBox";
 import { useSignIn } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useExternalLogin } from "../../hooks/useExternalSignIn";
 
 const Login = () => {
     const [password, setPassword] = useState<string>("")
     const [email, setEmail] = useState<string>("")
     const { signIn, setActive, isLoaded } = useSignIn()
     const [error, setError] = useState<string>("")
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const navigate = useNavigate()
+    const {
+        loginWithGithub,
+        loginWithGoogle
+    } = useExternalLogin()
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (!isLoaded || !setActive || !signIn) return;
 
         try {
-
             const result = await signIn.create({
                 password,
                 identifier: email
@@ -28,12 +33,7 @@ const Login = () => {
                 await setActive({ session: result.createdSessionId })
             }
             toast.success("Successfully logged in")
-
-            // await signIn.prepareFirstFactor({
-            //     strategy: "email_code",
-            //     emailAddressId: email
-            // })
-            // navigate("/verify-email")
+            navigate("/")
 
         } catch (error: any) {
             const errMessage = error.errors?.[0]?.message
@@ -44,6 +44,19 @@ const Login = () => {
         }
 
     }
+
+    const onGoogleClick = async () => {
+        setIsLoading(true)
+        await loginWithGoogle()
+        setIsLoading(false)
+    }
+    const onGithubClick = async () => {
+        setIsLoading(true)
+        await loginWithGithub()
+        setIsLoading(false)
+
+    }
+
     return (
         <div className="auth-layout">
             <div className="card">
@@ -86,14 +99,13 @@ const Login = () => {
                         para="Don't have an account"
                         url="/signup"
                     />
-                    <button className="submit-btn" type="submit">Login</button>
+                    <button className="submit-btn" type="submit">
+                        {isLoading ? "Loading..." : "Login"}
+                    </button>
+
+                    <ExternalAuth onGoogleClick={onGoogleClick} onGithubClick={onGithubClick} />
                 </form>
-                <div>
-                    {/* <p>Already Signed In Once</p> */}
-                    {/* <button>
-                        <FcGoogle /> <span>Sign in with Google</span>
-                    </button> */}
-                </div>
+
             </div>
         </div>
     )

@@ -1,9 +1,9 @@
 import axios from "axios";
 
 
-const baseURL = import.meta.env.BASE_URL
+const baseURL = import.meta.env.VITE_BASE_URL
 
-export const AxiosInstance = axios.create({
+export const axiosInstance = axios.create({
     baseURL,
     withCredentials: true
 })

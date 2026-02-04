@@ -1,7 +1,7 @@
 export type ApiPaths = {
-  auth: {
-    profile: string;
-  };
+  // auth: {
+  //   profile: string;
+  // };
 
   users: {
     register: string;

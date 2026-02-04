@@ -4,7 +4,7 @@ import { Request } from 'express';
 import path from 'path';
 
 const storage = multer.diskStorage({
-    destination: function (res, req, cb) {
+    destination: function (req, res, cb) {
         cb(null, "./public/temp")
     },
     filename: function (_, file, cb) {

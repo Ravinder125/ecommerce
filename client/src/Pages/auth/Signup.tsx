@@ -1,42 +1,36 @@
 
 import { useSignUp } from "@clerk/clerk-react"
-import { useState } from "react"
-import { InputBox } from "../../components/forms/InputBox"
+import React, { useState } from "react"
+import { createTypedInput } from "../../components/forms/InputBox"
 import { Link, useNavigate } from "react-router-dom"
 import { toast } from "react-hot-toast"
+import type { AuthFormData } from "../../types/auth.type"
+import { InitialAuthUpData } from "../../utils/InitialFormData"
+import { handleChangeHOC } from "../../utils/handleInputChange"
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa6"
+import { useExternalSignUp } from "../../hooks/useExternalSignUp"
 
-interface SignupFormData {
-    email: string
-    password: string
-    // role: string
-    // dob: string
-    // avatar: string | ArrayBuffer | null
 
-}
+const InputBox = createTypedInput<AuthFormData>()
 
-const InitialSignUpData = {
-    email: "",
-    password: "",
-    // role: "",
-    // dob: "",
-    // avatar: null
-}
 
 export default function Signup() {
-    const { signUp, isLoaded } = useSignUp()
-    const [form, setForm] = useState<SignupFormData>(InitialSignUpData)
-    const navigate = useNavigate()
+    const [form, setForm] = useState<AuthFormData>(InitialAuthUpData)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    const handleInputChange = (key: keyof SignupFormData, value: string) => {
-        setForm({ ...form, [key]: value })
-    }
+    const navigate = useNavigate()
+    const { gitHubSignup, googleSignup } = useExternalSignUp()
+
+    const { signUp, isLoaded, } = useSignUp()
+
+    const { onInput } = handleChangeHOC<AuthFormData>(setForm)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!isLoaded) return
 
         try {
-
             await signUp.create({
                 emailAddress: form.email,
                 password: form.password,
@@ -45,38 +39,30 @@ export default function Signup() {
             await signUp.prepareEmailAddressVerification({
                 strategy: "email_code"
             })
-            toast.success("Email verification code sent")
 
+
+            toast.success("Email verification code sent")
             navigate("/verify-email");
 
         } catch (error: any) {
             const errMessage = error.errors?.[0]?.message
             toast.error(errMessage)
-            console.error(errMessage);
+            console.error(errMessage || error);
         }
     }
 
-    // const ref = useRef<HTMLInputElement>(null)
 
-    // const imageHandler = () => {
-    //     const file: File | undefined = ref.current?.files?.[0]
-    //     // const result = imageSchema.safeParse({ image: file })
-    //     // if (!result.success) {
-    //     //     setError(result.error.issues?.[0].message)
-    //     //     return;
-    //     // }
-    //     const reader: FileReader = new FileReader();
-    //     if (file) {
-    //         reader.readAsDataURL(file);
-    //         reader.onloadend = () => {
-    //             if (typeof reader.result === "string") {
-    //                 setForm(prev => ({ ...prev, avatar: reader.result }))
-    //             } else {
-    //                 setForm(prev => ({ ...prev, avatar: "" }))
-    //             }
-    //         }
-    //     }
-    // }
+    const handleGoogleClick = async () => {
+        setIsLoading(true)
+        await googleSignup()
+        setIsLoading(false)
+    }
+
+    const handleGitHubClick = async () => {
+        setIsLoading(true)
+        await gitHubSignup()
+        setIsLoading(false)
+    }
 
     return (
 
@@ -93,7 +79,7 @@ export default function Signup() {
                         name="email"
                         value={form.email}
                         placeholder="Enter your email"
-                        onChange={e => handleInputChange("email", e.target.value)}
+                        onChange={onInput("email")}
                         required
                     />
                     <InputBox
@@ -102,65 +88,17 @@ export default function Signup() {
                         name="password"
                         value={form.password}
                         placeholder="Enter your password"
-                        onChange={e => handleInputChange("password", e.target.value)}
+                        onChange={onInput("password")}
                         required
                     />
-                    {/* <InputBox
-                        label="Role"
-                        type="text"
-                        name="role"
-                        value={form.role}
-                        placeholder="Role"
-                        onChange={e => setForm({ ...form, role: e.target.value })}
-                    /> */}
-                    {/* <InputBox
-                        label="Date of Birth"
-                        type="date"
-                        name="dob"
-                        value={form.dob}
-                        onChange={e => setForm({ ...form, dob: e.target.value })}
-                        required
-                    /> */}
-                    {/* <InputBox
-                        label="Enter avatar"
-                        type="file"
-                        name="avatar"
-                        inputRef={ref}
-                        value={typeof form.avatar === "string" ? form.avatar : ""}
-                        onChange={imageHandler}
-                        required
-                        action={() => setForm(prev => ({ ...prev, avatar: "" }))}
-                    /> */}
 
-                    {/* <div className="input-box">
-                        <label htmlFor="image">image</label>
-                        <input type="file" id="image" ref={ref}
-                            onChange={imageHandler} />
-
-                        {form.avatar && (
-                            <div className="image-preview">
-                                <div>
-                                    <img
-                                        src={typeof form.avatar === "string" ? form.avatar : ""}
-                                    />
-                                    <MdDelete onClick={() => setForm(prev => ({ ...prev, avatar: "" }))} />
-                                </div>
-                            </div>
-                        )
-                        }
-                    </div> */}
-                    {/* <InputBox
-                        label="Avatar URL"
-                        type="file"
-                        name="avatar"
-                        value={form.avatar}
-                        placeholder="Avatar URL"
-                        onChange={e => setForm({ ...form, avatar: e.target.value })}
-                        required
-                    /> */}
                     <div id="clerk-captcha"></div>
                     <RedirectToOtherAuthPage />
-                    <button className="submit-btn" type="submit">SignUp</button>
+                    <button className="submit-btn" type="submit">
+                        {isLoading ? "Loading..." : "SignUp"}
+                    </button>
+
+                    <ExternalAuth onGoogleClick={handleGoogleClick} onGithubClick={handleGitHubClick} />
                 </form>
             </div>
         </div>
@@ -183,3 +121,20 @@ export const RedirectToOtherAuthPage = ({
         <Link to={url}>{label}</Link>
     </div>
 }
+
+type ExternalAuthProps = {
+    onGoogleClick: React.MouseEventHandler<SVGElement>;
+    onGithubClick?: React.MouseEventHandler<SVGElement>;
+};
+
+export const ExternalAuth = ({
+    onGoogleClick,
+    onGithubClick,
+}: ExternalAuthProps) => {
+    return (
+        <div className="external-auth">
+            <FcGoogle onClick={onGoogleClick} aria-label="Sign up and Sign in with Google" />
+            <FaGithub onClick={onGithubClick} aria-label="Sign up and Sign in with GitHub" />
+        </div>
+    );
+};

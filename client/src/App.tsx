@@ -1,17 +1,18 @@
 import { lazy, Suspense } from "react"
 import {
+  Route,
   BrowserRouter as Router,
-  Routes,
-  Route
+  Routes
 } from "react-router-dom"
-import { Loader } from './components'
+// import { Loader } from './components'
 import { ThemeProvider } from "./context/themeContext"
-import { ClerkProvider } from "@clerk/clerk-react"
 import ProtectedRoutes from "./pages/ProtectedRoutes"
 import PublicRoutes from "./pages/PublicRoutes"
 
 import { Toaster } from 'react-hot-toast'
+import AuthSync from "./components/AuthSync"
 import { PageSkeleton } from "./components/skeletons/PageSkeleton"
+import UserProvider from "./providers/UserProvider"
 
 // Routes
 
@@ -21,6 +22,7 @@ const Signup = lazy(() => import("./pages/auth/Signup"))
 const Login = lazy(() => import("./pages/auth/Login"))
 const Logout = lazy(() => import("./pages/auth/Logout"))
 const VerifyEmail = lazy(() => import("./pages/auth/VerifyEmail"))
+const CompleteProfile = lazy(() => import("./pages/auth/CompleteProfile"))
 
 
 const Home = lazy(() => import("./pages/Home"))
@@ -53,20 +55,16 @@ const Toss = lazy(() => import("./pages/apps/Toss"))
 
 
 // Import your Publishable Key
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
-
-if (!PUBLISHABLE_KEY) {
-  throw new Error('Add your Clerk Publishable Key to the .env file')
-}
 
 function App() {
 
 
   return (
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+    <UserProvider>
       <ThemeProvider>
         <Router>
           {/* Header */}
+          {/* <AuthSync /> */}
           <Suspense fallback={<PageSkeleton />}>
             <Routes>
 
@@ -80,6 +78,7 @@ function App() {
 
               {/* Public Routes */}
               <Route element={<ProtectedRoutes />}>
+                <Route path="/complete-profile" element={<CompleteProfile />} />
                 <Route path="/" element={<Home />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/cart" element={<Cart />} />
@@ -122,7 +121,7 @@ function App() {
         </Router>
         <Toaster />
       </ThemeProvider>
-    </ClerkProvider>
+    </UserProvider>
   )
 }
 

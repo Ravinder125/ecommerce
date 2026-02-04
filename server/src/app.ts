@@ -10,10 +10,15 @@ const corsOptions: CorsOptions = {
     credentials: true
 }
 
+const publishableKey = process.env.CLERK_PUBLISHABLE_KEY as string
+const secretKey = process.env.CLERK_SECRET_KEY as string
+
+app.use(clerkMiddleware({ secretKey, publishableKey }))
 app.use(cors(corsOptions))
 
 // Middlewares
-app.use(express.json())
+app.use(express.json({ limit: "10mb" }))
+app.use(express.urlencoded({ extended: true, limit: "10mb" }))
 app.use(morgan("dev"))
 
 // Health Check
@@ -37,6 +42,7 @@ app.use("/api/v1/dashboard", dashboardRouter);
 
 // DB and Caching connection
 import { connectDB } from "./config/db.js";
+import { clerkMiddleware } from "@clerk/express";
 // import { connectToRedis } from './config/redis.js';
 
 connectDB();

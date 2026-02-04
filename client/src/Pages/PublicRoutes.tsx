@@ -1,19 +1,14 @@
-import { useUser } from "@clerk/clerk-react"
+import { useUser } from "@clerk/clerk-react";
 import { Navigate, Outlet } from "react-router-dom";
 
-const PublicRoutes = () => {
-    const { isLoaded, isSignedIn,user } = useUser()
+export default function PublicRoutes() {
+    const { isSignedIn, isLoaded } = useUser();
 
-    if (!isLoaded) {
-        return null;
-    }
-    console.log(user)
+    if (!isLoaded) return null;
 
-    if (!isSignedIn) {
-        return <Outlet />
+    if (isSignedIn) {
+        return <Navigate to="/" replace />;
     }
 
-    return <Navigate to="/" />
+    return <Outlet />;
 }
-
-export default PublicRoutes

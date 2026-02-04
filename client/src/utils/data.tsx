@@ -84,3 +84,14 @@ export const ADMIN_SIDEBAR_DATA: AdminSideBarData = {
     ]
 }
 
+export const USER_ROLE = {
+    USER: "user",
+    ADMIN: "admin"
+} as const
+
+export const GENDERS = {
+    MALE: "male",
+    FEMALE: "female",
+    OTHER: "other",
+} as const
+

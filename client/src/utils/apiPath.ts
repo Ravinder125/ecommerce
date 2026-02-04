@@ -2,9 +2,9 @@
 import type { ApiPaths } from '../types/api.type'
 
 export const apiPaths = {
-    auth: {
-        profile: "/auth/profile",
-    },
+    // auth: {
+    //     profile: "/auth/profile",
+    // },
 
     users: {
         register: "/users/register",
