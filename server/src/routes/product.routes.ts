@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { adminOnly } from '../middlewares/auth.middleware.js';
+import { adminOnly, authMiddleware } from '../middlewares/auth.middleware.js';
 import {
     createNewProduct,
     deleteProduct,
@@ -12,18 +12,17 @@ import {
     updateProductImages
 } from '../controllers/product.controller.js';
 import { upload } from '../middlewares/multer.middleware.js';
-import { createProduct } from '../middlewares/validators/productValidator.middleware.js';
+import { createProductSchema } from '../middlewares/validators/productValidator.middleware.js';
 
 const router = Router();
-
-
+router.use(authMiddleware)
 
 router
     .route("/")
     .post(
         adminOnly,
         upload.array("image", 5),
-        createProduct,
+        createProductSchema,
         createNewProduct
     )
     .get(getAllProduct)

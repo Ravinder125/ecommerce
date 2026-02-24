@@ -6,6 +6,7 @@ import { ClerkProvider } from '@clerk/clerk-react'
 import { Provider } from 'react-redux'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { store } from './store/index.ts'
+import ClerkTokenBridge from './utils/ClerkTokenBridge.tsx'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -18,6 +19,7 @@ const queryClient = new QueryClient()
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+      <ClerkTokenBridge />
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
           <App />

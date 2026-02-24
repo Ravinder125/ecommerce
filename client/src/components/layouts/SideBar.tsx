@@ -4,6 +4,8 @@ import { ADMIN_SIDEBAR_DATA } from "../../utils/data"
 import type { IconType } from "react-icons";
 import { MdOutlineClose } from "react-icons/md";
 import type { ReactNode } from "react";
+import { useAppDispatch } from "../../store/hooks";
+import { clearUser } from "../../store/reducers/authSlice";
 
 const AdminSideBar = ({ isOpen, onClose }: { isOpen: boolean, onClose: Function }) => {
     const location = useLocation();
@@ -85,8 +87,17 @@ interface LiProps {
     location: Location,
     Icon: IconType
 }
-const Li = ({ url, label, location, Icon }: LiProps) => (
-    <li
+const Li = ({ url, label, location, Icon }: LiProps) => {
+
+    const dispatch = useAppDispatch()
+    const handleClick = () => {
+        if (url === "/logout") {
+            dispatch(clearUser())
+        }
+    }
+    return <li
+        onClick={handleClick}
+
         style={{
             backgroundColor: location.pathname
                 .includes(url)
@@ -97,12 +108,12 @@ const Li = ({ url, label, location, Icon }: LiProps) => (
         <Link style={{
             color: location.pathname.includes(url) ? "var(--sidebar-primary-foreground" : "var(--sidebar-accent-foreground)"
         }}
-            to={url}>
+            to={url}
+        >
             <Icon />
             {label}
         </Link>
     </li >
-)
-
+}
 export default AdminSideBar
 

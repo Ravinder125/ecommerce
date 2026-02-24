@@ -14,13 +14,11 @@ export const registerUser = asyncHandler(
         req: Request<{}, {}, RegisterUserRequestBody>,
         res: Response
     ) => {
-        console.log("it's working")
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            const errMessages = errors.array().map(e => e.msg)
-            throw new ApiError(400, "Validation Error", errMessages)
-        }
-
+        // const errors = validationResult(req);
+        // if (!errors.isEmpty()) {
+        //     const errMessages = errors.array().map(e => e.msg)
+        //     throw new ApiError(400, "Validation Error", errMessages)
+        // }
         const { userId } = getAuth(req)
 
         const { name, email, gender, role, dob } = req.body;
@@ -34,10 +32,11 @@ export const registerUser = asyncHandler(
         // if (!uploadImage) throw new ApiError(500, "Error while uploading image on Cloudinary")
         // const { public_id, url } = uploadImage;
 
+        // console.log(req.body)
         const user = await User.create({
             name,
             email,
-            // avatar: url,
+            avatar: null,
             // avatarId: public_id,
             gender,
             role,
@@ -45,6 +44,7 @@ export const registerUser = asyncHandler(
             dob: new Date(dob)
         });
 
+        console.log("it's working")
         return res
             .status(201)
             .json(new ApiResponse(
@@ -56,17 +56,24 @@ export const registerUser = asyncHandler(
 
 export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
     const users = await User.find({});
+
     return res.status(200).json(
         new ApiResponse(200, users, "Successfully fetched users")
     )
 })
 
 export const getUser = asyncHandler(async (req: Request, res: Response) => {
-    const userId = ((req as any).auth).userId
+    const { userId } = getAuth(req)
+    if (!userId) {
+        throw new ApiError(400, "User Id is missing")
+    }
     const user = await User.findById(userId)
         .select("-updatedAt -createdAt -__v")
         .lean()
 
+    if (!user) {
+        throw new ApiError(404, "No User Found")
+    }
     return res.
         status(200)
         .json(

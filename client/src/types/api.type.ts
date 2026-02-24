@@ -1,10 +1,12 @@
+import type { Product } from "./product.type";
+
 export type ApiPaths = {
   // auth: {
   //   profile: string;
   // };
 
   users: {
-    register: string;
+    syncProfile: string;
     profile: string;
     allUsers: string;
     byId: (id: string) => string;
@@ -44,9 +46,27 @@ export type ApiPaths = {
 };
 
 
-export interface ApiResponse<T> {
+export interface ApiResponse<T = null> {
   success: boolean;
   message?: string;
   data: T;
 }
 
+
+export type GetProductsQuery = {
+  page?: number,
+  search?: string,
+  totalPages?: string,
+  sort?: string,
+  category?: string,
+  maxPrice?: number,
+  limit?: number,
+}
+
+export type GetProductResponse = GetProductsQuery
+  & {
+    products: Product[]
+    categories: string[]
+  }
+
+export type Sort = "asc" | "desc"

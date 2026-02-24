@@ -12,8 +12,12 @@ const corsOptions: CorsOptions = {
 
 const publishableKey = process.env.CLERK_PUBLISHABLE_KEY as string
 const secretKey = process.env.CLERK_SECRET_KEY as string
+if (!publishableKey || !secretKey) {
+    throw new Error("Clerk keys are missing")
+}
 
 app.use(clerkMiddleware({ secretKey, publishableKey }))
+// app.use(requireAuth())
 app.use(cors(corsOptions))
 
 // Middlewares
@@ -42,11 +46,12 @@ app.use("/api/v1/dashboard", dashboardRouter);
 
 // DB and Caching connection
 import { connectDB } from "./config/db.js";
-import { clerkMiddleware } from "@clerk/express";
+import { clerkMiddleware, requireAuth } from "@clerk/express";
+import { connectToRedis } from "./config/redis.js";
 // import { connectToRedis } from './config/redis.js';
 
 connectDB();
-// connectToRedis();
+connectToRedis();
 
 const port = process.env.PORT;
 app.listen(port, () => {

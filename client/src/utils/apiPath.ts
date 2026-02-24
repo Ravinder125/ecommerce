@@ -7,7 +7,7 @@ export const apiPaths = {
     // },
 
     users: {
-        register: "/users/register",
+        syncProfile: "/users/sync-profile",
         profile: "/users/profile",
         allUsers: "/users/all",
         byId: (id: string) => `/users/${id}`,

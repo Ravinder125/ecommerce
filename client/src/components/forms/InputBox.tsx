@@ -9,11 +9,12 @@ type BaseInputProps = {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     required?: boolean;
     isPassword?: boolean;
-    inputRef?: React.RefObject<HTMLInputElement |null>;
+    inputRef?: React.RefObject<HTMLInputElement | null>;
     action?: React.MouseEventHandler;
 };
 
 export function InputBox({
+
     label,
     type = "text",
     isPassword = false,

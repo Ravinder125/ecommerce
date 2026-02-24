@@ -1,23 +1,20 @@
-import { axiosInstance } from "../utils/axiosInstance";
-import { apiPaths } from "../utils/apiPath";
+// import { useAxiosWithAuth } from "../hooks/useAxiosWithAuth";
 import type { ApiResponse } from "../types/api.type";
-import type { Genders, User, UserRole } from "../types/user.type";
+import type { User } from "../types/user.type";
+import { apiPaths } from "../utils/apiPath";
+import { axiosInstance } from "../utils/axiosInstance";
+import type { UserPayload } from "../validations/completeProfile.validation";
 
 
 
-export type UserPayload = {
-    email: string,
-    name: string,
-    role: UserRole,
-    gender: Genders,
-    dob: string,
-    avatar: string | null
-}
+
+
+// const axiosInstanceWithAuth = useAxiosWithAuth()
 
 export const authService = {
     syncProfile: async (payload: UserPayload) => {
         const res = await axiosInstance.post<ApiResponse<User>>(
-            apiPaths.users.register,
+            apiPaths.users.syncProfile,
             payload
         );
         return res.data;

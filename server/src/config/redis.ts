@@ -9,6 +9,9 @@ dotenv.config();
 // redisClient.on("error", (error) => console.log("failed: ", error))
 
 const redisURL = process.env.REDIS_URL
+if (!redisURL) {
+    throw new Error("Redis url is missing")
+}
 // const redisLocalURL = "redis://localhost:6379"
 
 export const redisClient = createClient({
@@ -23,6 +26,7 @@ export const connectToRedis = async () => {
         }
     } catch (error) {
         console.error('❌ Redis connection failed:', error);
+        process.exit(1)
     }
 };
 

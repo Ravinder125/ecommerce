@@ -7,9 +7,10 @@ import {
     updateCoupon
 } from '../controllers/payment.controller.js';
 import { couponValidator } from '../middlewares/validators/paymentValidator.middleware.js';
-import { adminOnly } from '../middlewares/auth.middleware.js';
+import { adminOnly, authMiddleware } from '../middlewares/auth.middleware.js';
 
 const router = Router();
+router.use(authMiddleware)
 
 router.route("/coupon")
     .get(adminOnly, allCoupons)

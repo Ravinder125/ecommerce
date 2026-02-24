@@ -1,16 +1,29 @@
 import { useRef, useState, type FormEvent } from "react"
 import { createTypedInput } from "../../components/forms/InputBox"
 import { handleChangeHOC } from '../../utils/handleInputChange'
-import type { CompleteFormData } from "../../types/auth.type"
+// import { CompleteFormData } from "../../types/auth.type"
 import { InitialCompleteFormData } from "../../utils/InitialFormData"
 import { imageHandler } from "../../utils/imageHandler"
-import { authService, } from "../../services/auth.service"
+// import { authService, } from "../../services/auth.service"
 import toast from "react-hot-toast"
 
 import { useUser } from '@clerk/clerk-react'
 import { validateData } from "../../utils/validateFields"
 import { completeFormDataSchema, type UserPayload } from "../../validations/completeProfile.validation"
-import { useNavigate } from "react-router-dom"
+// import { useSyncProfileMutation } from "../../store/api/syncProfileAPI"
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query"
+import type { ApiResponse } from "../../types/api.type"
+import { useSyncProfileMutation } from "../../store/api/syncProfileAPI"
+import { useDispatch } from "react-redux"
+import { authService } from "../../services/auth.service"
+import { useAppDispatch } from "../../store/hooks"
+import { getUser } from "../../store/reducers/authSlice"
+
+// import { authService } from '../../services/auth.service'
+// import {  } from "../../store/api/syncProfileAPI"
+// import { syncProfileAPI } from "../../store/api/syncProfileAPI"
+
+type CompleteFormData = Omit<UserPayload, "email">
 
 const InputBox = createTypedInput<CompleteFormData>()
 
@@ -22,21 +35,22 @@ const CompleteProfile = () => {
     const { user, isLoaded } = useUser()
     const ref = useRef<HTMLInputElement | null>(null)
     const { onInput, handleInputChange } = handleChangeHOC<CompleteFormData>(setFormData)
-    const navigate = useNavigate()
+
+    const syncProfileAPI = useSyncProfileMutation()[0]
+
+    const dispatch = useAppDispatch()
+
+    // const syncProfile = useSyncProfileMutation()[0]
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
         setError("")
 
-
         try {
-            if (!isLoaded || !user) return;
-            if (typeof formData.avatar !== "string") return;
-            if (!formData.gender) return
-            if (!formData.role) return
-            // if (!user.emailAddresses?.[0]?.emailAddress) return;
+            if (!isLoaded || !user) return
 
             setIsLoading(true)
+
             const payload = {
                 avatar: formData.avatar,
                 dob: formData.dob,
@@ -46,25 +60,43 @@ const CompleteProfile = () => {
                 email: user.emailAddresses[0].emailAddress
             }
 
-            const { success, data, message } = validateData<UserPayload>(completeFormDataSchema, payload)
+            const { success, data, message } =
+                validateData<UserPayload>(completeFormDataSchema, payload)
+
             if (!success) {
                 throw new Error(message)
             }
 
-            console.log(data)
+            const res = await syncProfileAPI(data!)
+            console.log(res.error)
 
-            const res = await authService.syncProfile(data!)
-            console.log(res)
-            
+            if (res.data) {
+                toast.success(res.data.message!)
+                // toast.success("Profile completed")
+                const response = await authService.getProfile()
+
+                dispatch(getUser(response.data))
+            } else {
+                const err = res.error as FetchBaseQueryError
+                const message = (err.data as ApiResponse).message
+                throw new Error(message)
+            }
+
         } catch (error: any) {
-            const errMessage = error.errors?.[0]?.message || "Something went wrong"
+
+            let errMessage =
+                error?.data?.message
+                || error.message
+                || "Something went wrong"
+
             toast.error(errMessage)
             setError(errMessage)
-            console.error("Error while syncing data", error)
+
+            console.error("Sync error:", error)
+
         } finally {
             setIsLoading(false)
         }
-
     }
 
 

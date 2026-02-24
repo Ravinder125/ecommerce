@@ -19,11 +19,12 @@ export interface CreateProductRequestBody {
 }
 
 export type RequestProductQuery = {
-    price?: number;
+    maxPrice?: number;
     search?: string;
     category?: string;
-    sort?: string
+    sort?: "asc" | "desc";
     page?: string;
+    limit?:number;
 }
 
 

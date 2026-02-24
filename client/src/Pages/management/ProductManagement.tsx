@@ -1,42 +1,10 @@
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react"
 import { DashboardLayout } from "../../components"
 import { MdOutlineFileUpload } from "react-icons/md"
-import z from "zod"
+import { validateData } from "../../utils/validateFields"
+import { imageSchema, productDataSchema } from "../../validations/productDataSchema"
 
-const ProductDataSchema = z.object({
-    name: z
-        .string()
-        .nonempty({ message: "Name is required" }),
-    price: z
-        .number()
-        .min(1, { message: "Price cannot be lower than 1" })
-        .nonnegative({ message: "Price cannot be empty" }),
-    stock: z
-        .number()
-        .min(1, { message: "stock cannot be lower than 1" })
-        .nonnegative({ message: "Price cannot be empty" }),
-    image: z
-        .string()
-        .nonempty({ message: "Name is required" }),
-})
 
-const imageSchema = z.object({
-    image: z
-        .any()
-        .refine((file) => file instanceof File, {
-            message: "Image is required"
-        })
-        .refine((file) => file?.size >= 6250, {
-            message: "File is too small (min 6kb)",
-        })
-        .refine((file) => file?.size <= 6000000, {
-            message: "File is too large (max 6MB)"
-        })
-        .refine((file) =>
-            ["image/jpg", "image/jpeg", "image/png", "image/webp"].indexOf(file?.type) !== -1,
-            { message: "Only JPG, PNG, or WEBP image are allowed" }
-        )
-})
 
 
 const ProductManagement = () => {
@@ -76,9 +44,9 @@ const ProductManagement = () => {
     const changeImageHandler = () => {
         setError("")
         const file: File | undefined = ref.current?.files?.[0]
-        const result = imageSchema.safeParse({ image: file })
+        const result = validateData(imageSchema, { image: file })
         if (!result.success) {
-            setError(result.error.issues?.[0].message)
+            setError(result.message!)
             return;
         }
         const reader: FileReader = new FileReader();
@@ -100,9 +68,9 @@ const ProductManagement = () => {
             stock: formData.stock,
             image: formData.image
         }
-        const result = ProductDataSchema.safeParse(payload)
+        const result = validateData(productDataSchema, payload)
         if (!result.success) {
-            setError(result?.error?.issues?.[0].message)
+            setError(result.message!)
             return;
         }
         setProductData(payload)

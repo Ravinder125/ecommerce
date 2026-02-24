@@ -77,7 +77,7 @@ export const ADMIN_SIDEBAR_DATA: AdminSideBarData = {
             Icon: FaGamepad,
         },
         {
-            url: "/login",
+            url: "/logout",
             label: <LogoutBtn />,
             Icon: BiLogOut
         }

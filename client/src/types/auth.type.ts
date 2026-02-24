@@ -18,14 +18,14 @@ export interface UserProfile {
     gender: Genders
 }
 
-export type CompleteFormData = Omit<
-    UserProfile,
-    "password"
-    | "email"
-    | "role"
-    | "gender"
-    | "avatar"> & {
-        gender: Genders | "",
-        role: UserRole | "",
-        avatar: string | undefined
-    }
+// export type CompleteFormData = Omit<
+//     UserProfile,
+//     "password"
+//     | "email"
+//     | "role"
+//     | "gender"
+//     | "avatar"> & {
+//         gender: Genders | "",
+//         role: UserRole | "",
+//         avatar: string | undefined
+//     }

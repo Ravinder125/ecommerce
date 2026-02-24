@@ -10,7 +10,7 @@ export const asyncHandler = (
             if (err instanceof Error) {
                 const statusCode = (err as any).statusCode || 500;
                 const errors = (err as any).errors || undefined;
-
+                console.log(err)
                 let message = err.message;
 
                 // Handle common mongoose errors

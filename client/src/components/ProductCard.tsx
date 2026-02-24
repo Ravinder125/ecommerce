@@ -14,7 +14,7 @@ interface ProductsProps {
 const ProductCard = ({ _id, name, price, image, stock, handler }
     : ProductsProps) => {
     return (
-        <div className="product-card">
+        <div key={_id} className="product-card">
             {/* <img src={`${server}/${image}`} alt={name} />
              */}
             <img src={image} alt={name} />
@@ -23,7 +23,7 @@ const ProductCard = ({ _id, name, price, image, stock, handler }
 
             <div>
                 <button
-                    onClick={() => handler()}
+                    onClick={handler}
                 >
                     <FaPlus />
                 </button>

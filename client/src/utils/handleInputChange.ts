@@ -13,11 +13,11 @@ export const handleChangeHOC = <T>(
 
         onInput:
             <K extends keyof T>(key: K) =>
-            (e: React.ChangeEvent<HTMLInputElement>) => {
-                setData(prev => ({
-                    ...prev,
-                    [key]: e.target.value as T[K],
-                }));
-            },
+                (e: React.ChangeEvent<HTMLInputElement>) => {
+                    setData(prev => ({
+                        ...prev,
+                        [key]: e.target.value as T[K],
+                    }));
+                },
     };
 };

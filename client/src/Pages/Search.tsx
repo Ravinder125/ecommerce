@@ -1,18 +1,54 @@
 import { useState } from "react"
 import { Layout, ProductCard } from "../components"
-import data from '../assets/products.json'
+import preData from '../assets/products.json'
+import { useAppDispatch } from "../store/hooks";
+import { addToCart, type CartItem } from "../store/reducers/cartSlice";
+import { useAllProductsQuery } from "../store/api/productApi";
+import { useDebounce } from "../hooks/useDebounce";
+import type { Limit } from "../types/pagination.type";
+import { Pagination } from "../components/Pagination";
+
 
 const Search = () => {
     const [search, setSearch] = useState<string>("");
-    const [sort, setSort] = useState<string>("");
+    const [sort, setSort] = useState<string>("asc");
     const [maxPrice, setMaxPrice] = useState<number>(10000);
     const [category, setCategory] = useState<string>("");
     const [page, setPage] = useState<number>(1)
+    // const [totalPages, setTotalPages] = useState<number>(1)
+    const [limit, setLimit] = useState<Limit>(10)
 
-    const addToCartHandler = (id: string) => { }
+    const dispatch = useAppDispatch()
 
-    const isPrevPage = page > 1;
-    const isNextPage = page < 4;
+    const addToCartHandler = (product: CartItem) => {
+        dispatch(addToCart(product))
+    }
+
+    // const isPrevPage = page > 1;
+    // const isNextPage = page < 4;
+    const debounceSearch = useDebounce(search, 800);
+    const debounceMaxPrice = useDebounce(maxPrice, 800);
+
+    const { data, isLoading, isFetching, isError, error } = useAllProductsQuery({
+        page,
+        search: debounceSearch,
+        sort,
+        category,
+        maxPrice: debounceMaxPrice,
+        limit
+    })
+    if (isLoading) {
+        return <div>Loading...</div>
+    }
+
+    if (isError) {
+        console.log(error)
+        return <div>{"Something went wrong"}</div>
+    }
+
+
+    const totalPages = Number(data?.data.totalPages!) || 1;
+    const categories = data?.data.categories ?? [];
 
     return (
         <Layout>
@@ -42,8 +78,10 @@ const Search = () => {
                         <h4>Category</h4>
                         <select value={category} onChange={({ target }) => setCategory(target.value)}>
                             <option value="">All</option>
-                            <option value="Sample1">Sample1</option>
-                            <option value="Sample2">Sample2</option>
+                            {categories.map((c) =>
+                                <option value={c}>{c}</option>
+                            )}
+                            {/* <option value="Sample2">Sample2</option> */}
                         </select>
                     </div>
                 </aside>
@@ -57,34 +95,53 @@ const Search = () => {
                     />
 
                     <div className="search-product--list">
-                        {data.products.map(({ _id, name, price, stock, image }) => (
-                            <ProductCard
-                                key={_id}
-                                _id={_id}
-                                name={name}
-                                price={price}
-                                image={image}
-                                stock={stock}
-                                handler={() => addToCartHandler(_id)}
-                            />
-                        ))}
+                        {isFetching ? <div>Loading...</div>
+                            : (
+                                data?.data.products.map((p) => {
+                                    const { _id, name, price, stock, images } = p
+                                    return <ProductCard
+                                        key={_id}
+                                        _id={_id}
+                                        name={name}
+                                        price={price}
+                                        image={images[0] ?? preData.products[0].image}
+                                        stock={stock}
+                                        handler={() => addToCartHandler({
+                                            productId: _id,
+                                            image: preData.products[0].image,
+                                            price,
+                                            name,
+                                            stock
+                                        })}
+                                    />
+                                }
+                                )
+                            )}
                     </div>
 
-                    <article>
+                    <div style={{ padding: "1rem" }}>
+                        <Pagination
+                            page={page}
+                            onPageChange={(page) => setPage(page)}
+                            totalPages={totalPages}
+                            onLimitChange={((limit: Limit) => setLimit(limit))}
+                        />
+                    </div>
+                    {/* <article>
                         <button
                             disabled={!isPrevPage}
                             onClick={() => setPage(prev => prev !== 0 ? --prev : prev)}
                         >
                             Prev
                         </button>
-                        <span>{page} of {4}</span>
+                        <span>{page} of {totalPages}</span>
                         <button
                             disabled={!isNextPage}
-                            onClick={() => setPage(prev => prev !== 4 ? ++prev : prev)}
+                            onClick={() => setPage(prev => prev !== Number(data?.data.totalPages) ? ++prev : prev)}
                         >
                             Next
                         </button>
-                    </article>
+                    </article> */}
                 </main>
             </div>
         </Layout>
@@ -92,3 +149,4 @@ const Search = () => {
 }
 
 export default Search
+

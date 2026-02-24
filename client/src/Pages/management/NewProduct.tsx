@@ -1,78 +1,49 @@
-import { useRef, useState, type ChangeEvent, type FormEvent, } from "react"
+import { useRef, useState, type FormEvent, } from "react"
 import { DashboardLayout } from "../../components"
 import { MdOutlineFileUpload } from "react-icons/md"
-import z from "zod"
+import { validateData } from "../../utils/validateFields"
+import { imageSchema, productDataSchema } from "../../validations/productDataSchema"
+import { handleChangeHOC } from "../../utils/handleInputChange"
+import { useCreateProductMutation, useProductCategoriesQuery } from "../../store/api/productApi"
+import { createTypedInput } from "../../components/forms/InputBox"
+import type { NewProductFormData } from "../../types/product.type"
+import toast from "react-hot-toast"
 
 
-const ProductDataSchema = z.object({
-    name: z
-        .string()
-        .nonempty({ message: "Name is required" }),
-    price: z
-        .number()
-        .min(1, { message: "Price cannot be lower than 1" })
-        .nonnegative({ message: "Price cannot be empty" }),
-    stock: z
-        .number()
-        .min(1, { message: "stock cannot be lower than 1" })
-        .nonnegative({ message: "Price cannot be empty" }),
-    image: z
-        .string()
-        .nonempty({ message: "Name is required" }),
-})
+const ProductInitialFormData = {
+    name: "",
+    price: 0,
+    stock: 0,
+    image: "",
+    category: "",
+    brand: ""
+} as NewProductFormData
 
-
-const imageSchema = z.object({
-    image: z
-        .any()
-        .refine((file) => file instanceof File, "Image is required"
-        )
-        // .refine((file) => file?.size >= 6250,
-        //     "File is too small (min 6kb)",
-        // )
-        .refine((file) => file?.size <= 6000000,
-            "File is too large (max 6MB)"
-        )
-        .refine((file) =>
-            ["image/jpg", "image/jpeg", "image/png", "image/webp"].indexOf(file?.type) !== -1,
-            "Only JPG, PNG, or WEBP image are allowed"
-        )
-})
+const InputBox = createTypedInput<NewProductFormData>()
 
 const NewProduct = () => {
-
-    type FormData = {
-        name: string,
-        price: number,
-        stock: number,
-        image: string | null | ArrayBuffer,
-    }
-
     const [error, setError] = useState<string>("")
     const ref = useRef<HTMLInputElement>(null)
-    const [formData, setFormData] = useState<FormData>({
-        name: "",
-        price: 0,
-        stock: 0,
-        image: ""
-    })
+    const [formData, setFormData] = useState<NewProductFormData>(ProductInitialFormData)
 
-    const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        const { value, name, type } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === "number"
-                ? Number(value)
-                : value?.trim()
-        }))
-    }
+    const {
+        isError,
+        data: categories,
+        isFetching,
+        isLoading,
+        error: dataError } = useProductCategoriesQuery()
+    const newProductApi = useCreateProductMutation()[0];
+
+    const { onInput } = handleChangeHOC(setFormData)
 
     const changeImageHandler = () => {
         setError("")
         const file: File | undefined = ref.current?.files?.[0]
-        const result = imageSchema.safeParse({ image: file })
+        const result = validateData(imageSchema, { image: file })
+
         if (!result.success) {
-            setError(result.error.issues?.[0].message)
+            console.log(result.message)
+            setError(result.message!)
             return;
         }
         const reader: FileReader = new FileReader();
@@ -85,89 +56,174 @@ const NewProduct = () => {
             }
         }
     }
-    const submitHandler = (e: FormEvent<HTMLFormElement>) => {
+    const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError("")
 
-        const payload: FormData = {
-            name: formData.name,
-            price: formData.price,
-            stock: formData.stock,
-            image: formData.image
-        }
-        const result = ProductDataSchema.safeParse(payload)
+        // const payload: FormData = {
+        //     name: formData.name,
+        //     price: formData.price,
+        //     stock: formData.stock,
+        //     image: formData.image,
+        //     category: formData.category
+        // }
+        const result = validateData(productDataSchema, formData)
         if (!result.success) {
-            setError(result?.error?.issues?.[0].message)
+            console.log(formData)
+            setError(result.message!)
             return;
         }
+        try {
+            const res = await newProductApi(result.data!)
+            console.log(res)
+            if (res.data?.success) {
+                toast.success(res.data.message!)
+                return
+            }
+
+            if (!res.data?.success) {
+                throw new Error(res.data?.message)
+            }
+
+        } catch (error: any) {
+            toast.error(error.message)
+            console.log("Error while creating the product", error)
+        }
+
+    }
+
+    if (isError) {
+        console.log(dataError)
+        return <div>Something went wrong</div>
+    }
+
+    if (isFetching) {
+        return <div>Loading...</div>
+    }
+
+    if (isLoading) {
+        return <div>Loading...</div>
     }
 
     return (
         <DashboardLayout>
-            <main className="management">
+            <section className="management">
                 <article>
-                    <form onSubmit={(event) => submitHandler(event)}>
-                        <h2>New Product</h2>
-                        <div>
-                            <label htmlFor="Name">Name</label>
-                            <input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={(e) => inputChangeHandler(e)}
-                                placeholder="Enter product name"
+                    <form onSubmit={submitHandler}>
+                        <h2>Sunny the Financer</h2>
+
+                        <InputBox
+                            name="name"
+                            label="Name"
+                            placeholder="Enter product name"
+                            value={formData.name}
+                            onChange={onInput("name")}
+                            required
+                        />
+
+                        <InputBox
+                            name="brand"
+                            type="text"
+                            label="Brand"
+                            placeholder="Enter product brand"
+                            value={formData.brand}
+                            onChange={onInput("brand")}
+                            required
+                        />
+
+                        <InputBox
+                            name="price"
+                            type="number"
+                            label="Price"
+                            placeholder="Enter product price"
+                            value={String(formData.price)}
+                            onChange={onInput("price")}
+                            required
+                        />
+
+                        <InputBox
+                            name="stock"
+                            type="number"
+                            label="Stock"
+                            placeholder="Enter product stock"
+                            value={String(formData.stock)}
+                            onChange={onInput("stock")}
+
+                            required
+                        />
+
+
+                        {/* CATEGORY */}
+                        <div className="input-box">
+                            <label>Category</label>
+                            <select
+                                // name="category"
+                                value={formData.category}
+                                onChange={(e) =>
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        category: e.target.value
+                                    }))
+                                }
                                 required
-                            />
+                            >
+                                <option value="">None</option>
+                                {categories?.data.map(c => (
+                                    <option key={c} value={c}>
+                                        {c}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
-                        <div>
-                            <label htmlFor="Price">Price</label>
-                            <input
-                                type="number"
-                                name="price"
-                                value={formData.price}
-                                onChange={(e) => inputChangeHandler(e)}
-                                placeholder="Enter product price"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="Stock">Stock</label>
-                            <input
-                                type="number"
-                                name="stock"
-                                value={formData.stock}
-                                onChange={(e) => inputChangeHandler(e)}
-                                placeholder="Enter product Stock"
-                                required
-                            />
-                        </div>
-                        <div id="file-upload"
-                            onClick={() => ref.current?.click()}
+
+                        {/* IMAGE UPLOAD */}
+                        <div
+                            id="file-upload"
+                            className="input-box"
                         >
                             <MdOutlineFileUpload />
-                            <label htmlFor="Name" style={{ cursor: "pointer" }}>
+                            <label style={{ cursor: "pointer" }} htmlFor="image">
                                 Choose Image
                             </label>
+
                             <input
                                 ref={ref}
                                 onChange={changeImageHandler}
                                 type="file"
-                                required
+                                hidden
+                                // required
+                                name="image"
+                                id="image"
+                                style={{ display: "none" }}
                             />
                         </div>
-                        <div>
-                            {formData.image && <img src={
-                                typeof formData.image === "string" ? formData.image : ""}
-                                alt="New Image" />
-                            }
-                        </div>
+
+                        {/* PREVIEW */}
+                        {formData.image && (
+                            <div className="image-preview">
+                                <img
+                                    src={
+                                        typeof formData.image === "string"
+                                            ? formData.image
+                                            : ""
+                                    }
+                                    alt="New product"
+                                />
+                            </div>
+                        )}
+
                         {error && <div className="error-msg">{error}</div>}
-                        <button type="submit" className="submit-btn">Create New</button>
+
+                        <button type="submit" className="submit-btn">
+                            {isLoading ? "Loading..." : "Create New"}
+
+                        </button>
                     </form>
                 </article>
-            </main>
-        </DashboardLayout>
+            </section>
+        </DashboardLayout >
     )
 }
 
 export default NewProduct
+

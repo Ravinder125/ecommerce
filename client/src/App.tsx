@@ -10,7 +10,7 @@ import ProtectedRoutes from "./pages/ProtectedRoutes"
 import PublicRoutes from "./pages/PublicRoutes"
 
 import { Toaster } from 'react-hot-toast'
-import AuthSync from "./components/AuthSync"
+// import AuthSync from "./components/AuthSync"
 import { PageSkeleton } from "./components/skeletons/PageSkeleton"
 import UserProvider from "./providers/UserProvider"
 
@@ -121,7 +121,7 @@ function App() {
         </Router>
         <Toaster />
       </ThemeProvider>
-    </UserProvider>
+     </UserProvider>
   )
 }
 

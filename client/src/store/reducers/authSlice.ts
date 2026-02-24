@@ -1,6 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { fetchUser } from "./authThunk";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+// import { fetchUser } from "./authThunk";
 import type { User } from "../../types/user.type";
+import { fetchUser } from "../thunks/authThunk";
 
 interface AuthState {
     user: User | null;
@@ -20,7 +21,12 @@ const authSlice = createSlice({
             state.user = null;
             state.isLoading = false;
         },
+        getUser(state, action: PayloadAction<User>) {
+            state.user = action.payload
+            state.isLoading = false
+        },
     },
+
     extraReducers: builder => {
         builder
             .addCase(fetchUser.pending, state => {
@@ -37,5 +43,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { clearUser } = authSlice.actions;
+export const { clearUser, getUser } = authSlice.actions;
 export default authSlice.reducer;

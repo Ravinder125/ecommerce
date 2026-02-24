@@ -14,11 +14,7 @@ import { requireAuth } from "../middlewares/requireAuth.js";
 const router = Router();
 
 // Routes
-
-
-
-
-router.route("/register").post(
+router.route("/sync-profile").post(
     // upload.single("avatar"),
     createUser,
     registerUser,

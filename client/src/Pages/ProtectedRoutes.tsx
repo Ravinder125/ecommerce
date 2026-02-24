@@ -1,12 +1,12 @@
 import { useUser } from "@clerk/clerk-react";
-import { useAppSelector } from "../store/hooks";
+// import { useAppSelector } from "../store/hooks";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAppSelector } from "../store/hooks";
 
 export default function ProtectedRoutes() {
   const { isSignedIn, isLoaded } = useUser();
-  const { user, isLoading } = useAppSelector(state => state.auth);
+  const { user, isLoading } = useAppSelector(state => state.user);
   const location = useLocation()
-
   if (!isLoaded) return null;
 
   if (!isSignedIn) {
@@ -14,10 +14,16 @@ export default function ProtectedRoutes() {
   }
 
   if (isLoading) return null;
-  console.log(user?.role)
+
+
   if (!user?.role && location.pathname !== "/complete-profile") {
     return <Navigate to="/complete-profile" replace />;
   }
 
+  if (user?.role && location.pathname === "/complete-profile") {
+    return <Navigate to="/" replace />
+  }
+
   return <Outlet />;
+
 }

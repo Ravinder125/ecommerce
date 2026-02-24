@@ -56,7 +56,6 @@ import { cache, invalidateCache } from "../utils/cacheService.js";
 // } = deletePreRedisData();
 
 export const createNewProduct = asyncHandler(
-
     async (
         req: Request<{}, {}, CreateProductRequestBody>,
         res: Response) => {
@@ -191,30 +190,37 @@ export const getAdminProducts = asyncHandler(async (req: Request, res: Response)
 
 export const getAllProduct = asyncHandler(
     async (req: Request<{}, {}, {}, RequestProductQuery>, res: Response) => {
-        const { price, category, search, sort } = req.query;
+        const { maxPrice, category, search, sort = "asc" } = req.query;
 
         const page = Number(req.query.page) || 1;
-        const limit = Number(process.env.PRODUCT_PER_PAGE)
+        const limit = Number(req.query.limit || 10)
         const skip = (page - 1) * limit
-
+        console.log(limit)
         const baseQuery: BaseQuery = {};
-        if (price) baseQuery.price = { $lte: price }
+        if (maxPrice) baseQuery.price = { $lte: maxPrice }
         if (search) baseQuery.name = { $regex: search, $options: "i" }
         if (category) baseQuery.category = category;
 
         const productPromise = Product
             .find(baseQuery)
-            .sort(sort && { sort: sort === "asc" ? 1 : -1 })
+            .sort(sort && { price: sort === "asc" ? 1 : -1 })
             .skip(skip)
+            .limit(limit)
 
-        const [products, filterOnlyProducts] = await Promise.all([
+        const [products, filterOnlyProducts, categories] = await Promise.all([
             productPromise,
             Product.find(baseQuery),
+            Product.distinct("category")
         ])
 
-        const totalPage = Math.ceil(filterOnlyProducts.length / limit);
+        const totalPages = Math.ceil(filterOnlyProducts.length / limit);
+
         return res.status(200).json(
-            new ApiResponse(200, { products, totalPage }, "Product fetched successfully")
+            new ApiResponse(
+                200,
+                { products, totalPages, categories },
+                "Product fetched successfully"
+            )
         )
     })
 
