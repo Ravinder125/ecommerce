@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 import { useAdminOrdersQuery } from "../store/api/transactionAPI";
 import type { Order } from "../types/transaction.type";
-import { useMemo } from "react";
 
 
 
@@ -32,8 +31,12 @@ const columns: ColumnDef<Order>[] = [
     cell: ({ row }) => {
       const status = row.original.orderStatus;
       return <span className={`${status === "Processing"
-        ? "purple" : status === "Shipped"
-          ? "green" : "red"}`}>{status}</span>
+        ? "yellow" : status === "Shipped"
+          ? "purple" : status === "Delivered"
+            ? "green" : "red"}`}
+      >
+        {status}
+      </span>
     }
 
   },
@@ -51,16 +54,6 @@ const columns: ColumnDef<Order>[] = [
 const Transaction = () => {
 
   const { data, isLoading, error } = useAdminOrdersQuery()
-  console.log(data?.data)
-  // const [data] = useState<DataType[]>(arr);
-  // const Table = useMemo(() =>
-  //   TableHOC<Order>(
-  //     columns,
-  //     data?.data ?? [],
-  //     "dashboard-product--box",
-  //     "Transaction",
-  //   ),
-  //   [])
 
   const Table = TableHOC<Order>(
     columns,

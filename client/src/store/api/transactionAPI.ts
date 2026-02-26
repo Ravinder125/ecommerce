@@ -34,7 +34,15 @@ export const transactionAPI = createApi({
                 url: apiPaths.orders.byId(orderId),
                 method: "GET"
             })
-        })
+        }),
+
+        processOrder: builder
+            .mutation<ApiResponse, { orderId: string, isCancelled?: boolean }>({
+                query: ({ orderId, isCancelled }) => ({
+                    url: `${apiPaths.orders.byId(orderId)}?isCancelled=${isCancelled}`,
+                    method: "PUT"
+                })
+            })
     })
 })
 
@@ -42,4 +50,5 @@ export const {
     useCreateOrderMutation,
     useAdminOrdersQuery,
     useGetOrderQuery,
+    useProcessOrderMutation,
 } = transactionAPI

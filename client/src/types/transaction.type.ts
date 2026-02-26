@@ -1,7 +1,7 @@
 export type OrderItem = {
-    productId: string
+    product: string
     name: string
-    photo: string
+    image: string
     price: number
     quantity: number
 }

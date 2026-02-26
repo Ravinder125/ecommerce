@@ -6,6 +6,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { Order } from "../models/order.models.js";
 import { reduceStock } from "../utils/features.js";
+import { isValidObjectId } from "mongoose";
 
 
 export const createOrder = asyncHandler(
@@ -139,15 +140,19 @@ export const getSingleOrder = asyncHandler(async (req: Request, res: Response) =
 export const processOrder = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const order = await Order.findById(id);
-    const isCancelled = req.query?.isCancelled;
+
+    if (!isValidObjectId(id)) {
+        throw new ApiError(400, "Invalid ID")
+    }
+    const isCancelled = req.query?.isCancelled === "true";
 
     if (!order) throw new ApiError(404, "No order found")
 
     if (
-        isCancelled && order.orderStatus === "Processing" ||
-        isCancelled && order.orderStatus === "Shipped"
+        (isCancelled && order.orderStatus === "Processing") ||
+        (isCancelled && order.orderStatus === "Shipped")
     ) {
-        order.orderStatus = "Cancelled"
+        order.orderStatus = "Cancelled";
     } else if (isCancelled && order.orderStatus === "Delivered") {
         throw new ApiError(400, "Order cannot be canceled after delivery")
     } else {
@@ -171,7 +176,7 @@ export const processOrder = asyncHandler(async (req: Request, res: Response) => 
 
 
     await order.save();
-
+    console.log(order.orderStatus)
     return res.status(200).json(
         new ApiResponse(200, order, "Order processed successfully")
     )

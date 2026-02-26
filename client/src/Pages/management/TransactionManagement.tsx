@@ -1,10 +1,12 @@
-import { useState } from "react"
 import { DashboardLayout } from "../../components"
-import { type OrderType, type OrderItemType } from "../../types"
-import { Link } from "react-router-dom";
+import type { OrderItem } from "../../types/transaction.type"
+import { Link, Navigate, useParams } from "react-router-dom";
+import { useGetOrderQuery, useProcessOrderMutation, } from "../../store/api/transactionAPI";
+import toast from "react-hot-toast";
+import { useState } from "react";
 
 
-const orderItems: OrderItemType[] = [
+const orderItems = [
     {
         name: "Wireless Mouse",
         image: "https://www.bbassets.com/media/uploads/p/l/40341612_1-portronics-chyro-10000mah-magnetic-wireless-fast-charging-power-bank-black.jpg",
@@ -29,46 +31,39 @@ const orderItems: OrderItemType[] = [
 ];
 
 const TransactionManagement = () => {
-    const [order, setOrder] = useState<OrderType>({
-        name: "Aarav Sharma",
-        address: {
-            house: "12A",
-            street: "Lakeview Road",
-            locality: "Sector 45",
-            city: "Bangalore",
-            pinCode: "560045",
-            state: "Karnataka",
-            country: "India",
-        },
-        status: "Processing",
-        quantity: 2,
-        subTotal: 5498,
-        discount: 500,
-        shippingCharges: 100,
-        tax: 180,
-        totalAmount: 5278,
-        orderItems: orderItems,
-        _id: "order_1001",
-    }
-    );
 
-    const {
-        name,
-        address: { house, street, locality, city, pinCode, state, country, },
-        subTotal,
-        shippingCharges,
-        tax,
-        discount,
-        totalAmount,
-        status
-    } = order;
+    const [isCancelled, setIsCancelled] = useState<boolean>(false);
 
-    const updateHandler = () => {
-        setOrder(prev => ({
-            ...prev,
-            status: prev.status === "Processing" ? "Shipped" : "Delivered",
-        }))
+    const params = useParams();
+    const id = params.id
+
+    if (!id) {
+        return <Navigate to="/admin/transactions" replace />
     }
+
+    const processOrderApi = useProcessOrderMutation()[0]
+    const { data, error, isLoading } = useGetOrderQuery(id)
+
+    const updateHandler = async () => {
+        try {
+            const res = await processOrderApi({
+                orderId: id,
+                isCancelled: isCancelled
+            })
+
+            if (res.data?.data) {
+                toast.success("Order processed successfully")
+            }
+        } catch (error) {
+            toast.error("Failed to process order")
+        }
+    }
+    if (isLoading) return <div>Loading...</div>
+    if (error) {
+        toast.error(data?.message || "Something went wrong")
+        return <div>Something went wrong</div>
+    }
+
 
     return (
         <DashboardLayout>
@@ -78,12 +73,12 @@ const TransactionManagement = () => {
                 }}>
                     <h2>Order Items</h2>
 
-                    {order.orderItems.map(({ name, image, _id, quantity, price }) => (
+                    {data?.data.orderItem.map(({ product, name, quantity, price }, idx) => (
                         <ProductCard
-                            key={_id}
+                            key={product}
                             name={name}
-                            image={image}
-                            _id={_id}
+                            image={orderItems[idx].image}
+                            product={product}
                             quantity={quantity}
                             price={price}
                         />
@@ -94,54 +89,65 @@ const TransactionManagement = () => {
                     <h1>Order Info</h1>
 
                     <h5>User Info</h5>
-                    <p>Name: {name}</p>
-                    <p>Address: {`${house}, ${street},
-                        ${locality}, ${city},
-                        ${pinCode}, ${state},
-                        ${country}`}
+                    <p>Name: {data?.data?.buyer ?? "user name"}</p>
+                    <p>Address: {`
+                     ${data?.data?.shippingInfo?.address},
+                         ${data?.data.shippingInfo.city},
+                        ${data?.data.shippingInfo.country}, ${data?.data.shippingInfo.state},
+                        ${data?.data.shippingInfo.country}`}
                     </p>
 
                     <h5>Amount Info</h5>
-                    <p>Subtotal: {subTotal}</p>
-                    <p>Shipping Charges: {shippingCharges}</p>
-                    <p>Tax: {tax}</p>
-                    <p>Discount: {discount}</p>
-                    <p>Total: {totalAmount}</p>
+                    <p>Subtotal: {data?.data.subtotal}</p>
+                    <p>Shipping Charges: {data?.data.shippingCharge}</p>
+                    <p>Tax: {data?.data.taxPrice}</p>
+                    <p>Discount: {data?.data.discount}</p>
+                    <p>Total: {data?.data.totalPrice}</p>
 
                     <h5>Status Info</h5>
                     <p>Status:
                         <span
                             style={{ marginLeft: "5px" }}
-                            className={status === "Delivered"
-                                ? "purple"
-                                : status === "Shipped"
-                                    ? "green"
-                                    : "red"
-                            }>
-                            {" "} {status}
+                            className={`
+                                ${data?.data?.orderStatus === "Processing"
+                                    ? "yellow"
+                                    : data?.data?.orderStatus === "Shipped"
+                                        ? "purple"
+                                        : data?.data?.orderStatus === "Delivered"
+                                            ? "green"
+                                            : "red"
+                                }`
+                            }
+                        >
+                            {" "} {data?.data?.orderStatus}
                         </span>
                     </p>
                     <button onClick={updateHandler} className="submit-btn">Process Status</button>
                 </article>
             </main>
-        </DashboardLayout>
+        </DashboardLayout >
     )
 }
 
 export default TransactionManagement
 
-type ProductCardProps = {
-    name: string,
-    image: string,
-    price: number,
-    quantity: number,
-    _id: string,
-}
+// type ProductCardProps = {
+//     name: string,
+//     image: string,
+//     price: number,
+//     quantity: number,
+//     _id?: string,
+// }
 
-const ProductCard = ({ name, image, price, quantity, _id }: ProductCardProps) => (
+const ProductCard = ({ name,
+    image,
+    price,
+    quantity,
+    product
+}: OrderItem & { image: string }) => (
     <div className="transaction-product--card">
         <img src={image} alt={name} />
-        <Link to={`/products/${_id}`}>{name}</Link>
+        <Link to={`/admin/products/${product}`}>{name}</Link>
         <span>${price} X {quantity} = ${price * quantity}</span>
     </div>
 )

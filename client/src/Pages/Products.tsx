@@ -104,7 +104,6 @@ const arr: Product[] = [
 const Products = () => {
 
   const { error, isLoading, data } = useAdminProductsQuery()
-  console.log(data)
   const Table = TableHOC<Product>(columns, data?.data?? [], "dashboard-product--box",
     "Products", 3
   );

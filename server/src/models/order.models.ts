@@ -61,6 +61,10 @@ const OrderSchema = new mongoose.Schema<IOrder>(
                 type: String,
                 required: [true, "City is required"],
             },
+            // pinCode: {
+            //     type: String,
+            //     required: [true, "Pin Code is required"]
+            // }
         },
         paymentMethod: {
             type: String,

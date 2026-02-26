@@ -1,4 +1,4 @@
-import { useProductCategoriesQuery } from "../../store/api/productApi"
+import { useProductCategoriesQuery } from "../../store/api/productAPI"
 
 type SelectCategoryProps = {
     value: string;
