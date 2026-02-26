@@ -15,7 +15,6 @@ export const validateData = <T>(
     if (!result.success) {
         const message =
             result.error.issues[0]?.message ?? "Validation failed";
-
         return {
             success: result.success,
             data: null,

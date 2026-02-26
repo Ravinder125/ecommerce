@@ -1,37 +1,39 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import TableHOC from './TableHOC'
+import type { ModifiedLatestTransactions } from '../types/dashboard.type';
 
-
-interface DataType {
-    id: string,
-    quantity: number,
-    discount: number,
-    amount: number,
-    status: string,
-}
-
-const columns: ColumnDef<DataType>[] = [
+const columns: ColumnDef<ModifiedLatestTransactions>[] = [
     {
         header: "Id",
-        accessorKey: "id",
+        accessorKey: "_id",
     },
     {
         header: "Discount",
         accessorKey: "discount",
     },
     {
-        header: "Amount",
-        accessorKey: "amount",
+        header: "Total",
+        accessorKey: "total",
     },
     {
         header: "Status",
         accessorKey: "status",
+        cell: ({ row }) => {
+            const status = row.original.status as string;
+            return <span className={`${status === "pending"
+                ? "purple" : status === "cancelled"
+                    ? "red" : status === "refunded"
+                        ? "yellow" : "green"
+                }`}>
+                {status}
+            </span>
+        }
     },
 ]
 
 
-const DashboardTable = ({ data = [] }: { data: DataType[] }) => {
-    return TableHOC<DataType>(columns, data, "transaction-box", "Top Transaction")()
+const DashboardTable = ({ data = [] }: { data: ModifiedLatestTransactions[] }) => {
+    return TableHOC<ModifiedLatestTransactions>(columns, data, "transaction-box", "Top Transaction")()
 
 }
 

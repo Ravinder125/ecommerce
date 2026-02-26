@@ -12,7 +12,8 @@ import {
     updateProductImages
 } from '../controllers/product.controller.js';
 import { upload } from '../middlewares/multer.middleware.js';
-import { createProductSchema } from '../middlewares/validators/productValidator.middleware.js';
+import { createProductSchema } from '../validators/productValidator.middleware.js';
+import { validateRequest } from '../middlewares/validateRequest.middleware.js';
 
 const router = Router();
 router.use(authMiddleware)
@@ -23,6 +24,7 @@ router
         adminOnly,
         upload.array("image", 5),
         createProductSchema,
+        validateRequest,
         createNewProduct
     )
     .get(getAllProduct)

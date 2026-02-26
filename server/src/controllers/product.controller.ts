@@ -179,9 +179,11 @@ export const getAdminProducts = asyncHandler(async (req: Request, res: Response)
     //     )
     // }
 
-    products = await Product.find({ owner: userId });
-    if (!products) throw new ApiError(400, "No product not found");
+    products = await Product
+        .find({ owner: userId })
+        .sort({ createdAt: -1 });
 
+    if (!products) throw new ApiError(400, "No product not found");
     // await cache.set(cacheKey, products)
     return res.status(200).json(
         new ApiResponse(200, products, "All admin products fetched successfully")

@@ -11,10 +11,11 @@ type BaseInputProps = {
     isPassword?: boolean;
     inputRef?: React.RefObject<HTMLInputElement | null>;
     action?: React.MouseEventHandler;
+    min?: number;
+    max?: number;
 };
 
 export function InputBox({
-
     label,
     type = "text",
     isPassword = false,
@@ -25,12 +26,20 @@ export function InputBox({
     required = false,
     inputRef,
     action,
+    min = 0,
+    max = 100000,
+
 }: BaseInputProps) {
     return (
         <div className="input-box">
             {type !== "file" ? (
                 <>
-                    {label && <label htmlFor={name}>{label}</label>}
+                    {label &&
+                        <label
+                            htmlFor={name}
+                        >
+                            {label}</label>
+                    }
                     <input
                         id={name}
                         name={name}
@@ -39,7 +48,9 @@ export function InputBox({
                         placeholder={placeholder}
                         onChange={onChange}
                         required={required}
+                        {...(type === "number" && { min, max })}
                     />
+
                 </>
             ) : (
                 <>
@@ -59,12 +70,12 @@ export function InputBox({
                             </div>
                         </div>
                     ) : (
-                        <div
+                        <label
+                            htmlFor={name}
                             className="image-input"
-                            onClick={() => inputRef?.current?.click()}
                         >
                             Choose an avatar
-                        </div>
+                        </label>
                     )}
                 </>
             )}

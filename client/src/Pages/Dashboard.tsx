@@ -8,17 +8,27 @@ import {
 import { FaRegBell, FaRegUser } from "react-icons/fa6"
 import { HiTrendingDown, HiTrendingUp } from "react-icons/hi"
 // import AdminSideBar from "../components/layouts/AdminSideBar"
-import data from '../assets/data.json'
+// import data from '../assets/data.json'
 import { BiMaleFemale } from "react-icons/bi"
 import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md"
 import { useTheme } from '../context/themeContext'
 import { useState } from "react"
+import { useDashboardQuery } from "../store/api/statsAPI"
+import { calculatePercentage } from "../utils/calculatePercentage"
 
 
 const Dashboard = () => {
   // console.log(Math.abs(40 / 100)* 360)
   const { theme, toggleTheme } = useTheme()
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
+
+  const { data, isLoading, error } = useDashboardQuery(undefined, {
+    pollingInterval: 300000
+  })
+
+  if (isLoading) return <div>Loading..</div>
+
+  if (error) return <div>Something went wrong</div>
 
   return (
     <DashboardLayout>
@@ -61,28 +71,27 @@ const Dashboard = () => {
         <section className="widget-container">
           <WidgetItem
             heading="Revenue"
-            color="rgb(0,115, 355)"
-            percent={40}
-            amount={true}
-            value={15000}
+            color="rgb(0,115, 255)"
+            percent={data?.data?.growth?.revenue ?? 0}
+            value={data?.data?.count.revenue ?? 0}
           />
           <WidgetItem
             heading="Users"
             color="rgb(0,198, 202)"
-            percent={-14}
-            value={1500}
+            percent={data?.data?.growth?.users ?? 0}
+            value={data?.data?.count?.users ?? 0}
           />
           <WidgetItem
             heading="Transactions"
             color="rgb(255, 196,0)"
-            percent={-20}
-            value={3000}
+            percent={data?.data?.growth?.orders ?? 0}
+            value={data?.data?.count?.orders ?? 0}
           />
           <WidgetItem
             heading="Products"
             color="rgb(76,0, 255)"
-            percent={40}
-            value={3000}
+            percent={data?.data?.growth?.products ?? 0}
+            value={data?.data?.count?.products ?? 0}
           />
         </section>
 
@@ -90,13 +99,12 @@ const Dashboard = () => {
           <div className="revenue-chart">
             <h2>Revenue & Transaction</h2>
             <BarChart
-              data_1={[200, 300, 300, 300, 500, 0, 200]}
-              data_2={[300, 300, 600, 500, 300, 333, 200]}
+              data_1={data?.data?.charts.revenue ?? []}
+              data_2={data?.data?.charts.order ?? []}
               title_1="Revenue"
               title_2="Transaction"
               bgColor_1="rgb(0,155, 255)"
               bgColor_2="rgba(53, 163,235, 0.8)"
-              horizontal={false}
             />
           </div>
 
@@ -104,14 +112,17 @@ const Dashboard = () => {
             <h2>Inventory</h2>
             <div>
               {
-                data.categories.map((item, idx) => (
-                  <CategoryItem
+                data?.data.categories.map((item, idx) => {
+                  const [category, count] = Object.entries(item)[0]
+
+                  return <CategoryItem
                     key={idx}
-                    heading={item.heading}
-                    value={item.value}
-                    color={`hsl(${item.value * 4}, ${item.value}%, 50%)`}
+                    heading={category}
+                    value={count}
+                    color={`hsl(${(count * 4)}, ${count}%, 50%)`}
                   />
-                ))
+                }
+                )
               }
             </div>
           </div>
@@ -121,14 +132,17 @@ const Dashboard = () => {
             <h2>Gender Ratio</h2>
             <DoughnutChart
               labels={["Female", "Male"]}
-              data={[12, 19]}
-              backgroundColor={["hsl(340, 82%, 56%)", "rgba(53, 162, 235, 0.8"]}
+              data={[
+                data?.data?.ratio?.female ?? 0,
+                data?.data?.ratio?.male ?? 0
+              ]}
+              backgroundColor={["hsl(340, 82%, 56%)", "rgba(53, 162, 235, 0.8)"]}
               cutout={90}
             />
             <p><BiMaleFemale /></p>
           </div>
           <div >
-            <Table data={data.transactions} />
+            <Table data={data?.data?.modifiedLatestTransactions ?? []} />
           </div>
         </section>
       </main>

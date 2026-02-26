@@ -7,9 +7,9 @@ import {
 } from "../controllers/user.controller.js";
 import { adminOnly } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
-import { createUser } from "../middlewares/validators/userValidator.middleware.js";
+import { createUser } from "../validators/userValidator.middleware.js";
+import { validateRequest } from "../middlewares/validateRequest.middleware.js";
 // import { auth } from "../middlewares/clerkAuth.middlewares.js";
-import { requireAuth } from "../middlewares/requireAuth.js";
 
 const router = Router();
 
@@ -17,6 +17,7 @@ const router = Router();
 router.route("/sync-profile").post(
     // upload.single("avatar"),
     createUser,
+    validateRequest,
     registerUser,
 )
 

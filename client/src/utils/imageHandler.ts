@@ -4,6 +4,7 @@ export function imageHandler(
     onError?: () => void
 ) {
     const reader = new FileReader();
+    console.log()
 
     reader.readAsDataURL(file);
 

@@ -14,7 +14,6 @@ import { completeFormDataSchema, type UserPayload } from "../../validations/comp
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query"
 import type { ApiResponse } from "../../types/api.type"
 import { useSyncProfileMutation } from "../../store/api/syncProfileAPI"
-import { useDispatch } from "react-redux"
 import { authService } from "../../services/auth.service"
 import { useAppDispatch } from "../../store/hooks"
 import { getUser } from "../../store/reducers/authSlice"
@@ -68,7 +67,6 @@ const CompleteProfile = () => {
             }
 
             const res = await syncProfileAPI(data!)
-            console.log(res.error)
 
             if (res.data) {
                 toast.success(res.data.message!)

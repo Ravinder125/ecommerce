@@ -109,6 +109,7 @@ export const adminOrders = asyncHandler(async (req: Request, res: Response) => {
                 deliveredAt: { $first: "$deliveredAt" },
                 createdAt: { $first: "$createdAt" },
                 updatedAt: { $first: "$updatedAt" },
+                quantity: { $sum: "$orderItem.quantity" },
 
                 // Collect only the matching order items
                 orderItem: { $push: "$orderItem" }

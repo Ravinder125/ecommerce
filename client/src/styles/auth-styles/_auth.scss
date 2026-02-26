@@ -22,19 +22,7 @@
             display: flex;
             flex-direction: column;
 
-            >.image-input {
-                background-color: var(--secondary);
-                color: var(--secondary-foreground);
-                font-size: 0.9rem;
-                padding: 0.5rem 1rem;
-                display: inline-flex;
-                align-self: center;
-                border-radius: 7px;
-
-                &:hover {
-                    opacity: 0.9;
-                }
-            }
+           
 
             >label {
                 color: var(--foreground);
@@ -67,35 +55,6 @@
                 }
             }
 
-            .image-preview {
-                display: flex;
-                justify-content: center;
-
-                div {
-                    width: fit-content;
-                    position: relative;
-
-                    img {
-                        margin-top: 0.5rem;
-                        border-radius: 100%;
-                        @include square(5rem);
-                        object-fit: contain;
-                        background-color: white;
-                    }
-
-                    svg {
-                        position: absolute;
-                        right: 8px;
-                        top: 10px;
-                        font-size: 1.5rem;
-                        color: rgba(255, 17, 17, 0.911);
-
-                        &:hover {
-                            color: rgb(179, 7, 7);
-                        }
-                    }
-                }
-            }
         }
 
         .redirect-other--page {

@@ -23,7 +23,11 @@ export const productDataSchema = z.object({
     brand: z
         .string()
         .trim()
-        .nonempty({ message: "Category is requird" })
+        .nonempty({ message: "Category is requird" }),
+    description: z
+        .string()
+        .trim()
+        .nonempty({ message: "Description is required" })
 })
 
 export const imageSchema = z.object({

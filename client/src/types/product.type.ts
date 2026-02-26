@@ -15,4 +15,5 @@ export type NewProductFormData = {
     image: string | null | ArrayBuffer,
     category: string,
     brand: string,
+    description: string,
 }

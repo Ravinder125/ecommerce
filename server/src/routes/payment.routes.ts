@@ -6,7 +6,7 @@ import {
     newCoupon,
     updateCoupon
 } from '../controllers/payment.controller.js';
-import { couponValidator } from '../middlewares/validators/paymentValidator.middleware.js';
+import { couponValidator } from '../validators/paymentValidator.middleware.js';
 import { adminOnly, authMiddleware } from '../middlewares/auth.middleware.js';
 
 const router = Router();

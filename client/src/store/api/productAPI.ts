@@ -6,6 +6,7 @@ import { baseQueryWithClerk } from "./baseQueryWithAuth"
 import type { NewProductFormData, Product } from "../../types/product.type"
 
 
+
 export const productAPI = createApi({
   reducerPath: "productAPI",
   baseQuery: baseQueryWithClerk(getToken),
@@ -64,10 +65,17 @@ export const productAPI = createApi({
         method: "GET"
       })
     }),
+
     productCategories: builder.query<ApiResponse<string[]>, void>({
       query: () => ({
         url: apiPaths.products.categories,
         method: "GET"
+      })
+    }),
+
+    getProduct: builder.query<ApiResponse<Product>, string>({
+      query: (productId) => ({
+        url: `${apiPaths.products.byId(productId)}`
       })
     })
   })
@@ -80,4 +88,5 @@ export const {
   useLatestProductsQuery,
   useAdminProductsQuery,
   useProductCategoriesQuery,
+  useGetProductQuery,
 } = productAPI

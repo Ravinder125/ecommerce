@@ -32,6 +32,7 @@ export const syncProfileAPI = createApi({
     reducerPath: "userApi",
     baseQuery: baseQueryWithClerk(getToken),
     tagTypes: ["users"],
+    
     endpoints: (builder) => ({
         syncProfile: builder.mutation<ApiResponse<UserPayload>, UserPayload>({
             query: (user) => ({

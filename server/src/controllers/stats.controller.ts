@@ -9,6 +9,8 @@ import {
     getInventory,
     increment
 } from "../utils/features.js";
+import { isValidObjectId } from "mongoose";
+import { ApiError } from "../utils/ApiError.js";
 
 type RevenueAgg = {
     _id: string
@@ -228,6 +230,7 @@ export const Dashboard = asyncHandler(async (req: Request, res: Response) => {
             products: thisMonthProductCount,
             orders: thisMonthOrderCount,
             users: thisMonthUserCount,
+            revenue: thisMonthRevenue,
         },
         charts: {
             order: sixMonthTransaction,

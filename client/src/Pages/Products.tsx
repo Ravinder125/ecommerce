@@ -4,7 +4,7 @@ import { TableHOC } from "../components"
 import type { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
-import { useAdminProductsQuery } from "../store/api/productApi";
+import { useAdminProductsQuery } from "../store/api/productAPI";
 import type { Product } from "../types/product.type";
 
 // interface Product {
@@ -102,10 +102,10 @@ const arr: Product[] = [
 ]
 
 const Products = () => {
-  const [productData] = useState<Product[]>(arr);
-  const { isError, error, isFetching, isLoading, data } = useAdminProductsQuery()
+
+  const { error, isLoading, data } = useAdminProductsQuery()
   console.log(data)
-  const Table = TableHOC<Product>(columns, data?.data!, "dashboard-product--box",
+  const Table = TableHOC<Product>(columns, data?.data?? [], "dashboard-product--box",
     "Products", 3
   );
 
@@ -113,7 +113,7 @@ const Products = () => {
     return <div>Loading...</div>
   }
 
-  if (isError) {
+  if (error) {
     console.log(error)
     return <div>Something went wrong</div>
   }

@@ -1,160 +1,154 @@
-import { useRef, useState, type ChangeEvent, type FormEvent } from "react"
+import { useRef, useState, type FormEvent } from "react"
 import { DashboardLayout } from "../../components"
-import { MdOutlineFileUpload } from "react-icons/md"
 import { validateData } from "../../utils/validateFields"
-import { imageSchema, productDataSchema } from "../../validations/productDataSchema"
+import { productDataSchema } from "../../validations/productDataSchema"
+import { useParams } from "react-router-dom"
+import { useGetProductQuery } from "../../store/api/productApi"
+import type { NewProductFormData } from "../../types/product.type"
+import { InitialProductFormData } from "../../utils/InitialFormData"
+import { handleChangeHOC } from "../../utils/handleInputChange"
+import { createTypedInput } from "../../components/forms/InputBox"
+import { imageHandler } from "../../utils/imageHandler"
+import TextArea from "../../components/forms/TextArea"
+import SelectCategory from "./SelectCategory"
 
 
-
+const InputBox = createTypedInput<NewProductFormData>()
 
 const ProductManagement = () => {
     const [error, setError] = useState<string>("")
     const ref = useRef<HTMLInputElement>(null)
-    type FormData = {
-        name: string,
-        price: number,
-        stock: number,
-        image: string | null | ArrayBuffer,
-    }
-    const [productData, setProductData] = useState<FormData>({
-        name: "",
-        price: 0,
-        stock: 0,
-        image: ""
-    })
 
-    const [formData, setFormData] = useState<FormData>({
-        name: "",
-        price: 0,
-        stock: 0,
-        image: ""
-    })
+    const params = useParams();
+    const productId = params.id;
+
+    // const [productData, setProductData] = useState<NewProductFormData>(InitialProductFormData)
+
+    const [formData, setFormData] = useState<NewProductFormData>(InitialProductFormData)
+
+    const { isError, isFetching, isLoading, data } = useGetProductQuery(productId!)
 
 
-    const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        const { value, name, type } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === "number"
-                ? Number(value)
-                : value
-        }))
-    }
-
-    const changeImageHandler = () => {
-        setError("")
-        const file: File | undefined = ref.current?.files?.[0]
-        const result = validateData(imageSchema, { image: file })
-        if (!result.success) {
-            setError(result.message!)
-            return;
-        }
-        const reader: FileReader = new FileReader();
-        if (file) {
-            reader.readAsDataURL(file);
-            reader.onloadend = () => {
-                if (typeof reader.result === "string") {
-                    setFormData(prev => ({ ...prev, image: reader.result }))
-                }
-            }
-        }
-    }
+    const { onInput, handleInputChange } = handleChangeHOC<NewProductFormData>(setFormData)
 
     const submitHandler = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const payload: FormData = {
-            name: formData.name,
-            price: formData.price,
-            stock: formData.stock,
-            image: formData.image
-        }
-        const result = validateData(productDataSchema, payload)
+
+        const result = validateData(productDataSchema, formData)
         if (!result.success) {
             setError(result.message!)
             return;
         }
-        setProductData(payload)
+    }
+
+    if (isError) {
+        return <div>Something went wrong</div>
+    }
+
+    if (isLoading) {
+        return <div>Loading...</div>
+    }
+
+    if (isFetching) {
+        return <div>Loading...</div>
     }
 
     return (
         <DashboardLayout>
             <main className="management">
                 <section>
-                    <strong>Id - jajdsjlkasdkfl</strong>
+                    <strong>Id {data?.data._id}</strong>
                     {formData.image && <img src={
-                        typeof productData.image === "string" ? productData.image : " "}
+                        typeof data?.data.images?.[0] === "string" ? data.data.images?.[0] : " "}
                         alt="New Image" />
                     }
 
-                    <p>{productData.name}</p>
+                    <p>{data?.data.name}</p>
                     {
-                        productData.stock > 0
-                            ? <span className="green">{productData.stock}{" "}Available</span>
+                        data?.data.stock! > 0
+                            ? <span className="green">{data?.data.stock}{" "}Available</span>
                             : <span className="red">Not Available</span>
                     }
-                    <h2>{`$${productData.price}`}</h2>
+                    <h2>{`$${data?.data.price}`}</h2>
                 </section>
                 <article>
                     <form onSubmit={submitHandler}>
                         <h2>Manage Products</h2>
-                        <div>
-                            <label htmlFor="Name">Name</label>
-                            <input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={(e) => inputChangeHandler(e)}
-                                placeholder="Enter product name"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="Price">Price</label>
-                            <input
-                                type="number"
-                                name="price"
-                                min={0}
-                                value={formData.price}
-                                onChange={(e) => inputChangeHandler(e)}
-                                placeholder="Enter product price"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="Stock">Stock</label>
-                            <input
-                                type="number"
-                                name="stock"
-                                min={0}
-                                value={formData.stock}
-                                onChange={(e) => inputChangeHandler(e)}
-                                placeholder="Enter product Stock"
-                                required
-                            />
-                        </div>
-                        <div id="file-upload"
-                            onClick={() => ref.current?.click()}
-                        >
-                            <MdOutlineFileUpload />
-                            <label htmlFor="Name" style={{ cursor: "pointer" }}>
-                                Choose Image
-                            </label>
-                            <input
-                                ref={ref}
-                                onChange={changeImageHandler}
+
+                        <InputBox
+                            label="Name"
+                            name="name"
+                            value={formData.name}
+                            placeholder="Enter product name"
+                            onChange={onInput("name")}
+                            required
+                        />
+
+                        <InputBox
+                            label="Price"
+                            name="price"
+                            type="number"
+                            min={0}
+                            value={String(formData.price)}
+                            placeholder="Enter product price"
+                            onChange={onInput("price")}
+                            required
+                        />
+
+                        <InputBox
+                            label="Stock"
+                            name="stock"
+                            type="number"
+                            min={0}
+                            value={String(formData.stock)}
+                            placeholder="Enter product stock"
+                            onChange={onInput("stock")}
+                            required
+                        />
+
+                        {/* CATEGORY */}
+                        <SelectCategory
+                            value={formData.category}
+                            onChange={(value) => handleInputChange("category", value)}
+                        />
+                        <div style={{
+                            // margin: "1rem auto",
+                            height: "100%",
+                            display: "flex",
+                            alignItems: "center",
+                            // justifyContent: "center"
+                        }}>
+
+                            <InputBox
+                                name="image"
                                 type="file"
-                                name="name"
-                                required
+                                inputRef={ref}
+                                value={typeof formData.image === "string"
+                                    ? formData.image : undefined
+                                }
+                                onChange={(e) =>
+                                    imageHandler(
+                                        e.target.files?.[0]!,
+                                        (base: string) => handleInputChange("image", base))}
+                                label="Image"
+                                action={() => ref.current?.click()}
                             />
                         </div>
-                        <div>
-                            {formData.image && <img src={
-                                typeof formData.image === "string" ? formData.image : " "}
-                                alt="New Image" />
-                            }
-                        </div>
+
+                        <TextArea
+                            style={{ gridColumnStart: "1", gridColumnEnd: "3" }}
+                            onChange={(e) => setFormData(prev =>
+                                ({ ...prev, description: e.target.value }))}
+                            placeholder="Description..."
+                            name="description"
+                            id="description"
+                        />
+
                         {error && <div className="error-msg">{error}</div>}
-                        <button type="submit" className="submit-btn">Update</button>
+
+                        <button type="submit" className="submit-btn">
+                            Update
+                        </button>
                     </form>
                 </article>
             </main>

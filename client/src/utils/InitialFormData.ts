@@ -1,4 +1,5 @@
-import type { AuthFormData, CompleteFormData } from "../types/auth.type";
+import type { AuthFormData } from "../types/auth.type";
+import type { NewProductFormData } from "../types/product.type";
 
 // Auth Starts
 
@@ -8,6 +9,16 @@ export const InitialCompleteFormData: CompleteFormData = {
     dob: "",
     avatar: "",
     gender: "",
+}
+
+export const InitialProductFormData: NewProductFormData = {
+    name: "",
+    price: 0,
+    description: "",
+    stock: 0,
+    image: "",
+    category: "",
+    brand: ""
 }
 
 

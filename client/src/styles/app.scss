@@ -60,7 +60,8 @@ label {
 }
 
 input,
-select {
+select,
+textarea {
     @include mixin.inputStyle(100%,
         1rem,
         var(--),
@@ -74,11 +75,62 @@ select {
     }
 }
 
+textarea {
+    resize: none;
+    height: 100px;
+}
+
+.image-preview {
+    display: flex;
+    justify-content: center;
+
+    div {
+        width: fit-content;
+        position: relative;
+
+        img {
+            margin-top: 0.5rem;
+            border-radius: 100%;
+            @include square(5rem);
+            object-fit: contain;
+            background-color: white;
+        }
+
+        svg {
+            position: absolute;
+            right: 8px;
+            top: 10px;
+            font-size: 1.5rem;
+            color: rgba(255, 17, 17, 0.911);
+
+            &:hover {
+                color: rgb(179, 7, 7);
+            }
+        }
+    }
+}
+
+.image-input {
+    background-color: var(--secondary);
+    color: var(--secondary-foreground);
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    width: 100%;
+    cursor: pointer;
+
+    &:hover {
+        opacity: 0.9;
+    }
+}
+
 
 // select {
 //     @include inputStyle(100%, 1rem, white, 1px solid rgba(154, 154, 154, 0.38));
 //     border-radius: 4px;
-    // margin: 0.5rem;
+// margin: 0.5rem;
 // }
 
 .card {
@@ -170,6 +222,11 @@ p {
 
 td {
     color: rgb(34, 38, 43);
+    max-width: 200px;
+    overflow: hidden;
+    padding: 1rem 0.5rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .error-msg {
@@ -518,7 +575,7 @@ button {
 }
 
 .management {
-    @include mixin.flex(row, center, unset);
+    @include mixin.flex(row, unset, unset);
     padding: 4rem;
 
     >section {
@@ -570,7 +627,7 @@ button {
         height: 85vh;
         padding: 2rem;
         width: 100%;
-        max-width: 400px;
+        max-width: 500px;
         // background-color: whitesmoke;
         background-color: var(--card);
         border-radius: 5px;
@@ -590,6 +647,13 @@ button {
 
             >div {
                 margin: 2.3rem 0;
+            }
+
+            >.management-form {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                align-items: center;
+                gap: 1rem
             }
 
             >div:has(img) {

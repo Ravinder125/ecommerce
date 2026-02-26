@@ -21,7 +21,7 @@ export const adminOnly = asyncHandler(
             throw new ApiError(400, "User is missing")
         }
 
-        if (user.role !== "admin") throw new ApiError(401, "Admin only")
+        if (user.role !== "admin") throw new ApiError(403, "Unauthorized Error")
 
         next()
     })

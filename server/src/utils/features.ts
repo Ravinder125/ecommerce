@@ -21,7 +21,7 @@ export const increment = (current: number, prev: number): number => {
     return Math.round(((current - prev) / prev) * 100);
 };
 
-export const getInventory = async (categories: [string]): Promise<Record<string, number>[]> => {
+export const getInventory = async (categories: string[]): Promise<Record<string, number>[]> => {
     const categoriesCount = await Promise.all(categories.map(c =>
         Product.countDocuments({ category: c })
     ))
