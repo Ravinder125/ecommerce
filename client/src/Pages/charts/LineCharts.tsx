@@ -1,4 +1,6 @@
+import toast from "react-hot-toast";
 import { LineChart, DashboardLayout } from "../../components"
+import { useDashboardLineChartQuery } from "../../store/api/statsAPI";
 
 const months: string[] = [
     "January",
@@ -15,7 +17,14 @@ const months: string[] = [
     "December",
 ];
 
-const BarCharts = () => {
+const LineCharts = () => {
+    const { error, data, isLoading } = useDashboardLineChartQuery()
+
+    if (isLoading) return <div>Loading...</div>
+    if (error) {
+        toast.error(data?.message ?? "Something went wrong")
+    }
+
     return (
         <DashboardLayout >
             <main className="chart-container">
@@ -23,7 +32,7 @@ const BarCharts = () => {
                 <section>
                     <h2>Active Users</h2>
                     <LineChart
-                        data={[
+                        data={data?.data.users ?? [
                             200, 444, 444, 556, 778, 455, 990, 1444, 256, 447, 1000, 1200,
                         ]}
                         label="Users"
@@ -33,8 +42,9 @@ const BarCharts = () => {
                     />
                 </section>
                 <section>
+                    <h2>Total Products (SKU)</h2>
                     <LineChart
-                        data={[
+                        data={data?.data?.product ?? [
                             40, 60, 244, 100, 143, 120, 41, 41, 47, 50, 56, 32,
                         ]}
                         label="Products"
@@ -43,11 +53,11 @@ const BarCharts = () => {
                         labels={months}
 
                     />
-                    <h2>Total Products (SKU)</h2>
                 </section>
                 <section>
+                    <h2>Discount Allotted</h2>
                     <LineChart
-                        data={[
+                        data={data?.data?.discount ?? [
                             9000, 12000, 12000, 9000, 1000, 5000, 4000, 1200, 1100, 1500, 1100, 1200,
                         ]}
                         label="Discount"
@@ -56,7 +66,6 @@ const BarCharts = () => {
                         labels={months}
 
                     />
-                    <h2>Discount Allotted</h2>
                 </section>
             </main>
 
@@ -64,4 +73,4 @@ const BarCharts = () => {
     )
 }
 
-export default BarCharts
+export default LineCharts

@@ -3,7 +3,7 @@ import { Layout, ProductCard } from "../components"
 import preData from '../assets/products.json'
 import { useAppDispatch } from "../store/hooks";
 import { addToCart, type CartItem } from "../store/reducers/cartSlice";
-import { useAllProductsQuery } from "../store/api/productApi";
+import { useAllProductsQuery } from "../store/api/productAPI";
 import { useDebounce } from "../hooks/useDebounce";
 import type { Limit } from "../types/pagination.type";
 import { Pagination } from "../components/Pagination";

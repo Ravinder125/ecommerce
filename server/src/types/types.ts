@@ -24,7 +24,7 @@ export type RequestProductQuery = {
     category?: string;
     sort?: "asc" | "desc";
     page?: string;
-    limit?:number;
+    limit?: string;
 }
 
 

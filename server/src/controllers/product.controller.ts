@@ -12,6 +12,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { deleteOnCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import { fileCleanup } from "../utils/fileCleanup.js";
 import { cache, invalidateCache } from "../utils/cacheService.js";
+import { pagination } from "../utils/pagination.js";
 // import { faker } from "@faker-js/faker";
 
 
@@ -168,36 +169,71 @@ export const getSingleProduct = asyncHandler(async (req: Request, res: Response)
     )
 })
 
-export const getAdminProducts = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?._id
+type PaginateQuery = {
+    limit?: string,
+    page?: string,
+    search?: string,
+    sort?: "asc" | "desc"
+}
 
-    // const cacheKey = `admin-products${userId}`
-    let products //= //await cache.get(cacheKey)
-    // if (products) {
-    //     return res.status(200).json(
-    //         new ApiResponse(200, products, "All admin products fetched successfully")
-    //     )
-    // }
+export const getAdminProducts = asyncHandler(
+    async (req: Request<{}, {}, {}, RequestProductQuery>, res: Response) => {
+        const userId = req.user?._id
+        const { limit, page, search, sort, category, maxPrice } = req.query;
 
-    products = await Product
-        .find({ owner: userId })
-        .sort({ createdAt: -1 });
+        const { limit: pageSize, skip } = pagination({
+            limit: limit,
+            page: page
+        })
+        const baseQuery: BaseQuery = {}
 
-    if (!products) throw new ApiError(400, "No product not found");
-    // await cache.set(cacheKey, products)
-    return res.status(200).json(
-        new ApiResponse(200, products, "All admin products fetched successfully")
-    )
-})
+        if (maxPrice) baseQuery.price = { $lte: maxPrice }
+        if (search) baseQuery.name = { $regex: search, $options: "i" }
+        if (category) baseQuery.category = category;
+
+        // const cacheKey = `admin-products${userId}`
+        let products //= //await cache.get(cacheKey)
+        // if (products) {
+        //     return res.status(200).json(
+        //         new ApiResponse(200, products, "All admin products fetched successfully")
+        //     )
+        // }
+
+        const productPromise = await Product
+            .find({ ...baseQuery, owner: userId })
+            .limit(pageSize)
+            .skip(skip)
+            .sort(sort && {
+                price: sort === "asc" ? 1 : -1,
+                createdAt: -1
+            })
+        const [productDocs, productCount] = await Promise.all([
+            productPromise,
+            Product.countDocuments(baseQuery)
+        ])
+
+        if (!productDocs) throw new ApiError(400, "No product not found");
+
+        const totalPages = Math.round(productCount / pageSize)
+        // await cache.set(cacheKey, products)
+        const resData = {
+            totalPages,
+            products: productDocs
+        }
+        return res.status(200).json(
+            new ApiResponse(200, resData, "All admin products fetched successfully")
+        )
+    })
 
 export const getAllProduct = asyncHandler(
     async (req: Request<{}, {}, {}, RequestProductQuery>, res: Response) => {
         const { maxPrice, category, search, sort = "asc" } = req.query;
 
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit || 10)
-        const skip = (page - 1) * limit
-        console.log(limit)
+        const { limit, skip } = pagination({
+            limit: req?.query?.limit,
+            page: req?.query?.page
+        })
+
         const baseQuery: BaseQuery = {};
         if (maxPrice) baseQuery.price = { $lte: maxPrice }
         if (search) baseQuery.name = { $regex: search, $options: "i" }
@@ -209,13 +245,13 @@ export const getAllProduct = asyncHandler(
             .skip(skip)
             .limit(limit)
 
-        const [products, filterOnlyProducts, categories] = await Promise.all([
+        const [products, productCount, categories] = await Promise.all([
             productPromise,
-            Product.find(baseQuery),
+            Product.countDocuments(baseQuery),
             Product.distinct("category")
         ])
 
-        const totalPages = Math.ceil(filterOnlyProducts.length / limit);
+        const totalPages = Math.ceil(productCount / limit);
 
         return res.status(200).json(
             new ApiResponse(

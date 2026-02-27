@@ -5,29 +5,47 @@ import {
     getPaginationRowModel,
     flexRender,
     type ColumnDef,
+    type OnChangeFn,
+    type PaginationState,
+    type Updater,
 } from "@tanstack/react-table";
 
 import { AiOutlineSortAscending, AiOutlineSortDescending } from "react-icons/ai";
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
+
+export type TablePagination = {
+    pageIndex: number;
+    pageSize: number;
+}
+
+// type TableHOC = {}
 
 function TableHOC<T extends object>(
     columns: ColumnDef<T, any>[],
     data: T[],
     containerClassName: string,
     heading: string,
-    showPageNum = 7
+    showPageNum = 7,
+    setPagination?: (updater: Updater<PaginationState>) => void,
+    pagination?: TablePagination,
+    totalPages?: number,
+    isManualPagination: boolean = false
 ) {
     const table = useReactTable<T>({
         data,
         columns,
-        initialState: {
-            pagination: {
-                pageSize: 8,
-            },
-        },
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        manualPagination: isManualPagination,
+        ...(isManualPagination && {
+            pageCount: totalPages,
+            onPaginationChange: setPagination,
+            state: {
+                pagination
+            }
+
+        }),
     });
 
 
@@ -59,9 +77,7 @@ function TableHOC<T extends object>(
                         {table.getRowModel().rows.map(row => (
                             <tr key={row.id}>
                                 {row.getVisibleCells().map(cell => (
-                                    <td
-                                        key={cell.id}
-                                    >
+                                    <td key={cell.id}>
                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                     </td>
                                 ))}

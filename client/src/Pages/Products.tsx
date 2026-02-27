@@ -103,9 +103,30 @@ const arr: Product[] = [
 
 const Products = () => {
 
-  const { error, isLoading, data } = useAdminProductsQuery()
-  const Table = TableHOC<Product>(columns, data?.data?? [], "dashboard-product--box",
-    "Products", 3
+  const [search, setSearch] = useState<string>("");
+  const [sort, setSort] = useState<string>("asc");
+  const [maxPrice, setMaxPrice] = useState<number>(10000);
+  const [category, setCategory] = useState<string>("");
+  // const [page, setPage] = useState<number>(1)
+
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10
+  })
+  const { error, isLoading, data } = useAdminProductsQuery({
+    page: pagination.pageIndex + 1,
+    search: search,
+    sort,
+    category,
+    // maxPrice: search,
+    // limit
+  })
+  const Table = TableHOC<Product>(columns, data?.data.products ?? [], "dashboard-product--box",
+    "Products", 1,
+    setPagination,
+    pagination,
+    Number(data?.data?.totalPages) ?? 1,
+    true
   );
 
   if (isLoading) {
@@ -120,6 +141,7 @@ const Products = () => {
   return (
     <DashboardLayout>
       <main>
+
         {Table()}
 
         <Link to="/admin/products/new" className="create-product--btn">

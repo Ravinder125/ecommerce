@@ -19,6 +19,9 @@ export type UserPayload = {
     avatar: string | null
 }
 
+export type Customer = Omit<UserPayload, "role"> & { _id: string }
+
+
 // async (headers) => {
 //     const token = await getToken()
 //     headers.set("Authorization", `Bearer ${token}`)
@@ -32,7 +35,7 @@ export const syncProfileAPI = createApi({
     reducerPath: "userApi",
     baseQuery: baseQueryWithClerk(getToken),
     tagTypes: ["users"],
-    
+
     endpoints: (builder) => ({
         syncProfile: builder.mutation<ApiResponse<UserPayload>, UserPayload>({
             query: (user) => ({
@@ -42,14 +45,14 @@ export const syncProfileAPI = createApi({
             })
         }),
 
-        deleteUser: builder.mutation<ApiResponse<null>, null>({
+        deleteUser: builder.mutation<ApiResponse<null>, void>({
             query: () => ({
                 url: apiPaths.users.profile,
                 method: "GET",
             })
         }),
 
-        allUsers: builder.mutation<ApiResponse<UserPayload[]>, null>({
+        allUsers: builder.query<ApiResponse<Customer[]>, void>({
             query: () => ({
                 url: apiPaths.users.allUsers,
                 method: "GET"
@@ -60,6 +63,6 @@ export const syncProfileAPI = createApi({
 
 export const {
     useSyncProfileMutation,
-    useAllUsersMutation,
+    useAllUsersQuery,
     useDeleteUserMutation,
 } = syncProfileAPI;

@@ -4,6 +4,9 @@ import { getToken } from "../../utils/tokenManager";
 import type { ApiResponse } from "../../types/api.type";
 import type { DashboardStats } from "../../types/dashboard.type";
 import { apiPaths } from "../../utils/apiPath";
+import type { BarChart, LineChart, PieChart } from "../../types/commone.type";
+
+
 
 
 export const statsAPI = createApi({
@@ -22,7 +25,7 @@ export const statsAPI = createApi({
             })
         }),
 
-        dashboardPieChart: builder.query<ApiResponse<DashboardStats>, void>({
+        dashboardPieChart: builder.query<ApiResponse<PieChart>, void>({
             query: () => ({
                 url: apiPaths.dashboard.pie,
                 method: "GET",
@@ -30,7 +33,7 @@ export const statsAPI = createApi({
             })
         }),
 
-        dashboardBarChart: builder.query<ApiResponse<DashboardStats>, void>({
+        dashboardBarChart: builder.query<ApiResponse<BarChart>, void>({
             query: () => ({
                 url: apiPaths.dashboard.bar,
                 method: "GET",
@@ -38,7 +41,7 @@ export const statsAPI = createApi({
             })
         }),
 
-        dashboardLineChart: builder.query<ApiResponse<DashboardStats>, void>({
+        dashboardLineChart: builder.query<ApiResponse<LineChart>, void>({
             query: () => ({
                 url: apiPaths.dashboard.line,
                 method: "GET",

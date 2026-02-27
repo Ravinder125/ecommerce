@@ -55,8 +55,8 @@ export const registerUser = asyncHandler(
     })
 
 export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
-    const users = await User.find({});
-
+    const users = await User.find({}).select("name email gender avatar");
+    console.log(users)
     return res.status(200).json(
         new ApiResponse(200, users, "Successfully fetched users")
     )

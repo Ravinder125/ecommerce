@@ -5,6 +5,7 @@ import { statsAPI } from "./api/statsAPI";
 import cartSlice from "./reducers/cartSlice";
 import userSlice from './reducers/authSlice';
 import { transactionAPI } from "./api/transactionAPI";
+// import { usersAPI } from "./api/usersAPI";
 
 export const store = configureStore({
   reducer: {
@@ -13,7 +14,7 @@ export const store = configureStore({
     [statsAPI.reducerPath]: statsAPI.reducer,
     [transactionAPI.reducerPath]: transactionAPI.reducer,
     user: userSlice,
-    cart: cartSlice
+    cart: cartSlice,
   },
 
   middleware(getDefaultMiddleware) {

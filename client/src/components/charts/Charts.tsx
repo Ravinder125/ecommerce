@@ -129,6 +129,7 @@ export const DoughnutChart = ({
     labels,
     offset,
 }: DoughnutChartProps) => {
+    console.log(labels)
     const doughnutData: ChartData<"doughnut", number[], string> = {
         labels,
         datasets: [{

@@ -5,7 +5,7 @@ import { getToken } from "../../utils/tokenManager"
 import { baseQueryWithClerk } from "./baseQueryWithAuth"
 import type { NewProductFormData, Product } from "../../types/product.type"
 
-
+type AdminGetResponse = Omit<GetProductResponse, "categories">
 
 export const productAPI = createApi({
   reducerPath: "productAPI",
@@ -59,9 +59,16 @@ export const productAPI = createApi({
     }),
 
     // GET ADMIN PRODUCTS
-    adminProducts: builder.query<ApiResponse<Product[]>, void>({
-      query: () => ({
-        url: apiPaths.products.admin,
+    adminProducts: builder.query<ApiResponse<AdminGetResponse>, GetProductsQuery>({
+      query: ({
+        category = "all",
+        maxPrice = 1000000,
+        page = 1,
+        search = "",
+        sort = "asc",
+        limit = 10,
+      }) => ({
+        url: `${apiPaths.products.admin}?search=${search}&category=${category}&page=${page}&maxPrice=${maxPrice}&sort=${sort}&limit=${limit}`,
         method: "GET"
       })
     }),

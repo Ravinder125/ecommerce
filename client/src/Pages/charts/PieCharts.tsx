@@ -1,8 +1,29 @@
 import { DashboardLayout } from "../../components"
 import { DoughnutChart, PieChart } from "../../components/";
-import data from '../../assets/data.json'
+import { useDashboardPieChartQuery } from "../../store/api/statsAPI";
+import toast from "react-hot-toast";
 
 const PieCharts = () => {
+    const { error, isLoading, data } = useDashboardPieChartQuery()
+
+    if (isLoading) return <div>Loading...</div>
+    if (error) {
+        toast.error(data?.message ?? "Something went wrong")
+    }
+
+    const getCategories = (): [string[], number[]] => {
+        const categoriesData = data?.data?.categories
+        if (!categoriesData || categoriesData.length <= 1) {
+            toast.error("No Categories Fount")
+        }
+
+        const arr = Object.entries(data?.data?.categories ?? {})
+        const categories = arr.map(i => Object.keys(i[1])[0])
+        const values = arr.map(i => Number(i[0]))
+        return [categories, values]
+    }
+
+
     return (
         <DashboardLayout >
             <main className="chart-container">
@@ -12,15 +33,21 @@ const PieCharts = () => {
                     <h2>Order Fulfillment Ratio</h2>
                     <div>
                         <PieChart
-                            labels={["Processing", "Shipped", "Delivered"]}
-                            data={[12, 9, 13]}
+                            labels={["Processing", "Shipped", "Delivered", "Cancelled"]}
+                            data={[
+                                data?.data?.ordersFulfillment.processing ?? 0,
+                                data?.data?.ordersFulfillment.shipping ?? 0,
+                                data?.data?.ordersFulfillment.delivered ?? 0,
+                                data?.data?.ordersFulfillment.canceled ?? 0
+                            ]
+                            }
                             backgroundColor={[
                                 `hsl(110,80%,80%)`,
                                 `hsl(110,80%,50%)`,
                                 `hsl(110, 40%, 50%)`,
                             ]}
                             offset={[25, 25, 25]}
-                            legend={false}
+                            legend={true}
                         />
                     </div>
                 </section>
@@ -28,9 +55,9 @@ const PieCharts = () => {
                     <h2>Order Categories Ratio</h2>
                     <div>
                         <DoughnutChart
-                            labels={data.categories.map(i => i.heading)}
-                            data={data.categories.map(i => i.value)}
-                            backgroundColor={data.categories.map(i => `hsl(${i.value * 4}, ${i.value}%, 50%)`)}
+                            labels={getCategories()[0]}
+                            data={getCategories()[1]}
+                            backgroundColor={getCategories()[1].map(i => `hsl(${i * 50}, ${i}%, 50%)`)}
                             offset={[10, 10, 10]}
                             legends={false}
                         />
@@ -41,11 +68,15 @@ const PieCharts = () => {
                     <div>
                         <DoughnutChart
                             labels={["In Stock", "Out Of Stock"]}
-                            data={[40, 20]}
+                            data={[
+                                data?.data?.stockAvailability.inStock ?? 0,
+                                data?.data?.stockAvailability.outStock ?? 0
+                            ]}
                             backgroundColor={["hsl(269,80%,40%)", "rgb(53, 162,255)"]}
-                            legends={false}
+                            legends={true}
                             offset={[10, 10]}
                             cutout={"90"}
+
                         />
                     </div>
                 </section>
@@ -60,7 +91,13 @@ const PieCharts = () => {
                                 "Production Cost",
                                 "Net Margin"
                             ]}
-                            data={[32, 18, 5, 20, 25]}
+                            data={[
+                                data?.data?.revenueDistribution.marketingCost ?? 0,
+                                data?.data?.revenueDistribution.discount ?? 0,
+                                data?.data?.revenueDistribution.burnt ?? 0,
+                                data?.data?.revenueDistribution.productionCost ?? 0,
+                                data?.data?.revenueDistribution.netMargin ?? 0
+                            ]}
                             backgroundColor={[
                                 "hsl(110,80%,40%)",
                                 "hsl(19,80%,40%)",
@@ -68,7 +105,7 @@ const PieCharts = () => {
                                 "hsl(300,80%,40%)",
                                 "rgb(53, 162,255)"
                             ]}
-                            legends={false}
+                            legends={true}
                             offset={[20, 30, 20, 30, 80]}
                         />
                     </div>
@@ -79,7 +116,11 @@ const PieCharts = () => {
                     <div>
                         <PieChart
                             labels={["Teenager(Below 20)", "Adult (20-40)", "Older (above 40)"]}
-                            data={[30, 250, 70]}
+                            data={[
+                                data?.data?.userAgeDistribution?.teenagers ?? 0,
+                                data?.data?.userAgeDistribution?.adults ?? 0,
+                                data?.data?.userAgeDistribution?.olds ?? 0,
+                            ]}
                             backgroundColor={[
                                 `hsl(110,${80}%,80%)`,
                                 `hsl(110,${80}%,50%)`,
@@ -94,9 +135,12 @@ const PieCharts = () => {
                     <div>
                         <DoughnutChart
                             labels={["Admin", "Customers"]}
-                            data={[40, 250]}
+                            data={[
+                                data?.data?.userRoleDistribution?.admins ?? 0,
+                                data?.data?.userRoleDistribution?.admins ?? 0,
+                            ]}
                             backgroundColor={["hsl(269,80%,40%)", "rgb(53, 162,255)"]}
-                            legends={false}
+                            legends={true}
                             offset={[0, 80]}
                         />
                     </div>
