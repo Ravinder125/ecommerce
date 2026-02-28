@@ -1,4 +1,3 @@
-// import { RiDashboardFill } from "react-icons/ri"
 import { Link, useLocation, type Location } from "react-router-dom"
 import { ADMIN_SIDEBAR_DATA } from "../../utils/data"
 import type { IconType } from "react-icons";
@@ -13,7 +12,7 @@ const AdminSideBar = ({ isOpen, onClose }: { isOpen: boolean, onClose: Function 
         <aside style={{
             left: isOpen ? "0%" : "-100%"
         }}>
-            <div className="sidebar-btn--container">
+            <div className="sidebar-btn--container">                                                                                                                                                                                            
                 <button
                     className="sidebar-btn"
                     onClick={() => onClose()}

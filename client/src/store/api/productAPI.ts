@@ -3,9 +3,13 @@ import type { ApiResponse, GetProductResponse, GetProductsQuery } from "../../ty
 import { apiPaths } from "../../utils/apiPath"
 import { getToken } from "../../utils/tokenManager"
 import { baseQueryWithClerk } from "./baseQueryWithAuth"
-import type { NewProductFormData, Product } from "../../types/product.type"
+import type { Product } from "../../types/product.type"
+import type { NewProductFormData, UpdateProductFormData } from "../../validations/productDataSchema"
 
-type AdminGetResponse = Omit<GetProductResponse, "categories">
+export type AdminGetResponse = Omit<GetProductResponse, "categories">
+export type GetProductQuery = Product & { description: string }
+export type UpdateProductQuery = UpdateProductFormData & { id: string }
+
 
 export const productAPI = createApi({
   reducerPath: "productAPI",
@@ -84,6 +88,14 @@ export const productAPI = createApi({
       query: (productId) => ({
         url: `${apiPaths.products.byId(productId)}`
       })
+    }),
+
+    updateProduct: builder.mutation<ApiResponse<GetProductQuery>, UpdateProductQuery>({
+      query: (product) => ({
+        url: apiPaths.products.byId(product.id),
+        method: "PUT",
+        body: product
+      })
     })
   })
 })
@@ -96,4 +108,5 @@ export const {
   useAdminProductsQuery,
   useProductCategoriesQuery,
   useGetProductQuery,
+  useUpdateProductMutation,
 } = productAPI

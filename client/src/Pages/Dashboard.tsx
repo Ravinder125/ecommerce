@@ -14,7 +14,6 @@ import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md"
 import { useTheme } from '../context/themeContext'
 import { useState } from "react"
 import { useDashboardQuery } from "../store/api/statsAPI"
-import { calculatePercentage } from "../utils/calculatePercentage"
 
 
 const Dashboard = () => {
@@ -33,7 +32,7 @@ const Dashboard = () => {
   return (
     <DashboardLayout>
       <main className="dashboard">
-        <div className="bar" style={{ position: "relative", width: "calc(100vw - 16px)" }}>
+        <div className="bar" style={{ position: "relative", width: "calc(100% - 16px)" }}>
           <BsSearch onClick={() => setIsSearchOpen(true)} />
           <input
             type="text"

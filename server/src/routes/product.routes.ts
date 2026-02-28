@@ -12,7 +12,7 @@ import {
     updateProductImages
 } from '../controllers/product.controller.js';
 import { upload } from '../middlewares/multer.middleware.js';
-import { createProductSchema } from '../validators/productValidator.middleware.js';
+import { createProductSchema, updateProductSchema } from '../validators/productValidator.middleware.js';
 import { validateRequest } from '../middlewares/validateRequest.middleware.js';
 
 const router = Router();
@@ -35,7 +35,7 @@ router.route("/categories").get(getAllCategories)
 router
     .route("/:id")
     .get(adminOnly, getSingleProduct)
-    .put(adminOnly, updateProduct)
+    .put(adminOnly, updateProductSchema, validateRequest, updateProduct)
     .patch(adminOnly, upload.array("image", 5), updateProductImages)
     .delete(adminOnly, deleteProduct)
 

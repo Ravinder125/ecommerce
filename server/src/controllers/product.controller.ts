@@ -264,14 +264,15 @@ export const getAllProduct = asyncHandler(
 
 export const updateProduct = asyncHandler(
     async (
-        req: Request<any>,
+        req: Request,
         res: Response) => {
         if (!req.body) throw new ApiError(400, "At least one field is required")
 
         const { name, brand, category, description, price, stock } = req.body
-        if (!name && !brand && !category && !description && !price && !stock) {
-            throw new ApiError(400, "At least one field is required")
-        }
+        // if (!name && !brand && !category && !description && !price && !stock) {
+        //     throw new ApiError(400, "At least one field is required")
+        // }
+
         const product = await Product.findById(req.params.id);
         if (!product) throw new ApiError(400, "No Product found")
         if (name) product.name = name;

@@ -8,12 +8,12 @@ export interface Product {
     stock: number;
 }
 
-export type NewProductFormData = {
-    name: string,
-    price: number,
-    stock: number,
-    image: string | null | ArrayBuffer,
-    category: string,
-    brand: string,
-    description: string,
-}
+// export type NewProductFormData = {
+//     name: string,
+//     price: number,
+//     stock: number,
+//     image: string | null | ArrayBuffer,
+//     category: string,
+//     brand: string,
+//     description: string,
+// }

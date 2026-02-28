@@ -7,7 +7,7 @@ type SelectCategoryProps = {
     onChange: (value: string) => void
 }
 
-const SelectCategory = ({ value, className = "", onChange }: SelectCategoryProps) => {
+const SelectCategory = ({ value, className = "", onChange, required = false }: SelectCategoryProps) => {
     const {
         isError,
         data,
@@ -31,7 +31,7 @@ const SelectCategory = ({ value, className = "", onChange }: SelectCategoryProps
             <select
                 // name="category"
                 value={value}
-                required
+                required={required}
                 name="category"
                 id="category"
                 onChange={(e) => onChange(e.target.value)}

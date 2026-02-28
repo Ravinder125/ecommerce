@@ -1,44 +1,92 @@
 import { useRef, useState, type FormEvent } from "react"
 import { DashboardLayout } from "../../components"
 import { validateData } from "../../utils/validateFields"
-import { productDataSchema } from "../../validations/productDataSchema"
 import { useParams } from "react-router-dom"
-import { useGetProductQuery } from "../../store/api/productAPI"
-import type { NewProductFormData } from "../../types/product.type"
+import { useGetProductQuery, useUpdateProductMutation } from "../../store/api/productAPI"
 import { InitialProductFormData } from "../../utils/InitialFormData"
 import { handleChangeHOC } from "../../utils/handleInputChange"
 import { createTypedInput } from "../../components/forms/InputBox"
 import { imageHandler } from "../../utils/imageHandler"
 import TextArea from "../../components/forms/TextArea"
 import SelectCategory from "./SelectCategory"
+import toast from "react-hot-toast"
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query"
+import type { ApiResponse } from "../../types/api.type"
+import { updateProductDataSchema, type UpdateProductFormData } from "../../validations/productDataSchema"
 
 
-const InputBox = createTypedInput<NewProductFormData>()
+const InputBox = createTypedInput<UpdateProductFormData>()
 
 const ProductManagement = () => {
     const [error, setError] = useState<string>("")
+    const [loading, setLoading] = useState<boolean>(false)
     const ref = useRef<HTMLInputElement>(null)
 
     const params = useParams();
     const productId = params.id;
+    // const [productData, setProductData] = useState<UpdateProductFormData>(InitialProductFormData)
 
-    // const [productData, setProductData] = useState<NewProductFormData>(InitialProductFormData)
-
-    const [formData, setFormData] = useState<NewProductFormData>(InitialProductFormData)
-
+    const [formData, setFormData] = useState<UpdateProductFormData>(InitialProductFormData)
     const { isError, isFetching, isLoading, data } = useGetProductQuery(productId!)
+    const updateProductAPI = useUpdateProductMutation()[0]
 
+    const { onInput, handleInputChange } = handleChangeHOC<UpdateProductFormData>(setFormData)
 
-    const { onInput, handleInputChange } = handleChangeHOC<NewProductFormData>(setFormData)
-
-    const submitHandler = (e: FormEvent<HTMLFormElement>) => {
+    const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setError("")
 
-        const result = validateData(productDataSchema, formData)
+        const payload = {
+            ...formData,
+            stock: Number(formData.stock),
+            price: Number(formData.price)
+        }
+
+        console.log(payload)
+
+        const result = validateData(updateProductDataSchema, payload)
         if (!result.success) {
-            setError(result.message!)
+            const message = result.message ?? "Something went wrong"
+            toast.error(message)
+            setError(message)
             return;
         }
+
+        try {
+            const id = productId!
+            if (!id) {
+                const message = "ID is missing"
+                setError(message);
+                toast.error(message)
+                return;
+            }
+
+            const res = await updateProductAPI({ ...formData, id })
+
+            if (res.error) {
+                const err = res.error as FetchBaseQueryError
+                const message = (err.data as ApiResponse).message
+                throw new Error(message)
+            }
+
+        } catch (error: any) {
+
+            let errMessage =
+                error?.data?.message
+                || error.message
+                || "Something went wrong"
+
+            toast.error(errMessage)
+            setError(errMessage)
+
+            console.error("Sync error:", error)
+        } finally {
+            setFormData(InitialProductFormData)
+            setLoading(false)
+        }
+
+        // const res = await updateProductAPI({ _id: productId!, ...result.data! })
+        // console.log(res)
     }
 
     if (isError) {
@@ -57,7 +105,7 @@ const ProductManagement = () => {
         <DashboardLayout>
             <main className="management">
                 <section>
-                    <strong>Id {data?.data._id}</strong>
+                    <strong>Id {data?.data?._id}</strong>
                     {formData.image && <img src={
                         typeof data?.data.images?.[0] === "string" ? data.data.images?.[0] : " "}
                         alt="New Image" />
@@ -81,7 +129,6 @@ const ProductManagement = () => {
                             value={formData.name}
                             placeholder="Enter product name"
                             onChange={onInput("name")}
-                            required
                         />
 
                         <InputBox
@@ -92,7 +139,6 @@ const ProductManagement = () => {
                             value={String(formData.price)}
                             placeholder="Enter product price"
                             onChange={onInput("price")}
-                            required
                         />
 
                         <InputBox
@@ -103,13 +149,21 @@ const ProductManagement = () => {
                             value={String(formData.stock)}
                             placeholder="Enter product stock"
                             onChange={onInput("stock")}
-                            required
+                        />
+                        <InputBox
+                            name="brand"
+                            type="text"
+                            label="Brand"
+                            placeholder="Enter product brand"
+                            value={formData.brand}
+                            onChange={onInput("brand")}
                         />
 
                         {/* CATEGORY */}
                         <SelectCategory
-                            value={formData.category}
+                            value={formData.category ?? ""}
                             onChange={(value) => handleInputChange("category", value)}
+
                         />
                         <div style={{
                             // margin: "1rem auto",

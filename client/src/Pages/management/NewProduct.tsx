@@ -1,16 +1,17 @@
 import { useRef, useState, type FormEvent, } from "react"
 import { DashboardLayout } from "../../components"
 import { validateData } from "../../utils/validateFields"
-import { productDataSchema } from "../../validations/productDataSchema"
+import { productDataSchema, type NewProductFormData } from "../../validations/productDataSchema"
 import { handleChangeHOC } from "../../utils/handleInputChange"
-import { useCreateProductMutation, useProductCategoriesQuery } from "../../store/api/productApi"
+import { useCreateProductMutation, useProductCategoriesQuery } from "../../store/api/productAPI"
 import { createTypedInput } from "../../components/forms/InputBox"
-import type { NewProductFormData } from "../../types/product.type"
 import toast from "react-hot-toast"
 import { imageHandler } from "../../utils/imageHandler"
 import TextArea from "../../components/forms/TextArea"
 import { InitialProductFormData } from "../../utils/InitialFormData"
 import SelectCategory from "./SelectCategory"
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query"
+import type { ApiResponse } from "../../types/api.type"
 
 
 
@@ -18,6 +19,7 @@ const InputBox = createTypedInput<NewProductFormData>()
 
 const NewProduct = () => {
     const [error, setError] = useState<string>("")
+    const [loading, setLoading] = useState<boolean>(false)
     const ref = useRef<HTMLInputElement>(null)
     const [formData, setFormData] = useState<NewProductFormData>(InitialProductFormData)
 
@@ -48,25 +50,36 @@ const NewProduct = () => {
         }
         try {
             const res = await newProductApi(result.data!)
-            console.log(res)
-            if (res.data?.success) {
-                toast.success(res.data.message!)
-                return
-            }
 
-            if (!res.data?.success) {
-                throw new Error(res.data?.message)
+            if (res.data) {
+                toast.success(res.data.message!)
+                // toast.success("Profile completed")
+            } else {
+                const err = res.error as FetchBaseQueryError
+                const message = (err.data as ApiResponse).message
+                throw new Error(message)
             }
 
         } catch (error: any) {
-            toast.error(error.message)
-            console.log("Error while creating the product", error)
+
+            let errMessage =
+                error?.data?.message
+                || error.message
+                || "Something went wrong"
+
+            toast.error(errMessage)
+            setError(errMessage)
+
+            console.error("Sync error:", error)
+        } finally {
+            setFormData(InitialProductFormData)
+            setLoading(false)
         }
 
     }
 
     if (isError) {
-        console.log(dataError)
+        toast.error(error)
         return <div>Something went wrong</div>
     }
 
@@ -129,9 +142,9 @@ const NewProduct = () => {
 
                             {/* CATEGORY */}
                             <SelectCategory
-                            value={formData.category}
-                            onChange={(value) => handleInputChange("category", value)}
-                        />
+                                value={formData.category}
+                                onChange={(value) => handleInputChange("category", value)}
+                            />
                             <div style={{
                                 // margin: "1rem auto",
                                 height: "100%",
@@ -169,8 +182,8 @@ const NewProduct = () => {
 
                         {error && <div className="error-msg">{error}</div>}
 
-                        <button type="submit" className="submit-btn">
-                            {isLoading ? "Loading..." : "Create New"}
+                        <button disabled={loading} type="submit" className="submit-btn">
+                            {(isLoading || loading) ? "Loading..." : "Create New"}
 
                         </button>
                     </form>

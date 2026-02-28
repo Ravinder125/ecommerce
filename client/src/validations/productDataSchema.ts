@@ -4,30 +4,68 @@ export const productDataSchema = z.object({
     name: z
         .string()
         .trim()
-        .nonempty({ message: "Name is required" }),
+        .min(1, { message: "Name is required" }),
+
     price: z
         .number()
-        .min(1, { message: "Price cannot be lower than 1" })
-        .nonnegative({ message: "Price cannot be empty" }),
+        .min(1, { message: "Price cannot be lower than 1" }),
+
     stock: z
         .number()
-        .min(1, { message: "stock cannot be lower than 1" })
-        .nonnegative({ message: "Price cannot be empty" }),
+        .min(1, { message: "Stock cannot be lower than 1" }),
+
     image: z
         .string()
-        .nonempty({ message: "Image is required" }),
+        .min(1, { message: "Image is required" }),
+
     category: z
         .string()
         .trim()
-        .nonempty({ message: "Category is requird" }),
+        .min(1, { message: "Category is required" }),
+
     brand: z
         .string()
         .trim()
-        .nonempty({ message: "Category is requird" }),
+        .min(1, { message: "Brand is required" }),
+
     description: z
         .string()
         .trim()
-        .nonempty({ message: "Description is required" })
+        .min(1, { message: "Description is required" })
+})
+
+export const updateProductDataSchema = z.object({
+    name: z
+        .string()
+        .trim()
+        .optional(),
+
+    price: z
+        .number()
+        .optional(),
+
+    stock: z
+        .number()
+        .optional(),
+
+    image: z
+        .string()
+        .optional(),
+
+    category: z
+        .string()
+        .trim()
+        .optional(),
+
+    brand: z
+        .string()
+        .trim()
+        .optional(),
+
+    description: z
+        .string()
+        .trim()
+        .optional(),
 })
 
 export const imageSchema = z.object({
@@ -48,3 +86,5 @@ export const imageSchema = z.object({
         )
 })
 
+export type NewProductFormData = z.infer<typeof productDataSchema>
+export type UpdateProductFormData = z.infer<typeof updateProductDataSchema>
