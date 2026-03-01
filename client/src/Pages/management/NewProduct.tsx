@@ -3,7 +3,7 @@ import { DashboardLayout } from "../../components"
 import { validateData } from "../../utils/validateFields"
 import { productDataSchema, type NewProductFormData } from "../../validations/productDataSchema"
 import { handleChangeHOC } from "../../utils/handleInputChange"
-import { useCreateProductMutation, useProductCategoriesQuery } from "../../store/api/productAPI"
+import { useCreateProductMutation, useProductCategoriesQuery, useUploadProductImagesMutation } from "../../store/api/productAPI"
 import { createTypedInput } from "../../components/forms/InputBox"
 import toast from "react-hot-toast"
 import { imageHandler } from "../../utils/imageHandler"
@@ -30,6 +30,7 @@ const NewProduct = () => {
         isLoading,
         error: dataError } = useProductCategoriesQuery()
     const newProductApi = useCreateProductMutation()[0];
+    const uploadImages = useUploadProductImagesMutation()[0];
 
     const { onInput, handleInputChange } = handleChangeHOC(setFormData)
 
@@ -52,6 +53,13 @@ const NewProduct = () => {
             const res = await newProductApi(result.data!)
 
             if (res.data) {
+                if (res?.data?.data._id) {
+                    const file = new File([formData.image], "product-image.webp", { type: "image/webp" })
+                    await uploadImages({
+                        id: res.data.data._id,
+                        images: [file]
+                    })
+                }
                 toast.success(res.data.message!)
                 // toast.success("Profile completed")
             } else {

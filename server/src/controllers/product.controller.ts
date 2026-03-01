@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
-import { Product } from "../models/product.models.js";
+import { IProduct, Product } from "../models/product.models.js";
 import {
     BaseQuery,
     CreateProductRequestBody,
@@ -130,9 +130,17 @@ export const getLatestProducts = asyncHandler(async (req: Request, res: Response
         .sort({ createdAt: -1 })
         .limit(10);
 
-    cache.set(cacheKey, latestProducts,)
+    const products = latestProducts.map((p: any) => {
+        return {
+            ...p.toObject(),
+            images: p.images?.map((i: any) => i.image)
+        }
+    })
+
+
+    cache.set(cacheKey, products,)
     return res.status(200).json(
-        new ApiResponse(200, latestProducts, "Latest products fetched successfully")
+        new ApiResponse(200, products, "Latest products fetched successfully")
     );
 })
 
@@ -161,20 +169,29 @@ export const getSingleProduct = asyncHandler(async (req: Request, res: Response)
     // }
 
     product = await Product.findById(req.params.id);
+
+    if (!product) {
+        throw new ApiError(404, "No product found")
+    }
+
+    const resData = {
+        ...product.toObject(), images: product?.images.map(img => img.image)
+    }
+
     if (!product) throw new ApiError(400, "No product found")
     // await cache.set(cacheKey, product)
 
     return res.status(200).json(
-        new ApiResponse(200, product, "Product fetched successfully")
+        new ApiResponse(200, resData, "Product fetched successfully")
     )
 })
 
-type PaginateQuery = {
-    limit?: string,
-    page?: string,
-    search?: string,
-    sort?: "asc" | "desc"
-}
+// type PaginateQuery = {
+//     limit?: string,
+//     page?: string,
+//     search?: string,
+//     sort?: "asc" | "desc"
+// }
 
 export const getAdminProducts = asyncHandler(
     async (req: Request<{}, {}, {}, RequestProductQuery>, res: Response) => {
@@ -297,11 +314,11 @@ export const updateProduct = asyncHandler(
 
 export const updateProductImages = asyncHandler(async (req: Request, res: Response) => {
     const product = await Product.findById(req.params.id);
+    // console.log(req.file, req.files, req.body)
     const images = (
         Array.isArray(req.files)
             ? req.files
             : []).map((img: any) => img?.path)
-
     if (!product) {
         images.map((path) => fileCleanup(path))
         throw new ApiError(400, "No Product found")
@@ -327,7 +344,6 @@ export const updateProductImages = asyncHandler(async (req: Request, res: Respon
             return { public_id, image: url };
         })
         : []
-
     product.images = imagesInfo
     await product.save();
 

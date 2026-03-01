@@ -26,7 +26,10 @@ export const uploadOnCloudinary = async (localFilePath: string)
             overwrite: true,
             format: "webp"
         })
-        .then(result => result)
+        .then(result => {
+            console.log("File successfully uploaded on Cloud Storage")
+            return result
+        })
         .catch((error) => console.error('Error while uploading image on Cloudinary', error))
         .finally(() => fileCleanup(localFilePath))
 }

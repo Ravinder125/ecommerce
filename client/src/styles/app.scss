@@ -471,14 +471,18 @@ button {
 
 
     * {
-        outline: 1px solid var(--border);
+        outline: 1px solid var(--background);
         color: var(--foreground);
+    }
+
+    thead>tr {
+        outline: 1px solid var(--foreground);
     }
 
     th,
     td {
         padding: 8px;
-        text-align: left;
+        text-align: center;
         vertical-align: middle;
     }
 

@@ -1,8 +1,8 @@
-import { useRef, useState, type FormEvent } from "react"
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react"
 import { DashboardLayout } from "../../components"
 import { validateData } from "../../utils/validateFields"
 import { useParams } from "react-router-dom"
-import { useGetProductQuery, useUpdateProductMutation } from "../../store/api/productAPI"
+import { useGetProductQuery, useUpdateProductMutation, useUploadProductImagesMutation } from "../../store/api/productAPI"
 import { InitialProductFormData } from "../../utils/InitialFormData"
 import { handleChangeHOC } from "../../utils/handleInputChange"
 import { createTypedInput } from "../../components/forms/InputBox"
@@ -20,6 +20,7 @@ const InputBox = createTypedInput<UpdateProductFormData>()
 const ProductManagement = () => {
     const [error, setError] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
+    const [imagePrev, setImagePrev] = useState<string>("")
     const ref = useRef<HTMLInputElement>(null)
 
     const params = useParams();
@@ -29,6 +30,8 @@ const ProductManagement = () => {
     const [formData, setFormData] = useState<UpdateProductFormData>(InitialProductFormData)
     const { isError, isFetching, isLoading, data } = useGetProductQuery(productId!)
     const updateProductAPI = useUpdateProductMutation()[0]
+    const uploadImages = useUploadProductImagesMutation()[0];
+
 
     const { onInput, handleInputChange } = handleChangeHOC<UpdateProductFormData>(setFormData)
 
@@ -36,21 +39,21 @@ const ProductManagement = () => {
         e.preventDefault();
         setError("")
 
-        const payload = {
-            ...formData,
-            stock: Number(formData.stock),
-            price: Number(formData.price)
-        }
+        // const payload = {
+        //     ...formData,
+        //     stock: Number(formData.stock),
+        //     price: Number(formData.price)
+        // }
 
-        console.log(payload)
+        // console.log(payload)
 
-        const result = validateData(updateProductDataSchema, payload)
-        if (!result.success) {
-            const message = result.message ?? "Something went wrong"
-            toast.error(message)
-            setError(message)
-            return;
-        }
+        // const result = validateData(updateProductDataSchema, payload)
+        // if (!result.success) {
+        //     const message = result.message ?? "Something went wrong"
+        //     toast.error(message)
+        //     setError(message)
+        //     return;
+        // }
 
         try {
             const id = productId!
@@ -61,11 +64,19 @@ const ProductManagement = () => {
                 return;
             }
 
-            const res = await updateProductAPI({ ...formData, id })
+            // const res = await updateProductAPI({ ...formData, id })
+            if (!formData.image) {
+                setError("Image is required")
+                return;
+            }
+            const res = await uploadImages({
+                id,
+                images: [formData.image]
+            })
 
             if (res.error) {
                 const err = res.error as FetchBaseQueryError
-                const message = (err.data as ApiResponse).message
+                const message = (err.data as ApiResponse)?.message
                 throw new Error(message)
             }
 
@@ -81,13 +92,21 @@ const ProductManagement = () => {
 
             console.error("Sync error:", error)
         } finally {
-            setFormData(InitialProductFormData)
+            // setFormData(InitialProductFormData)
             setLoading(false)
         }
+
 
         // const res = await updateProductAPI({ _id: productId!, ...result.data! })
         // console.log(res)
     }
+
+    useEffect(() => {
+        console.log("It's working")
+        if (!formData.image) return;
+        console.log(formData.image)
+        imageHandler(formData.image!, (base) => setImagePrev(base))
+    }, [formData.image])
 
     if (isError) {
         return <div>Something went wrong</div>
@@ -100,16 +119,21 @@ const ProductManagement = () => {
     if (isFetching) {
         return <div>Loading...</div>
     }
-
+    console.log(data?.data.images)
     return (
         <DashboardLayout>
             <main className="management">
                 <section>
                     <strong>Id {data?.data?._id}</strong>
-                    {formData.image && <img src={
-                        typeof data?.data.images?.[0] === "string" ? data.data.images?.[0] : " "}
-                        alt="New Image" />
+                    <img src={
+                        imagePrev ||
+                        data?.data.images[0] || ""
+
                     }
+                        alt="New Image"
+                        loading="lazy"
+                    />
+
 
                     <p>{data?.data.name}</p>
                     {
@@ -177,14 +201,10 @@ const ProductManagement = () => {
                                 name="image"
                                 type="file"
                                 inputRef={ref}
-                                value={typeof formData.image === "string"
-                                    ? formData.image : undefined
-                                }
-                                onChange={(e) =>
-                                    imageHandler(
-                                        e.target.files?.[0]!,
-                                        (base: string) => handleInputChange("image", base))}
+                                value={formData.image}
+                                onChange={(e) => handleInputChange("image", e.target.files?.[0])}
                                 label="Image"
+                                imgPrev={imagePrev}
                                 action={() => ref.current?.click()}
                             />
                         </div>

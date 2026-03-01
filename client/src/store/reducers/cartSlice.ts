@@ -27,10 +27,11 @@ const cartSlice = createSlice({
                 i => i.productId === action.payload.productId
             )
 
+
             if (item) {
                 item.stock++
             } else {
-                state.items.push(action.payload)
+                state.items.push(item!)
             }
         },
 

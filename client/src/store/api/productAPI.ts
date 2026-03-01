@@ -9,7 +9,10 @@ import type { NewProductFormData, UpdateProductFormData } from "../../validation
 export type AdminGetResponse = Omit<GetProductResponse, "categories">
 export type GetProductQuery = Product & { description: string }
 export type UpdateProductQuery = UpdateProductFormData & { id: string }
-
+export type UploadProductImagesQuery = {
+  images: File[];
+  id: string;
+}
 
 export const productAPI = createApi({
   reducerPath: "productAPI",
@@ -19,7 +22,7 @@ export const productAPI = createApi({
   endpoints: (builder) => ({
 
     // CREATE
-    createProduct: builder.mutation<ApiResponse<null>, NewProductFormData>({
+    createProduct: builder.mutation<ApiResponse<Product>, NewProductFormData>({
       query: (product) => ({
         url: apiPaths.products.root,
         method: "POST",
@@ -96,6 +99,22 @@ export const productAPI = createApi({
         method: "PUT",
         body: product
       })
+    }),
+
+    uploadProductImages: builder.mutation<ApiResponse<null>, UploadProductImagesQuery>({
+      query: (data) => {
+        const formData = new FormData()
+
+        data.images.forEach((img) => {
+          formData.append("image", img)
+        })
+
+        return {
+          url: apiPaths.products.byId(data.id),
+          method: "PATCH",
+          body: formData
+        }
+      }
     })
   })
 })
@@ -109,4 +128,5 @@ export const {
   useProductCategoriesQuery,
   useGetProductQuery,
   useUpdateProductMutation,
+  useUploadProductImagesMutation,
 } = productAPI

@@ -98,18 +98,18 @@ export const adminOrders = asyncHandler(async (req: Request, res: Response) => {
             $group: {
                 _id: "$_id",
                 buyer: { $first: "$buyer" },
-                shippingInfo: { $first: "$shippingInfo" },
-                paymentMethod: { $first: "$paymentMethod" },
-                paymentInfo: { $first: "$paymentInfo" },
-                subtotal: { $first: "$subtotal" },
+                // shippingInfo: { $first: "$shippingInfo" },
+                // paymentMethod: { $first: "$paymentMethod" },
+                // paymentInfo: { $first: "$paymentInfo" },
+                // subtotal: { $first: "$subtotal" },
                 discount: { $first: "$discount" },
-                taxPrice: { $first: "$taxPrice" },
-                shippingCharge: { $first: "$shippingCharge" },
+                // taxPrice: { $first: "$taxPrice" },
+                // shippingCharge: { $first: "$shippingCharge" },
                 totalPrice: { $first: "$totalPrice" },
                 orderStatus: { $first: "$orderStatus" },
-                deliveredAt: { $first: "$deliveredAt" },
-                createdAt: { $first: "$createdAt" },
-                updatedAt: { $first: "$updatedAt" },
+                // deliveredAt: { $first: "$deliveredAt" },
+                // createdAt: { $first: "$createdAt" },
+                // updatedAt: { $first: "$updatedAt" },
                 quantity: { $sum: "$orderItem.quantity" },
 
                 // Collect only the matching order items
@@ -119,7 +119,6 @@ export const adminOrders = asyncHandler(async (req: Request, res: Response) => {
     ]);
 
 
-    console.log(orders)
     if (!orders) throw new ApiError(401, "No order Found")
 
     return res.status(200).json(
@@ -131,6 +130,7 @@ export const adminOrders = asyncHandler(async (req: Request, res: Response) => {
 export const getSingleOrder = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const order = await Order.findById(id);
+    console.log(order)
     if (!order) throw new ApiError(404, "Order not found")
     return res.status(200).json(
         new ApiResponse(200, order, "Order successfully fetched")

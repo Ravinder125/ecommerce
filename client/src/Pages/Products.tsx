@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 import { useAdminProductsQuery } from "../store/api/productAPI";
 import type { Product } from "../types/product.type";
+import { InputBox } from "../components/forms/InputBox";
+import { useDebounce } from "../hooks/useDebounce";
 
 // interface Product {
 //   image: string;
@@ -113,14 +115,17 @@ const Products = () => {
     pageIndex: 0,
     pageSize: 10
   })
+  const debounceSearch = useDebounce(search, 1000)
+
   const { error, isLoading, data } = useAdminProductsQuery({
     page: pagination.pageIndex + 1,
-    search: search,
+    search: debounceSearch?.trim(),
     sort,
     category,
     // maxPrice: search,
     // limit
   })
+
   const Table = TableHOC<Product>(columns, data?.data.products ?? [], "dashboard-product--box",
     "Products", 1,
     setPagination,
@@ -141,7 +146,14 @@ const Products = () => {
   return (
     <DashboardLayout>
       <main>
-
+        <div style={{ marginTop: "8rem", padding: "2rem" }}>
+          <InputBox
+            onChange={(e) => setSearch(e.target.value)}
+            value={search}
+            name="search"
+            placeholder="What are you looking for"
+          />
+        </div>
         {Table()}
 
         <Link to="/admin/products/new" className="create-product--btn">

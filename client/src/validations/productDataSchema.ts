@@ -1,5 +1,22 @@
 import z from "zod";
 
+export const imageSchema = z
+    .file()
+    .refine((file) => file instanceof File, {
+        message: "Image is required"
+    })
+    .refine((file) => file?.size >= 6250, {
+        message: "File is too small (min 6kb)",
+    })
+    .refine((file) => file?.size <= 6000000, {
+        message: "File is too large (max 6MB)"
+    })
+    .refine((file) =>
+        ["image/jpg", "image/jpeg", "image/png", "image/webp"].indexOf(file?.type) !== -1,
+        { message: "Only JPG, PNG, or WEBP image are allowed" }
+    ).optional()
+
+
 export const productDataSchema = z.object({
     name: z
         .string()
@@ -14,9 +31,7 @@ export const productDataSchema = z.object({
         .number()
         .min(1, { message: "Stock cannot be lower than 1" }),
 
-    image: z
-        .string()
-        .min(1, { message: "Image is required" }),
+    image: imageSchema,
 
     category: z
         .string()
@@ -48,9 +63,7 @@ export const updateProductDataSchema = z.object({
         .number()
         .optional(),
 
-    image: z
-        .string()
-        .optional(),
+    image: imageSchema,
 
     category: z
         .string()
@@ -68,23 +81,7 @@ export const updateProductDataSchema = z.object({
         .optional(),
 })
 
-export const imageSchema = z.object({
-    image: z
-        .any()
-        .refine((file) => file instanceof File, {
-            message: "Image is required"
-        })
-        .refine((file) => file?.size >= 6250, {
-            message: "File is too small (min 6kb)",
-        })
-        .refine((file) => file?.size <= 6000000, {
-            message: "File is too large (max 6MB)"
-        })
-        .refine((file) =>
-            ["image/jpg", "image/jpeg", "image/png", "image/webp"].indexOf(file?.type) !== -1,
-            { message: "Only JPG, PNG, or WEBP image are allowed" }
-        )
-})
+
 
 export type NewProductFormData = z.infer<typeof productDataSchema>
 export type UpdateProductFormData = z.infer<typeof updateProductDataSchema>

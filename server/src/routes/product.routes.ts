@@ -36,7 +36,7 @@ router
     .route("/:id")
     .get(adminOnly, getSingleProduct)
     .put(adminOnly, updateProductSchema, validateRequest, updateProduct)
-    .patch(adminOnly, upload.array("image", 5), updateProductImages)
+    .patch(adminOnly, upload.array("image"), updateProductImages)
     .delete(adminOnly, deleteProduct)
 
 export default router;

@@ -1,10 +1,11 @@
+import { useState } from "react";
 import { MdDelete } from "react-icons/md";
 
 type BaseInputProps = {
     label?: string;
     type?: React.HTMLInputTypeAttribute;
     name: string;
-    value?: string;
+    value?: string | File;
     placeholder?: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     required?: boolean;
@@ -13,6 +14,7 @@ type BaseInputProps = {
     action?: React.MouseEventHandler;
     min?: number;
     max?: number;
+    imgPrev?: string;
 };
 
 export function InputBox({
@@ -28,11 +30,14 @@ export function InputBox({
     action,
     min = 0,
     max = 100000,
+    imgPrev = ""
 
 }: BaseInputProps) {
+
+
     return (
         <div className="input-box">
-            {type !== "file" ? (
+            {type !== "file" && !(value instanceof File) ? (
                 <>
                     {label &&
                         <label
@@ -62,10 +67,10 @@ export function InputBox({
                         onChange={onChange}
                     />
 
-                    {value ? (
+                    {imgPrev ? (
                         <div className="image-preview">
                             <div>
-                                <img src={value} alt="preview" />
+                                <img src={imgPrev} alt="preview" />
                                 <MdDelete onClick={action} />
                             </div>
                         </div>

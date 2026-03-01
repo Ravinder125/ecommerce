@@ -16,3 +16,16 @@ export function imageHandler(
         }
     };
 }
+
+
+// export const readImage = (image: File): string => {
+//     const reader = new FileReader();
+//     reader.readAsDataURL(image);
+
+//     reader.onloadend = () => {
+//         if (typeof reader.result === "string") {
+//             onSuccess(reader.result);
+//         } else {
+//             onError?.();
+
+//         }
