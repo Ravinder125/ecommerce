@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
+
 import { syncProfileAPI } from "./api/syncProfileAPI";
 import { productAPI } from "./api/productAPI";
 import { statsAPI } from "./api/statsAPI";
+import { transactionAPI } from "./api/transactionAPI";
+
 import cartSlice from "./reducers/cartSlice";
 import userSlice from './reducers/authSlice';
-import { transactionAPI } from "./api/transactionAPI";
 // import { usersAPI } from "./api/usersAPI";
 
 export const store = configureStore({
@@ -13,8 +15,8 @@ export const store = configureStore({
     [productAPI.reducerPath]: productAPI.reducer,
     [statsAPI.reducerPath]: statsAPI.reducer,
     [transactionAPI.reducerPath]: transactionAPI.reducer,
-    user: userSlice,
-    cart: cartSlice,
+    "user": userSlice,
+    "cart": cartSlice,
   },
 
   middleware(getDefaultMiddleware) {

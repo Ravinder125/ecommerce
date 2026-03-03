@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
-import { IProduct, Product } from "../models/product.models.js";
+import { Product } from "../models/product.models.js";
 import {
     BaseQuery,
     CreateProductRequestBody,
@@ -9,9 +9,9 @@ import {
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { cache, invalidateCache } from "../utils/cacheService.js";
 import { deleteOnCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import { fileCleanup } from "../utils/fileCleanup.js";
-import { cache, invalidateCache } from "../utils/cacheService.js";
 import { pagination } from "../utils/pagination.js";
 // import { faker } from "@faker-js/faker";
 

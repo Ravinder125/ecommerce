@@ -1,20 +1,46 @@
 export function imageHandler(
-    file: File,
-    onSuccess: (base64: string) => void,
-    onError?: () => void
+    file: File | File[],
+    onSuccess: (previews: string | string[]) => void,
+    onError?: (message: string | string[]) => void
 ) {
-    const reader = new FileReader();
-    console.log()
+    if (Array.isArray(file) && file.length >= 1) {
+        const previews: string[] = [];
+        const errors: { fileName: string | undefined; error: string | undefined }[] = [];
+        let completed = 0;
 
-    reader.readAsDataURL(file);
+        file.forEach((f) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(f);
 
-    reader.onloadend = () => {
-        if (typeof reader.result === "string") {
-            onSuccess(reader.result);
-        } else {
-            onError?.();
-        }
-    };
+            reader.onloadend = () => {
+                completed++;
+                if (typeof reader.result === "string") {
+                    previews.push(reader.result);
+                } else {
+                    errors.push({
+                        fileName: f.name,
+                        error: reader.error?.message
+                    });
+                }
+                if (completed === file.length) {
+                    previews.length >= 1
+                        ? onSuccess(previews)
+                        : onError?.(errors.map(e => e.error ?? "Something went wrong"));
+                }
+            };
+        });
+    } else if (file instanceof File) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        reader.onloadend = () => {
+            if (typeof reader.result === "string") {
+                onSuccess(reader.result);
+            } else {
+                onError?.(reader.error?.message ?? "File preview failed");
+            }
+        };
+    }
 }
 
 

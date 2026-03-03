@@ -3,8 +3,10 @@ import { Layout, ProductCard } from "../components"
 import { useEffect, useState } from "react"
 // import data from "../assets/products.json"
 import { useLatestProductsQuery } from "../store/api/productAPI"
+import type { CartItem } from "../types/cart.type"
 import { useAppDispatch } from "../store/hooks"
-import { addToCart, type CartItem } from "../store/reducers/cartSlice"
+import toast from "react-hot-toast"
+import { addToCart } from "../store/reducers/cartSlice"
 
 const images = [
     "https://cdn.shopify.com/s/files/1/2303/2711/files/2_e822dae0-14df-4cb8-b145-ea4dc0966b34.jpg?v=1617059123",
@@ -17,10 +19,17 @@ const images = [
 
 const Home = () => {
     const [showImageIndex, setShowImageIndex] = useState<number>(0)
-    const dispatch = useAppDispatch()
     const { data, isLoading } = useLatestProductsQuery();
+
+    const dispatch = useAppDispatch();
     const addToCartHandler = (item: CartItem) => {
+        if (item.stock < 1) {
+            toast.error("Item is out of stock")
+            return;
+        }
+
         dispatch(addToCart(item))
+        toast.success("Product has been added into Cart")
     }
 
     useEffect(() => {
@@ -56,7 +65,7 @@ const Home = () => {
                             </Link>
                         </h1>
 
-                        <main>
+                        <div>
                             {
                                 data?.data.map((item) => {
                                     const {
@@ -76,14 +85,16 @@ const Home = () => {
                                         handler={() => addToCartHandler({
                                             ...item,
                                             productId: item._id,
-                                            image: images[0]
+                                            image: images[0],
+                                            quantity: 1,
+                                            stock
                                         })}
                                     />
 
                                 }
                                 )
                             }
-                        </main>
+                        </div>
                     </div>
 
                 )}

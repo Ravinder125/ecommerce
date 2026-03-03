@@ -1,18 +1,20 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react"
-import { DashboardLayout } from "../../components"
-import { validateData } from "../../utils/validateFields"
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query"
+import { useEffect, useState, type FormEvent } from "react"
+import toast from "react-hot-toast"
 import { useParams } from "react-router-dom"
+import { DashboardLayout } from "../../components"
+import { createTypedInput } from "../../components/forms/InputBox"
+import TextArea from "../../components/forms/TextArea"
 import { useGetProductQuery, useUpdateProductMutation, useUploadProductImagesMutation } from "../../store/api/productAPI"
+import type { ApiResponse } from "../../types/api.type"
 import { InitialProductFormData } from "../../utils/InitialFormData"
 import { handleChangeHOC } from "../../utils/handleInputChange"
-import { createTypedInput } from "../../components/forms/InputBox"
-import { imageHandler } from "../../utils/imageHandler"
-import TextArea from "../../components/forms/TextArea"
-import SelectCategory from "./SelectCategory"
-import toast from "react-hot-toast"
-import type { FetchBaseQueryError } from "@reduxjs/toolkit/query"
-import type { ApiResponse } from "../../types/api.type"
 import { updateProductDataSchema, type UpdateProductFormData } from "../../validations/productDataSchema"
+import SelectCategory from "./SelectCategory"
+import { validateData } from "../../utils/validateFields"
+import { ImageSelector } from "../../components/forms/ImageSelector"
+import { useImageHandler } from "../../hooks/useImageHandler"
+import { urlToFile } from "../../utils/urlToFile"
 
 
 const InputBox = createTypedInput<UpdateProductFormData>()
@@ -20,40 +22,71 @@ const InputBox = createTypedInput<UpdateProductFormData>()
 const ProductManagement = () => {
     const [error, setError] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
-    const [imagePrev, setImagePrev] = useState<string>("")
-    const ref = useRef<HTMLInputElement>(null)
+
+    const [existingImages, setExistingImages] = useState<string[]>([]);
+    const [newImages, setNewImages] = useState<File[]>([]);
+    const [deleteImages, setDeleteImages] = useState<string[]>([])
 
     const params = useParams();
     const productId = params.id;
-    // const [productData, setProductData] = useState<UpdateProductFormData>(InitialProductFormData)
 
     const [formData, setFormData] = useState<UpdateProductFormData>(InitialProductFormData)
+    const [images, setImages] = useState<File[]>([])
     const { isError, isFetching, isLoading, data } = useGetProductQuery(productId!)
     const updateProductAPI = useUpdateProductMutation()[0]
     const uploadImages = useUploadProductImagesMutation()[0];
 
+    const previews = useImageHandler(images)
+    const displayImage =
+        previews.length > 0
+            ? previews[0]
+            : data?.data.images?.[0] ?? "";
 
     const { onInput, handleInputChange } = handleChangeHOC<UpdateProductFormData>(setFormData)
+
+    useEffect(() => {
+        if (data?.data?.images) {
+            setExistingImages(data.data.images)
+        }
+    }, [data])
+
+    useEffect(() => {
+        if (!data?.data?.images || !(data?.data.images.length === 1)) {
+            setImages([])
+            return;
+        }
+        const convertPreviewToFile = async () => {
+            const files = await Promise.all(
+                data.data.images.map(img => urlToFile(img))
+            )
+
+            setImages(files)
+        }
+
+        convertPreviewToFile()
+
+    }, [data])
+
+
+
 
     const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError("")
 
-        // const payload = {
-        //     ...formData,
-        //     stock: Number(formData.stock),
-        //     price: Number(formData.price)
-        // }
+        const payload = {
+            ...formData,
+            stock: Number(formData.stock),
+            price: Number(formData.price)
+        }
 
-        // console.log(payload)
-
-        // const result = validateData(updateProductDataSchema, payload)
-        // if (!result.success) {
-        //     const message = result.message ?? "Something went wrong"
-        //     toast.error(message)
-        //     setError(message)
-        //     return;
-        // }
+        const result = validateData(updateProductDataSchema, payload)
+        if (!result.success) {
+            const message = result.message ?? "Something went wrong"
+            toast.error(message)
+            setError(message)
+            return;
+        }
 
         try {
             const id = productId!
@@ -64,20 +97,22 @@ const ProductManagement = () => {
                 return;
             }
 
-            // const res = await updateProductAPI({ ...formData, id })
-            if (!formData.image) {
-                setError("Image is required")
-                return;
-            }
-            const res = await uploadImages({
-                id,
-                images: [formData.image]
-            })
-
-            if (res.error) {
-                const err = res.error as FetchBaseQueryError
+            setLoading(true)
+            const updateRes = await updateProductAPI({ ...payload, id })
+            if (updateRes.error) {
+                const err = updateRes.error as FetchBaseQueryError
                 const message = (err.data as ApiResponse)?.message
                 throw new Error(message)
+            }
+
+            if (updateRes.data && images.length >= 0) {
+                const uploadRes = await uploadImages({ id, images: images })
+
+                if (!uploadRes.data?.success) {
+                    throw new Error("Uploading images failed")
+                }
+
+                toast.success(uploadRes.data.message ?? "Images successfully uploaded")
             }
 
         } catch (error: any) {
@@ -96,17 +131,7 @@ const ProductManagement = () => {
             setLoading(false)
         }
 
-
-        // const res = await updateProductAPI({ _id: productId!, ...result.data! })
-        // console.log(res)
     }
-
-    useEffect(() => {
-        console.log("It's working")
-        if (!formData.image) return;
-        console.log(formData.image)
-        imageHandler(formData.image!, (base) => setImagePrev(base))
-    }, [formData.image])
 
     if (isError) {
         return <div>Something went wrong</div>
@@ -119,17 +144,12 @@ const ProductManagement = () => {
     if (isFetching) {
         return <div>Loading...</div>
     }
-    console.log(data?.data.images)
     return (
         <DashboardLayout>
             <main className="management">
                 <section>
                     <strong>Id {data?.data?._id}</strong>
-                    <img src={
-                        imagePrev ||
-                        data?.data.images[0] || ""
-
-                    }
+                    <img src={displayImage}
                         alt="New Image"
                         loading="lazy"
                     />
@@ -190,22 +210,20 @@ const ProductManagement = () => {
 
                         />
                         <div style={{
-                            // margin: "1rem auto",
                             height: "100%",
                             display: "flex",
                             alignItems: "center",
-                            // justifyContent: "center"
                         }}>
 
-                            <InputBox
+                            <ImageSelector
                                 name="image"
-                                type="file"
-                                inputRef={ref}
-                                value={formData.image}
-                                onChange={(e) => handleInputChange("image", e.target.files?.[0])}
+                                value={newImages}
+                                onChange={(files) => {
+                                    setNewImages(files)
+                                }}
                                 label="Image"
-                                imgPrev={imagePrev}
-                                action={() => ref.current?.click()}
+                                multiple={true}
+
                             />
                         </div>
 
@@ -220,8 +238,8 @@ const ProductManagement = () => {
 
                         {error && <div className="error-msg">{error}</div>}
 
-                        <button type="submit" className="submit-btn">
-                            Update
+                        <button disabled={loading} type="submit" className="submit-btn">
+                            {loading ? "Updating..." : "Update"}
                         </button>
                     </form>
                 </article>

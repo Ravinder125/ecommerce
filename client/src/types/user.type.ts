@@ -9,5 +9,11 @@ export interface User {
   gender: Genders,
   // createdAt: string;
 }
+
+export type AuthState = {
+  user: User | null;
+  isLoading: boolean;
+}
+
 export type UserRole = typeof USER_ROLE[keyof typeof USER_ROLE]
 export type Genders = typeof GENDERS[keyof typeof GENDERS]

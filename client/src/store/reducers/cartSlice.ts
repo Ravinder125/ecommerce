@@ -1,63 +1,92 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-
-export type CartItem = {
-    productId: string
-    name: string
-    price: number
-    image: string
-    stock: number
-}
-
-export type CartState = {
-    items: CartItem[]
-}
+import type { ShippingInfo } from "../../types/transaction.type";
+import type { CartItem, CartState } from "../../types/cart.type"
 
 const InitialState: CartState = {
     items: [],
-    // stock: 0,
-    // isLoading: false,
+    coupon: undefined,
+    discount: 0,
+    loading: false,
+    shippingCharges: 0,
+    shippingInfo: {
+        address: "",
+        city: "",
+        country: "",
+        phone: "",
+        state: "",
+    },
+    subtotal: 0,
+    tax: 0,
+    total: 0,
 }
 
 const cartSlice = createSlice({
     name: "cart",
     initialState: InitialState,
     reducers: {
-        addToCart(state, action: PayloadAction<CartItem>) {
-            const item = state.items.find(
+        addToCart: (state, action: PayloadAction<CartItem>) => {
+            state.loading = true;
+            const index = state.items.findIndex(
                 i => i.productId === action.payload.productId
             )
 
-
-            if (item) {
-                item.stock++
+            if (index !== -1) {
+                state.items[index] = {
+                    ...state.items[index],
+                    quantity: action.payload.quantity
+                };
             } else {
-                state.items.push(item!)
+                state.items.push(action.payload);
             }
+            state.loading = false;
         },
 
-        clearCart(state) {
-            state.items = []
-            // state.stock = 0
-            // state.isLoading = false
-        },
 
-        // addToCart(state, action) {
-        //     state.items = [...state.items, action.payload]
-        //     state.isLoading = false
-        // },
-
-        removeToCart(state, action: PayloadAction<CartItem>) {
+        removeToCart: (state, action: PayloadAction<{ productId: string }>) => {
+            state.loading = true;
             state.items = state.items
                 .filter(i => i.productId !== action.payload.productId);
-            // state.isLoading = false;
-            // state.stock = state.stock - state.items
-            // .find(i => i._id === action.payload._id)
-            // ?.stock!
+
+            state.loading = false;
         },
+
+        calculatePrice: (state) => {
+            const subtotal = state.items.reduce(
+                (total, item) => total + item.price * item.quantity
+                , 0)
+
+            state.subtotal = subtotal;
+            state.shippingCharges = state.subtotal > 1000 ? 0 : 200;
+            state.tax = Math.round(state.subtotal * 0.18);
+            state.total =
+                state.subtotal + state.shippingCharges + state.tax - state.discount;
+        },
+
+        discountApplied: (state, action: PayloadAction<number>) => {
+            state.discount = action.payload;
+        },
+
+        saveCoupon: (state, action: PayloadAction<string>) => {
+            state.coupon = action.payload;
+        },
+
+        saveShippingInfo: (state, action: PayloadAction<ShippingInfo>) => {
+            state.shippingInfo = action.payload;
+        },
+
+        clearCart: () => InitialState,
 
     }
 })
 
-export const { clearCart, addToCart, removeToCart } = cartSlice.actions
+export const {
+    clearCart,
+    addToCart,
+    removeToCart,
+    calculatePrice,
+    discountApplied,
+    saveCoupon,
+    saveShippingInfo,
+} = cartSlice.actions
 
 export default cartSlice.reducer;

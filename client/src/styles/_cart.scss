@@ -3,13 +3,15 @@
 
 
 .cart {
-    padding: 2rem 4rem;
+    padding: 6rem 4rem;
     @include flex(row, unset, unset, 4rem);
 
-    height: calc(100vh - 5rem);
+    // height: calc(100vh - 5rem);
+    height: 100%;
+    display: flex;
 
-    >main {
-        width: 70%;
+    >section {
+        // width: 70%;
 
         >h1 {
             @include heading(2px);
@@ -22,10 +24,11 @@
         &::-webkit-scrollbar {
             display: none;
         }
+
     }
 
     aside {
-        width: 30%;
+        width: 35rem;
 
         padding: 4rem;
         @include flex(column, center, stretch, 1.5rem);
@@ -80,55 +83,67 @@
         object-fit: contain;
     }
 
-    >article {
-        @include flex(column, center, flex-start, 0.25rem);
+    .cart-item--info {
+        flex: 1;
+        @include flex(row, flex-start, flex-start, 2rem);
 
-        a {
-            font-size: 1.2rem;
-            color: $color2;
+        >article {
+            @include flex(column, center, flex-start, 0.25rem);
 
-            &:hover {
-                color: $color3;
+            a {
+                font-size: 1.2rem;
+                color: $color2;
+
+                &:hover {
+                    color: $color3;
+                }
+            }
+
+            span {
+                font-weight: 700;
             }
         }
 
-        span {
-            font-weight: 700;
-        }
-    }
 
-    >div {
-        margin-left: auto;
-        @include flex;
-        justify-content: center;
-
-        >button {
-            border-radius: 5px;
-            padding: 0.2rem 0.6rem;
+        .cart-item--btn {
             @include flex;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.5rem;
-            transition: all 300ms;
+            gap: 2rem;
 
-            &:hover {
-                background-color: $color2;
-                color: $color1;
+            >div {
+                margin-left: auto;
+                @include flex;
+                justify-content: center;
+
+                >button {
+                    border-radius: 5px;
+                    padding: 0.2rem 0.6rem;
+                    @include flex;
+                    justify-content: center;
+                    cursor: pointer;
+                    font-size: 1.5rem;
+                    transition: all 300ms;
+
+                    &:hover {
+                        background-color: $color2;
+                        color: $color1;
+                    }
+                }
+            }
+
+            >button {
+                background-color: transparent;
+                @include flex;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 1.2rem;
+                transition: all 300ms;
+
+
+                &:hover {
+                    color: red;
+                }
             }
         }
-    }
 
-    >button {
-        background-color: transparent;
-        @include flex;
-        justify-content: center;
-        cursor: pointer;
-        font-size: 1.2rem;
-        transition: all 300ms;
-
-
-        &:hover {
-            color: red;
-        }
     }
 }

@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent, } from "react"
+import { useEffect, useRef, useState, type FormEvent, } from "react"
 import { DashboardLayout } from "../../components"
 import { validateData } from "../../utils/validateFields"
 import { productDataSchema, type NewProductFormData } from "../../validations/productDataSchema"
@@ -6,12 +6,12 @@ import { handleChangeHOC } from "../../utils/handleInputChange"
 import { useCreateProductMutation, useProductCategoriesQuery, useUploadProductImagesMutation } from "../../store/api/productAPI"
 import { createTypedInput } from "../../components/forms/InputBox"
 import toast from "react-hot-toast"
-import { imageHandler } from "../../utils/imageHandler"
 import TextArea from "../../components/forms/TextArea"
 import { InitialProductFormData } from "../../utils/InitialFormData"
 import SelectCategory from "./SelectCategory"
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query"
 import type { ApiResponse } from "../../types/api.type"
+import { imageHandler } from "../../utils/imageHandler"
 
 
 
@@ -21,14 +21,10 @@ const NewProduct = () => {
     const [error, setError] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
     const ref = useRef<HTMLInputElement>(null)
+    const [imagePrev, setImagePrev] = useState<string>("")
+
     const [formData, setFormData] = useState<NewProductFormData>(InitialProductFormData)
 
-    const {
-        isError,
-        data: categories,
-        isFetching,
-        isLoading,
-        error: dataError } = useProductCategoriesQuery()
     const newProductApi = useCreateProductMutation()[0];
     const uploadImages = useUploadProductImagesMutation()[0];
 
@@ -52,12 +48,11 @@ const NewProduct = () => {
         try {
             const res = await newProductApi(result.data!)
 
-            if (res.data) {
+            if (res?.data) {
                 if (res?.data?.data._id) {
-                    const file = new File([formData.image], "product-image.webp", { type: "image/webp" })
                     await uploadImages({
                         id: res.data.data._id,
-                        images: [file]
+                        images: [formData.image!]
                     })
                 }
                 toast.success(res.data.message!)
@@ -86,18 +81,24 @@ const NewProduct = () => {
 
     }
 
-    if (isError) {
-        toast.error(error)
-        return <div>Something went wrong</div>
-    }
 
-    if (isFetching) {
-        return <div>Loading...</div>
-    }
+    useEffect(() => {
+        if (!formData.image) return;
+        imageHandler(formData.image!, (base) => setImagePrev(base))
+    }, [formData.image])
 
-    if (isLoading) {
-        return <div>Loading...</div>
-    }
+    // if (isError) {
+    //     toast.error(error)
+    //     return <div>Something went wrong</div>
+    // }
+
+    // if (isFetching) {
+    //     return <div>Loading...</div>
+    // }
+
+    // if (isLoading) {
+    //     return <div>Loading...</div>
+    // }
 
     return (
         <DashboardLayout>
@@ -165,14 +166,10 @@ const NewProduct = () => {
                                     name="image"
                                     type="file"
                                     inputRef={ref}
-                                    value={typeof formData.image === "string"
-                                        ? formData.image : undefined
-                                    }
-                                    onChange={(e) =>
-                                        imageHandler(
-                                            e.target.files?.[0]!,
-                                            (base: string) => handleInputChange("image", base))}
+                                    value={formData.image}
+                                    onChange={(e) => handleInputChange("image", e.target.files?.[0])}
                                     label="Image"
+                                    imgPrev={imagePrev}
                                     action={() => ref.current?.click()}
                                 />
                             </div>
@@ -191,7 +188,7 @@ const NewProduct = () => {
                         {error && <div className="error-msg">{error}</div>}
 
                         <button disabled={loading} type="submit" className="submit-btn">
-                            {(isLoading || loading) ? "Loading..." : "Create New"}
+                            {(loading) ? "Loading..." : "Create New"}
 
                         </button>
                     </form>

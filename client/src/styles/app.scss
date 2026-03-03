@@ -84,6 +84,19 @@ textarea {
     display: flex;
     justify-content: center;
 
+    >.image-preview--carousel {
+        display: flex;
+
+        >.left-arrow {
+            font-size: 2rem;
+        }
+
+        >div {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
     div {
         width: fit-content;
         position: relative;

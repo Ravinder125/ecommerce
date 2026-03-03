@@ -1,10 +1,7 @@
 import z from "zod";
 
 export const imageSchema = z
-    .file()
-    .refine((file) => file instanceof File, {
-        message: "Image is required"
-    })
+    .instanceof(File)
     .refine((file) => file?.size >= 6250, {
         message: "File is too small (min 6kb)",
     })
@@ -14,8 +11,25 @@ export const imageSchema = z
     .refine((file) =>
         ["image/jpg", "image/jpeg", "image/png", "image/webp"].indexOf(file?.type) !== -1,
         { message: "Only JPG, PNG, or WEBP image are allowed" }
-    ).optional()
+    )
 
+export const imagesSchema = z
+    .array(z.instanceof(File))
+    .min(1, "At least one image is required")
+    .refine(
+        (files) =>
+            files.every(
+                (file) =>
+                    file.size >= 6 * 1024 &&
+                    file.size <= 6 * 1024 * 1024 &&
+                    ["image/jpg", "image/jpeg", "image/png", "image/webp"].includes(
+                        file.type
+                    )
+            ),
+        {
+            message: "Invalid image file(s)",
+        }
+    );
 
 export const productDataSchema = z.object({
     name: z
@@ -31,7 +45,7 @@ export const productDataSchema = z.object({
         .number()
         .min(1, { message: "Stock cannot be lower than 1" }),
 
-    image: imageSchema,
+    // image: imageSchema,
 
     category: z
         .string()
@@ -63,7 +77,7 @@ export const updateProductDataSchema = z.object({
         .number()
         .optional(),
 
-    image: imageSchema,
+    // image: z.array(imageSchema).optional(),
 
     category: z
         .string()
@@ -85,3 +99,5 @@ export const updateProductDataSchema = z.object({
 
 export type NewProductFormData = z.infer<typeof productDataSchema>
 export type UpdateProductFormData = z.infer<typeof updateProductDataSchema>
+export type ImageData = z.infer<typeof imageSchema>
+export type ImagesData = z.infer<typeof imagesSchema>

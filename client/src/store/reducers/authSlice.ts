@@ -1,12 +1,8 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 // import { fetchUser } from "./authThunk";
-import type { User } from "../../types/user.type";
+import type { AuthState, User } from "../../types/user.type";
 import { fetchUser } from "../thunks/authThunk";
 
-interface AuthState {
-    user: User | null;
-    isLoading: boolean;
-}
 
 const initialState: AuthState = {
     user: null,

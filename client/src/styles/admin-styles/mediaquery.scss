@@ -1,6 +1,6 @@
 @use "mixin";
 
-@media screen and (width <=1300px) {
+@media screen and (width <=1348px) {
     .dashboard-layout {
         grid-template-columns: 1fr !important;
         position: relative;
@@ -55,6 +55,16 @@
             }
         }
     }
+
+    .cart {
+        padding: 4rem 3rem;
+        flex-direction: column;
+        overflow-y: auto;
+
+        section {
+            overflow: unset;
+        }
+    }
 }
 
 @media screen and (width <=1200px) {
@@ -89,6 +99,10 @@
         @include mixin.flex(column, center, center, 1rem);
         height: 100%;
         padding: 0;
+    }
+
+    .cart-item--info {
+        flex-direction: column !important;
     }
 }
 
