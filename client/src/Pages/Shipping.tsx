@@ -1,27 +1,64 @@
-import { useEffect, useState, type ChangeEvent } from "react"
-import { Layout } from "../components"
-import { BiArrowBack } from "react-icons/bi"
 import axios from "axios"
+import { useEffect, useState, type FormEvent } from "react"
+import { BiArrowBack } from "react-icons/bi"
 import { useNavigate } from "react-router-dom"
+import { Layout } from "../components"
+import { useAppDispatch, useAppSelector } from "../store/hooks"
+import type { ShippingInfo } from "../types/transaction.type"
+import { handleChangeHOC } from "../utils/handleInputChange"
+import { saveShippingInfo } from "../store/reducers/cartSlice"
+import { axiosInstance } from "../utils/axiosInstance"
+import { apiPaths } from "../utils/apiPath"
+import toast from "react-hot-toast"
+
 
 const Shipping = () => {
-    const [shippingInfo, setShippingInfo] = useState({
+    const { items, coupon } = useAppSelector(
+        state => state.cart
+    );
+
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+
+    const [shippingInfo, setShippingInfo] = useState<ShippingInfo>({
         address: "",
         city: "",
         state: "",
         country: "",
-        pinCode: "",
+        phone: "",
+        pinCode: 0
     })
-    const navigate = useNavigate();
+    const [error, setError] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const { onInput } = handleChangeHOC<ShippingInfo>(setShippingInfo)
+
     const [countries, setCountries] = useState<string[]>([]);
 
+    const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setError("")
 
+        dispatch(saveShippingInfo(shippingInfo));
 
-    const inputChangeHandler = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setShippingInfo(prev => ({
-            ...prev, [name]: value
-        }))
+        try {
+            setLoading(true)
+            const { data } = await axiosInstance.post(apiPaths.payments.root, {
+                items: items,
+                shippingInfo,
+                coupon,
+            })
+
+            navigate("/pay", {
+                state: data.clientSecret
+            })
+        } catch (error) {
+            console.log(error);
+            toast.error("Something went wrong")
+        } finally {
+            setLoading(false)
+        }
+
     }
 
     const fetchCountries = async () => {
@@ -36,6 +73,7 @@ const Shipping = () => {
             console.error("Error fetching countries:", error);
         }
     }
+
     useEffect(() => {
         if (!localStorage.getItem("countries")) {
             fetchCountries();
@@ -46,6 +84,7 @@ const Shipping = () => {
             }
         }
     }, [])
+
     return (
         <Layout>
             <div className="shipping">
@@ -56,14 +95,14 @@ const Shipping = () => {
                     <BiArrowBack />
                 </button>
 
-                <form >
+                <form onSubmit={submitHandler}>
                     <h1>Shipping Information</h1>
 
                     <input
                         type="text"
                         name="address"
                         value={shippingInfo.address}
-                        onChange={inputChangeHandler}
+                        onChange={onInput("address")}
                         placeholder="Address"
                         required
                     />
@@ -71,15 +110,15 @@ const Shipping = () => {
                         type="text"
                         name="city"
                         value={shippingInfo.city}
-                        onChange={inputChangeHandler}
+                        onChange={onInput("city")}
                         placeholder="City"
                         required
                     />
                     <input
                         type="text"
                         name="pinCode"
-                        value={shippingInfo.pinCode}
-                        onChange={inputChangeHandler}
+                        value={shippingInfo.phone}
+                        onChange={onInput("phone")}
                         placeholder="Pin Code"
                         required
                     />
@@ -87,8 +126,17 @@ const Shipping = () => {
                         type="text"
                         name="state"
                         value={shippingInfo.state}
-                        onChange={inputChangeHandler}
+                        onChange={onInput("state")}
                         placeholder="State"
+                        required
+                    />
+
+                    <input
+                        type="text"
+                        name="pinCode"
+                        value={shippingInfo.pinCode}
+                        onChange={onInput("pinCode")}
+                        placeholder="ex.11000"
                         required
                     />
 
@@ -96,7 +144,11 @@ const Shipping = () => {
                         name="country"
                         required
                         value={shippingInfo.country}
-                        onChange={inputChangeHandler}
+                        onChange={(e) =>
+                            setShippingInfo({
+                                ...shippingInfo,
+                                country: e.target.value
+                            })}
                     >
                         <option value="" disabled>Select Country</option>
                         {countries?.length > 0 && countries.map((country) => (

@@ -22,7 +22,7 @@ const columns: ColumnDef<Product>[] = [
     header: "Image",
     accessorKey: "image",
     cell: ({ row }) => (
-      <img src={arr[0].images[0]} alt={`${row.original.name} image`} />
+      <img src={row.original.images?.[0]} alt={`${row.original.name} image`} />
     )
   },
   {

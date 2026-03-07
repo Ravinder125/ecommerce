@@ -1,4 +1,4 @@
-
+import { Types } from 'mongoose'
 export interface RegisterUserRequestBody {
     name: string;
     email: string;
@@ -46,6 +46,7 @@ export interface InvalidateCacheProps {
 }
 
 export interface OrderItemType {
+    productId: Types.ObjectId;
     name: string;
     price: number;
     quantity: number

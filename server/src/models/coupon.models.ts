@@ -1,7 +1,6 @@
-import mongoose, { Types } from 'mongoose';
+import mongoose from 'mongoose';
 
 export interface ICoupon extends Document {
-    _id: Types.ObjectId;
     code: string;
     amount: number;
 }

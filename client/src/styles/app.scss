@@ -14,6 +14,7 @@
 @use "theme" as *;
 @use "admin-styles/mixin" as *;
 @use "skeletons/skeleton";
+@use "product-details";
 
 @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
 
@@ -80,22 +81,53 @@ textarea {
     height: 100px;
 }
 
+.input-box--image {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.image-carousel {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;
+
+    >div {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        >img {
+            width: 100%;
+        }
+
+        >svg {
+            position: absolute;
+            font-size: 1.5rem;
+            color: red;
+            top: 0;
+        }
+    }
+
+    >button {
+        font-size: 2rem;
+        background-color: var(--background);
+
+        &:not(:disabled)>svg:hover {
+            background-color: var(--secondary);
+            color: var(--secondary-foreground);
+        }
+    }
+}
+
 .image-preview {
     display: flex;
     justify-content: center;
-
-    >.image-preview--carousel {
-        display: flex;
-
-        >.left-arrow {
-            font-size: 2rem;
-        }
-
-        >div {
-            width: 100%;
-            height: 100%;
-        }
-    }
 
     div {
         width: fit-content;

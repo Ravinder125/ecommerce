@@ -1,4 +1,4 @@
-export interface Product {
+export type Product = {
     _id: string;
     name: string;
     price: number;
@@ -6,6 +6,22 @@ export interface Product {
     images: string[];
     category: string;
     stock: number;
+    description: string;
+    owner: string;
+    sold: number;
+    ratings: number;
+    numOfReviews: number;
+    reviews: Review[];
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export type Review = {
+    user: string;
+    name: string;
+    rating: number;
+    comment: string;
+    createdAt: Date;
 }
 
 // export type NewProductFormData = {

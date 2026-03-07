@@ -1,7 +1,8 @@
 // baseQueryWithClerk.ts
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 
-const baseUrl = import.meta.env.VITE_BASE_URL
+export const baseUrl = import.meta.env.VITE_BASE_URL
+
 if (!baseUrl) {
   throw new Error("Base url is missing")
 }

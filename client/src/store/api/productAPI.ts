@@ -97,8 +97,9 @@ export const productAPI = createApi({
       query: (product) => ({
         url: apiPaths.products.byId(product.id),
         method: "PUT",
-        body: product
-      })
+        body: product,
+      }),
+      invalidatesTags: ["Product"]
     }),
 
     uploadProductImages: builder.mutation<ApiResponse<null>, UploadProductImagesQuery>({
@@ -114,9 +115,11 @@ export const productAPI = createApi({
           method: "PATCH",
           body: formData
         }
-      }
-    })
+      },
+      invalidatesTags: ["Product"]
+    }),
   })
+
 })
 
 export const {

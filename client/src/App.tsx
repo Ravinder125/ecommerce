@@ -34,8 +34,8 @@ const Shipping = lazy(() => import("./pages/Shipping"))
 const Orders = lazy(() => import("./pages/Orders"))
 const OrderDetails = lazy(() => import("./pages/OrderDetails"))
 
-
 // Product Management routes
+const ProductDetails = lazy(() => import("./pages/ProductDetails"))
 const Products = lazy(() => import("./pages/Products"))
 const NewProduct = lazy(() => import("./pages/management/NewProduct"))
 const ProductManagement = lazy(() => import("./pages/management/ProductManagement"))
@@ -53,9 +53,6 @@ const StopWatch = lazy(() => import("./pages/apps/StopWatch"))
 const Coupon = lazy(() => import("./pages/apps/Coupon"))
 const Toss = lazy(() => import("./pages/apps/Toss"))
 
-
-// Import your Publishable Key
-
 function App() {
 
 
@@ -67,6 +64,8 @@ function App() {
           {/* <AuthSync /> */}
           <Suspense fallback={<PageSkeleton />}>
             <Routes>
+
+              <Route path="/product-details/:id" element={<ProductDetails />} />
 
               {/* Auth Routes */}
               <Route element={<PublicRoutes />}>
@@ -121,7 +120,7 @@ function App() {
         </Router>
         <Toaster />
       </ThemeProvider>
-     </UserProvider>
+    </UserProvider>
   )
 }
 

@@ -57,6 +57,14 @@
     background-color: $color1;
     @include flex(column, flex-start, center, 4px);
 
+    >a {
+        font-size: 1.1rem;
+
+        &:hover {
+            opacity: 0.9
+        }
+    }
+
     img {
         @include square(calc(18.75rem - 3rem));
         object-fit: cover;
@@ -70,7 +78,7 @@
 
     >div {
         opacity: 0;
-        position: absolute;
+        position: relative;
         @include square(100%);
         top: 0;
         left: 0;
@@ -79,9 +87,10 @@
         justify-content: center;
         transition: all 300ms;
 
-        &:hover {
-            opacity: 1;
-        }
+
+        // &:hover {
+        //     opacity: 1;
+        // }
 
         button {
             @include flex;

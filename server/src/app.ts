@@ -2,21 +2,31 @@ import express from "express";
 import dotenv from 'dotenv'
 import morgan from 'morgan'
 import cors, { CorsOptions } from 'cors'
+import Stripe from 'stripe';
 
 dotenv.config({ path: "./.env" })
 const app = express();
+
 const corsOptions: CorsOptions = {
     origin: "http://localhost:5173",
     credentials: true
 }
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
+const STRIPE_KEY_PUBLISHABLE_KEY = process.env.STRIPE_KEY_PUBLISHABLE_KEY;
+// const CLERK_PUBLISHABLE_KEY = process.env.CLERK_PUBLISHABLE_KEY as string
+const CLERK_SECRET_KEY = process.env.CLERK_SECRET_KEY as string
 
-const publishableKey = process.env.CLERK_PUBLISHABLE_KEY as string
-const secretKey = process.env.CLERK_SECRET_KEY as string
-if (!publishableKey || !secretKey) {
+if (!STRIPE_SECRET_KEY || !STRIPE_KEY_PUBLISHABLE_KEY) {
+    throw new Error("Stripe keys are missing")
+}
+
+if (!CLERK_SECRET_KEY) {
     throw new Error("Clerk keys are missing")
 }
 
-app.use(clerkMiddleware({ secretKey, publishableKey }))
+export const stripe = new Stripe(STRIPE_SECRET_KEY)
+
+app.use(clerkMiddleware({ secretKey: CLERK_SECRET_KEY, publishableKey: CLERK_PUBLISHABLE_KEY }))
 // app.use(requireAuth())
 app.use(cors(corsOptions))
 
@@ -46,7 +56,7 @@ app.use("/api/v1/dashboard", dashboardRouter);
 
 // DB and Caching connection
 import { connectDB } from "./config/db.js";
-import { clerkMiddleware, requireAuth } from "@clerk/express";
+import { clerkMiddleware } from "@clerk/express";
 import { connectToRedis } from "./config/redis.js";
 // import { connectToRedis } from './config/redis.js';
 

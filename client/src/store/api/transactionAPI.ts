@@ -8,7 +8,7 @@ import type { Order } from "../../types/transaction.type";
 export const transactionAPI = createApi({
     reducerPath: "transactionAPI",
     baseQuery: baseQueryWithClerk(getToken),
-    tagTypes: ["transactions"],
+    tagTypes: ["Transactions"],
 
     endpoints: (builder) => ({
 
@@ -19,7 +19,7 @@ export const transactionAPI = createApi({
                 method: "POST",
                 body: order,
             }),
-            invalidatesTags: ["transactions"]
+            invalidatesTags: ["Transactions"]
         }),
 
         adminOrders: builder.query<ApiResponse<Order[]>, void>({

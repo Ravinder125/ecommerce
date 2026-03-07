@@ -31,7 +31,8 @@ export const createOrder = asyncHandler(
             taxPrice,
             totalPrice,
             orderStatus,
-            paymentInfo } = req.body
+            paymentInfo
+        } = req.body
 
         const order = await Order.create({
             buyer,

@@ -12,6 +12,43 @@ export interface IOrder extends Document, NewOrderRequestBody {
     _id: Types.ObjectId
 }
 
+export interface IShippingInfo {
+    address: string,
+    city: string,
+    state: string,
+    country: string,
+    phone: string;
+    pinCode: number;
+}
+
+export const ShippingSchema = new mongoose.Schema<IShippingInfo>({
+    address: {
+        type: String,
+        required: [true, "Address 1 is required"],
+    },
+    city: {
+        type: String,
+        required: [true, "City is required"],
+    },
+    state: {
+        type: String,
+        required: [true, "City is required"],
+    },
+    country: {
+        type: String,
+        required: [true, "City is required"],
+    },
+    phone: {
+        type: String,
+        required: [true, "City is required"],
+    },
+    pinCode: {
+        type: Number,
+        required: [true, "Pin Code is required"]
+    }
+}, { _id: false })
+
+
 const OrderItemSchema = new mongoose.Schema<IOrderItemType>({
     product: {
         type: Schema.Types.ObjectId,
@@ -40,32 +77,7 @@ const OrderSchema = new mongoose.Schema<IOrder>(
             trim: true,
         },
         orderItem: [OrderItemSchema],
-        shippingInfo: {
-            address: {
-                type: String,
-                required: [true, "Address 1 is required"],
-            },
-            city: {
-                type: String,
-                required: [true, "City is required"],
-            },
-            state: {
-                type: String,
-                required: [true, "City is required"],
-            },
-            country: {
-                type: String,
-                required: [true, "City is required"],
-            },
-            phone: {
-                type: String,
-                required: [true, "City is required"],
-            },
-            // pinCode: {
-            //     type: String,
-            //     required: [true, "Pin Code is required"]
-            // }
-        },
+        shippingInfo: ShippingSchema,
         paymentMethod: {
             type: String,
             enum: ["COD", "Card", "UPI"],

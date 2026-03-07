@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { MdDelete, MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
+import { useMemo } from "react";
 import { useImageHandler } from "../../hooks/useImageHandler";
+import { ImageCarousel } from "../ImageCarousel";
 
 type ImageSelector = {
     name: string;
@@ -9,6 +9,8 @@ type ImageSelector = {
     required?: boolean;
     label?: string;
     multiple?: boolean
+    existingImages?: string[]
+    setDeleteImages?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export const ImageSelector = ({
@@ -17,28 +19,18 @@ export const ImageSelector = ({
     label = "Choose Image",
     value = [],
     multiple = false,
-    required = false
+    required = false,
+    setDeleteImages,
+    existingImages = []
 }: ImageSelector) => {
-
-    // const [previews, setPreviews] = useState<string[]>([])
-
-    // useEffect(() => {
-    //     if (!value.length) {
-    //         setPreviews([])
-    //         return;
-    //     }
-
-    //     const urls = value.map(file =>
-    //         URL.createObjectURL(file)
-    //     );
-
-    //     return () => {
-    //         urls.forEach(url => URL.revokeObjectURL(url))
-    //     }
-
-    // }, [value])
+    console.log("Image rendered")
 
     const previews = useImageHandler(value)
+
+    const allPreviews = useMemo(
+        () => [...existingImages, ...previews]
+        , [previews, existingImages])
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -49,17 +41,14 @@ export const ImageSelector = ({
         if (!multiple) {
             onChange([filesArr[0]])
         } else {
-            onChange(filesArr)
+            onChange([...value, ...filesArr])
         }
     }
 
-    const handleRemove = (idx: number) => {
-        const updated = value.filter((_, i) => i !== idx)
-        onChange(updated);
-    }
+
 
     return (
-        <div>
+        <div className="input-box--image">
             <input
                 hidden
                 type="file"
@@ -75,20 +64,10 @@ export const ImageSelector = ({
                 {label}
             </label>
 
-            {previews.length > 0 && (
-                <div className="image-preview">
-                    {previews.map((src, index) => (
-                        <div key={index}>
-                            <img src={src} alt="preview" />
-                            <MdDelete onClick={() => handleRemove(index)} />
-                        </div>
-                    ))}
-                </div>
-            )}
+            {/* {allPreviews.length > 0 && (
+                <ImageCarousel images={allPreviews} onRemove={handleRemove} />
+            )} */}
         </div >
     )
 }
 
-const ImageCarousel = () => {
-
-}

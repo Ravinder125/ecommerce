@@ -31,6 +31,9 @@ export const createOrderValidator = [
     body("shippingInfo.city")
         .notEmpty().withMessage("City is required"),
 
+    body("shippingInfo.phone")
+        .notEmpty().withMessage("Phone number is required"),
+
     body("shippingInfo.state")
         .notEmpty().withMessage("State is required"),
 

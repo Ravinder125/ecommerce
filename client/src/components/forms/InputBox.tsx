@@ -1,4 +1,3 @@
-import { MdDelete, MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
 type BaseInputProps = {
     label?: string;
@@ -11,6 +10,8 @@ type BaseInputProps = {
     isPassword?: boolean;
     min?: number;
     max?: number;
+    autoComplete?: "off" | "on";
+    maxLength?: number;
 };
 
 export function InputBox({
@@ -24,6 +25,8 @@ export function InputBox({
     required = false,
     min = 0,
     max = 100000,
+    autoComplete = "off",
+    maxLength
 
 }: BaseInputProps) {
 
@@ -44,7 +47,9 @@ export function InputBox({
                 placeholder={placeholder}
                 onChange={onChange}
                 required={required}
-                {...(type === "number" && { min, max })}
+
+                autoComplete={autoComplete}
+                {...(type === "number" && { min, max, maxLength })}
             />
 
         </div >

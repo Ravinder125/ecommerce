@@ -4,7 +4,59 @@ import { Coupon, ICoupon } from "../models/coupon.models.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { validationResult } from "express-validator";
 import { ApiError } from "../utils/ApiError.js";
+import { User } from "../models/user.models.js";
+import { OrderItemType } from "../types/types.js";
+import { IShippingInfo } from "../models/order.models.js";
+import { Product } from "../models/product.models.js";
 
+
+export const createPaymentIntent = asyncHandler(async (req, res) => {
+    const userId = req.user?._id;
+
+    const user = await User.findById(userId).select("name");
+
+    if (!user) {
+        throw new ApiError(401, "Please login first");
+    }
+
+    const { coupon, items, shippingInfo } = req.body as {
+        items: OrderItemType[],
+        shippingInfo: IShippingInfo | undefined;
+        coupon: string | undefined;
+    };
+
+    if (!items) throw new ApiError(400, "Items are required");
+
+    if (!shippingInfo) throw new ApiError(400, "Shipping Info is required");
+
+    let discountAmount = 0;
+
+    if (coupon) {
+        const discount = await Coupon.findOne({ code: coupon });
+        if (!discount) throw new ApiError(400, "Invalid Coupon Code")
+        discountAmount = discount.amount;
+    }
+
+    const productIDs = items.map(item => item.productId);
+
+    const products = await Product.find({
+        _id: { $in: productIDs }
+    });
+
+    const subtotal = products.reduce((prev, curr) => {
+        const item = items.find((i) => i.productId === curr._id)
+        if (!item) return prev;
+        return curr.price * item.quantity + Number(prev)
+    }, 0);
+
+    const tax = subtotal * 0.18;
+
+    const shipping = subtotal > 1000 ? 0 : 200;
+
+    const total = Math.floor(subtotal + tax + shipping - discountAmount);
+
+    const paymentIntent = await 
+})
 
 export const newCoupon = asyncHandler(async (
     req: Request<{}, {}, ICoupon>,
@@ -26,6 +78,7 @@ export const applyDiscount = asyncHandler(async (req: Request, res: Response) =>
     const { code } = req.query;
     if (!code) throw new ApiError(400, "Coupon code is required")
     const coupon = await Coupon.findOne({ code })
+
     if (!coupon) throw new ApiError(400, "Invalid coupon code")
 
     return res.status(200).json(
@@ -36,7 +89,7 @@ export const applyDiscount = asyncHandler(async (req: Request, res: Response) =>
 export const allCoupons = asyncHandler(async (req: Request, res: Response) => {
     const id = req?.user?._id
 
-    const coupons = await Coupon.findOne({})
+    const coupons = await Coupon.findOne({ _id: id })
     if (!coupons) throw new ApiError(400, "Invalid coupon code")
 
     return res.status(200).json(

@@ -29,9 +29,9 @@ export const apiPaths = {
     },
 
     coupons: {
-        root: "/orders/coupon",
-        byId: (id: string) => `/orders/coupon/${id}`,
-        applyDiscount: "/orders/discount",
+        root: "/payments/coupon",
+        byId: (id: string) => `/payments/coupon/${id}`,
+        applyDiscount: "/payments/discount",
     },
 
     dashboard: {

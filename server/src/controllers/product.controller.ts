@@ -174,6 +174,7 @@ export const getSingleProduct = asyncHandler(async (req: Request, res: Response)
         throw new ApiError(404, "No product found")
     }
 
+
     const resData = {
         ...product.toObject(), images: product?.images.map(img => img.image)
     }
@@ -232,11 +233,16 @@ export const getAdminProducts = asyncHandler(
         if (!productDocs) throw new ApiError(400, "No product not found");
 
         const totalPages = Math.round(productCount / pageSize)
+        const productsList = productDocs.map(p => {
+            return { ...p.toObject(), images: p.images.map(i => i.image) }
+        })
+
         // await cache.set(cacheKey, products)
         const resData = {
             totalPages,
-            products: productDocs
+            products: productsList
         }
+
         return res.status(200).json(
             new ApiResponse(200, resData, "All admin products fetched successfully")
         )

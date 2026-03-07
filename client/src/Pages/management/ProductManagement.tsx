@@ -14,12 +14,15 @@ import SelectCategory from "./SelectCategory"
 import { validateData } from "../../utils/validateFields"
 import { ImageSelector } from "../../components/forms/ImageSelector"
 import { useImageHandler } from "../../hooks/useImageHandler"
-import { urlToFile } from "../../utils/urlToFile"
+import { ImageCarousel } from "../../components/ImageCarousel"
 
 
 const InputBox = createTypedInput<UpdateProductFormData>()
 
 const ProductManagement = () => {
+    const params = useParams();
+    const productId = params.id;
+
     const [error, setError] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -27,20 +30,17 @@ const ProductManagement = () => {
     const [newImages, setNewImages] = useState<File[]>([]);
     const [deleteImages, setDeleteImages] = useState<string[]>([])
 
-    const params = useParams();
-    const productId = params.id;
+
 
     const [formData, setFormData] = useState<UpdateProductFormData>(InitialProductFormData)
-    const [images, setImages] = useState<File[]>([])
-    const { isError, isFetching, isLoading, data } = useGetProductQuery(productId!)
+    const { isError, isFetching, isLoading, data } = useGetProductQuery(productId!, {
+        refetchOnMountOrArgChange: false,
+        refetchOnFocus: false,
+        refetchOnReconnect: false
+    })
     const updateProductAPI = useUpdateProductMutation()[0]
     const uploadImages = useUploadProductImagesMutation()[0];
 
-    const previews = useImageHandler(images)
-    const displayImage =
-        previews.length > 0
-            ? previews[0]
-            : data?.data.images?.[0] ?? "";
 
     const { onInput, handleInputChange } = handleChangeHOC<UpdateProductFormData>(setFormData)
 
@@ -50,86 +50,73 @@ const ProductManagement = () => {
         }
     }, [data])
 
-    useEffect(() => {
-        if (!data?.data?.images || !(data?.data.images.length === 1)) {
-            setImages([])
-            return;
-        }
-        const convertPreviewToFile = async () => {
-            const files = await Promise.all(
-                data.data.images.map(img => urlToFile(img))
-            )
-
-            setImages(files)
-        }
-
-        convertPreviewToFile()
-
-    }, [data])
-
-
-
+    const previews = useImageHandler(newImages);
+    const displayImage: string[] = previews.concat(existingImages);
 
     const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setError("")
+        setError("");
 
         const payload = {
             ...formData,
             stock: Number(formData.stock),
             price: Number(formData.price)
-        }
+        };
 
-        const result = validateData(updateProductDataSchema, payload)
+        const result = validateData(updateProductDataSchema, payload);
+
         if (!result.success) {
-            const message = result.message ?? "Something went wrong"
-            toast.error(message)
-            setError(message)
+            toast.error(result.message!);
             return;
         }
 
         try {
-            const id = productId!
-            if (!id) {
-                const message = "ID is missing"
-                setError(message);
-                toast.error(message)
-                return;
-            }
+            const id = productId!;
+            setLoading(true);
 
-            setLoading(true)
-            const updateRes = await updateProductAPI({ ...payload, id })
+            // 1️⃣ Update product info
+            const updateRes = await updateProductAPI({ ...payload, id });
+
             if (updateRes.error) {
-                const err = updateRes.error as FetchBaseQueryError
-                const message = (err.data as ApiResponse)?.message
-                throw new Error(message)
+                const err = updateRes.error as FetchBaseQueryError;
+                throw new Error((err.data as ApiResponse)?.message);
             }
 
-            if (updateRes.data && images.length >= 0) {
-                const uploadRes = await uploadImages({ id, images: images })
-
-                if (!uploadRes.data?.success) {
-                    throw new Error("Uploading images failed")
-                }
-
-                toast.success(uploadRes.data.message ?? "Images successfully uploaded")
+            // 2️⃣ Upload new images
+            if (newImages.length > 0) {
+                await uploadImages({ id, images: newImages });
             }
+
+            // 3️⃣ Delete removed images
+            if (deleteImages.length > 0) {
+                // await deleteProductImages({ id, images: deleteImages });
+            }
+
+            toast.success("Product updated successfully");
 
         } catch (error: any) {
-
-            let errMessage =
-                error?.data?.message
-                || error.message
-                || "Something went wrong"
-
-            toast.error(errMessage)
-            setError(errMessage)
-
-            console.error("Sync error:", error)
+            toast.error(error.message || "Something went wrong");
         } finally {
-            // setFormData(InitialProductFormData)
-            setLoading(false)
+            setLoading(false);
         }
+    };
+
+    const handleRemove = (idx: number) => {
+        // remove existing image
+        if (idx < existingImages.length) {
+            const removeUrl = existingImages[idx];
+
+            if (setDeleteImages) {
+                setDeleteImages(prev => [...prev, removeUrl]);
+            }
+
+            return;
+        }
+
+        // remove newly added image
+        const newIndex = idx - existingImages.length;
+        const updated = newImages.filter((_, i) => i !== newIndex);
+        setNewImages(updated)
 
     }
 
@@ -147,12 +134,11 @@ const ProductManagement = () => {
     return (
         <DashboardLayout>
             <main className="management">
-                <section>
+                <section style={{ display: "flex" }}>
                     <strong>Id {data?.data?._id}</strong>
-                    <img src={displayImage}
-                        alt="New Image"
-                        loading="lazy"
-                    />
+                    <div>
+                        <ImageCarousel images={displayImage} />
+                    </div>
 
 
                     <p>{data?.data.name}</p>
@@ -213,6 +199,7 @@ const ProductManagement = () => {
                             height: "100%",
                             display: "flex",
                             alignItems: "center",
+                            flexDirection: "column"
                         }}>
 
                             <ImageSelector
@@ -223,8 +210,13 @@ const ProductManagement = () => {
                                 }}
                                 label="Image"
                                 multiple={true}
+                                existingImages={existingImages}
+                                setDeleteImages={setDeleteImages}
 
                             />
+                            <div>
+                                <ImageCarousel onRemove={handleRemove} images={displayImage} />
+                            </div>
                         </div>
 
                         <TextArea

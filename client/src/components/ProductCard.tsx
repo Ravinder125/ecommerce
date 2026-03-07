@@ -1,4 +1,5 @@
 import { FaPlus } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 
 interface ProductsProps {
@@ -20,7 +21,7 @@ const ProductCard = ({ _id, name, price, image, stock, handler }
             <img src={image} alt={name} />
             <p>{name}</p>
             <span>₹{price}</span>
-
+            <Link to={`/product-details/${_id}`}>Read more </Link>
             <div>
                 <button
                     onClick={handler}

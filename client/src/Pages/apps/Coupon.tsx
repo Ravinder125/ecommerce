@@ -1,5 +1,9 @@
 import { useState, type FormEvent } from "react"
 import { DashboardLayout } from "../../components"
+import { axiosInstance } from "../../utils/axiosInstance";
+import { apiPaths } from "../../utils/apiPath";
+import toast from "react-hot-toast";
+import { InputBox } from "../../components/forms/InputBox";
 
 
 const allLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -15,6 +19,7 @@ const Coupon = () => {
     const [isCopied, setIsCopied] = useState<boolean>(false)
 
     const [coupon, setCoupon] = useState<string>("")
+    const [amount, setAmount] = useState<number>(0)
 
 
     const copyText = async (coupon: string) => {
@@ -25,7 +30,7 @@ const Coupon = () => {
         }, 2000);
     }
 
-    const submitHandler = (e: FormEvent<HTMLFormElement>) => {
+    const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!includeChar && !includeNumbers && !includeSymbol) {
@@ -43,6 +48,27 @@ const Coupon = () => {
             result += entireString[randomNum];
         }
         setCoupon(result)
+
+        if (amount <= 50) {
+            toast.error("Amount cannot be lower than 50")
+            return;
+        }
+
+        if (!result.trim()) {
+            toast.error("Coupon is required")
+            return;
+        }
+
+        axiosInstance.post(apiPaths.coupons.root, { code: result, amount })
+            .then((data) => {
+                toast.success("Coupon successfully created")
+                console.log(data)
+            })
+            .catch((err) => {
+                toast.error("Error while creating Coupon")
+                console.log(err)
+            })
+
     }
 
     return (
@@ -51,22 +77,33 @@ const Coupon = () => {
                 <h1>Coupon</h1>
                 <section>
                     <form className="coupon-form" onSubmit={submitHandler}>
-                        <input
+                        <InputBox
                             type="text"
+                            name="text"
                             placeholder="Text to include"
                             autoComplete="off"
                             value={prefix}
                             onChange={({ target }) => setPrefix(target.value)}
                             maxLength={size}
                         />
-                        <input
+                        <InputBox
                             type="number"
-                            placeholder="Text to include"
-                            value={size}
+                            name="number"
+                            placeholder="Number to include"
+                            value={size.toString()}
                             onChange={({ target }) => setSize(Number(target.value))}
                             min={8}
                             maxLength={25}
                             autoComplete="off"
+                        />
+
+                        <InputBox
+                            type="number"
+                            name="amount"
+                            onChange={({ target }) => setAmount(Number(target.value))}
+                            value={amount.toString()}
+                            max={30000}
+                            min={50}
                         />
 
                         <fieldset>
@@ -90,7 +127,7 @@ const Coupon = () => {
                             />
                             <label>Symbols</label>
                         </fieldset>
-                        <button className="submit-btn" type="submit">Generate</button>
+                        <button className="primary-btn" type="submit">Generate</button>
                     </form>
                     {coupon
                         && <code> {coupon} <span
