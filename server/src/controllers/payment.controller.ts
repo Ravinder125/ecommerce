@@ -8,6 +8,7 @@ import { User } from "../models/user.models.js";
 import { OrderItemType } from "../types/types.js";
 import { IShippingInfo } from "../models/order.models.js";
 import { Product } from "../models/product.models.js";
+import { stripe } from "../app.js";
 
 
 export const createPaymentIntent = asyncHandler(async (req, res) => {
@@ -51,11 +52,32 @@ export const createPaymentIntent = asyncHandler(async (req, res) => {
 
     const tax = subtotal * 0.18;
 
-    const shipping = subtotal > 1000 ? 0 : 200;
+    const shippingCharge = subtotal > 1000 ? 0 : 200;
 
-    const total = Math.floor(subtotal + tax + shipping - discountAmount);
+    const total = Math.floor(subtotal + tax + shippingCharge - discountAmount);
 
-    const paymentIntent = await 
+    const paymentIntent = await stripe.paymentIntents.create({
+        amount: total * 100,
+        currency: "inr",
+        description: "MERN-ECOMMERCE",
+        shipping: {
+            name: user.name,
+            address: {
+                line1: shippingInfo.address,
+                postal_code: shippingInfo.pinCode.toString(),
+                city: shippingInfo.city,
+                state: shippingInfo.state,
+                country: shippingInfo.country,
+            },
+        },
+    })
+
+    return res
+        .status(201)
+        .json(new ApiResponse(
+            201,
+            { clientSecret: paymentIntent.client_secret })
+        )
 })
 
 export const newCoupon = asyncHandler(async (
@@ -134,8 +156,3 @@ export const updateCoupon = asyncHandler(async (
         new ApiResponse(200, coupon, "Coupon successfully updated")
     );
 });
-
-
-
-
-

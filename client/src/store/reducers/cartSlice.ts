@@ -14,6 +14,7 @@ const InitialState: CartState = {
         country: "",
         phone: "",
         state: "",
+        pinCode: 0
     },
     subtotal: 0,
     tax: 0,
@@ -75,7 +76,6 @@ const cartSlice = createSlice({
         },
 
         clearCart: () => InitialState,
-
     }
 })
 

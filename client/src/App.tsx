@@ -27,31 +27,32 @@ const CompleteProfile = lazy(() => import("./pages/auth/CompleteProfile"))
 
 const Home = lazy(() => import("./pages/Home"))
 const Profile = lazy(() => import("./pages/Profile"))
-const Dashboard = lazy(() => import("./pages/Dashboard"))
+const Dashboard = lazy(() => import("./pages/admin/Dashboard"))
 const Search = lazy(() => import("./pages/Search"))
 const Cart = lazy(() => import("./pages/Cart"))
 const Shipping = lazy(() => import("./pages/Shipping"))
-const Orders = lazy(() => import("./pages/Orders"))
-const OrderDetails = lazy(() => import("./pages/OrderDetails"))
+const Checkout = lazy(() => import("./pages/Checkout"))
+const Orders = lazy(() => import("./pages/admin/Orders"))
+const OrderDetails = lazy(() => import("./pages/admin/OrderDetails"))
 
 // Product Management routes
 const ProductDetails = lazy(() => import("./pages/ProductDetails"))
-const Products = lazy(() => import("./pages/Products"))
-const NewProduct = lazy(() => import("./pages/management/NewProduct"))
-const ProductManagement = lazy(() => import("./pages/management/ProductManagement"))
-const Customers = lazy(() => import("./pages/Customers"))
+const Products = lazy(() => import("./pages/admin/Products"))
+const NewProduct = lazy(() => import("./pages/admin/management/NewProduct"))
+const ProductManagement = lazy(() => import("./pages/admin/management/ProductManagement"))
+const Customers = lazy(() => import("./pages/admin/Customers"))
 
 // Transaction Management routes
-const Transaction = lazy(() => import("./pages/Transaction"))
-const TransactionManagement = lazy(() => import("./pages/management/TransactionManagement"))
+const Transaction = lazy(() => import("./pages/admin/Transaction"))
+const TransactionManagement = lazy(() => import("./pages/admin/management/TransactionManagement"))
 const BarCharts = lazy(() => import("./pages/charts/BarCharts"))
 const LineCharts = lazy(() => import("./pages/charts/LineCharts"))
 const PieCharts = lazy(() => import("./pages/charts/PieCharts"))
 
 // Apps Routes
-const StopWatch = lazy(() => import("./pages/apps/StopWatch"))
-const Coupon = lazy(() => import("./pages/apps/Coupon"))
-const Toss = lazy(() => import("./pages/apps/Toss"))
+const StopWatch = lazy(() => import("./pages/admin/apps/StopWatch"))
+const Coupon = lazy(() => import("./pages/admin/apps/Coupon"))
+const Toss = lazy(() => import("./pages/admin/apps/Toss"))
 
 function App() {
 
@@ -87,6 +88,7 @@ function App() {
                 {/* Private Routes (Users) */}
                 <Route>
                   <Route path="/shipping" element={<Shipping />} />
+                  <Route path="/pay" element={<Checkout />} />
                   <Route path="/orders" element={<Orders />} />
                   <Route path="/orders/:id" element={<OrderDetails />} />
                 </Route>

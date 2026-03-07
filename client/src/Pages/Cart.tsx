@@ -3,7 +3,7 @@ import { VscError } from "react-icons/vsc";
 import { Link } from "react-router-dom";
 import { Layout } from "../components";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import CardItem from "./CardItem";
+import CardItem from "./admin/CardItem";
 import { axiosInstance } from "../utils/axiosInstance";
 import axios from "axios";
 import { addToCart, calculatePrice, discountApplied, removeToCart, saveCoupon } from "../store/reducers/cartSlice";

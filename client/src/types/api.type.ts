@@ -42,6 +42,7 @@ export type ApiPaths = {
 
   payments: {
     root: string;
+    createPayment: string;
   };
 };
 

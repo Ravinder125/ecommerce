@@ -1,9 +1,9 @@
 import { useState, type FormEvent } from "react"
-import { DashboardLayout } from "../../components"
-import { axiosInstance } from "../../utils/axiosInstance";
-import { apiPaths } from "../../utils/apiPath";
+import { DashboardLayout } from "../../../components"
+import { axiosInstance } from "../../../utils/axiosInstance";
+import { apiPaths } from "../../../utils/apiPath";
 import toast from "react-hot-toast";
-import { InputBox } from "../../components/forms/InputBox";
+import { InputBox } from "../../../components/forms/InputBox";
 
 
 const allLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";

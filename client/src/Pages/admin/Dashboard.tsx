@@ -4,16 +4,16 @@ import {
   DashboardLayout,
   DoughnutChart,
   DashboardTable as Table
-} from "../components"
+} from "../../components"
 import { FaRegBell, FaRegUser } from "react-icons/fa6"
 import { HiTrendingDown, HiTrendingUp } from "react-icons/hi"
 // import AdminSideBar from "../components/layouts/AdminSideBar"
 // import data from '../assets/data.json'
 import { BiMaleFemale } from "react-icons/bi"
 import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md"
-import { useTheme } from '../context/themeContext'
+import { useTheme } from '../../context/themeContext'
 import { useState } from "react"
-import { useDashboardQuery } from "../store/api/statsAPI"
+import { useDashboardQuery } from "../../store/api/statsAPI"
 
 
 const Dashboard = () => {

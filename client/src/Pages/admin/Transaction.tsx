@@ -1,10 +1,10 @@
-import { DashboardLayout } from "../components"
-import { TableHOC } from "../components"
+import { DashboardLayout } from "../../components"
+import { TableHOC } from "../../components"
 import type { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
-import { useAdminOrdersQuery } from "../store/api/transactionAPI";
-import type { Order } from "../types/transaction.type";
+import { useAdminOrdersQuery } from "../../store/api/transactionAPI";
+import type { Order } from "../../types/transaction.type";
 
 
 

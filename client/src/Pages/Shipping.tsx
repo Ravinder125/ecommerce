@@ -43,14 +43,13 @@ const Shipping = () => {
 
         try {
             setLoading(true)
-            const { data } = await axiosInstance.post(apiPaths.payments.root, {
+            const { data } = await axiosInstance.post(apiPaths.payments.createPayment, {
                 items: items,
                 shippingInfo,
                 coupon,
             })
-
             navigate("/pay", {
-                state: data.clientSecret
+                state: data.data.clientSecret
             })
         } catch (error) {
             console.log(error);
@@ -131,14 +130,14 @@ const Shipping = () => {
                         required
                     />
 
-                    <input
+                    {/* <input
                         type="text"
                         name="pinCode"
                         value={shippingInfo.pinCode}
                         onChange={onInput("pinCode")}
                         placeholder="ex.11000"
                         required
-                    />
+                    /> */}
 
                     <select
                         name="country"
@@ -157,7 +156,7 @@ const Shipping = () => {
 
                     </select>
 
-                    <button type="submit">Pay now</button>
+                    <button type="submit" disabled={loading}>{loading ? "Loading..." : "Pay Now"}</button>
                 </form>
             </div>
         </Layout>

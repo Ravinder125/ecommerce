@@ -1,7 +1,7 @@
-import { DashboardLayout } from "../../components"
-import type { OrderItem } from "../../types/transaction.type"
+import { DashboardLayout } from "../../../components"
+import type { OrderItem } from "../../../types/transaction.type"
 import { Link, Navigate, useParams } from "react-router-dom";
-import { useGetOrderQuery, useProcessOrderMutation, } from "../../store/api/transactionAPI";
+import { useGetOrderQuery, useProcessOrderMutation, } from "../../../store/api/transactionAPI";
 import toast from "react-hot-toast";
 import { useState } from "react";
 

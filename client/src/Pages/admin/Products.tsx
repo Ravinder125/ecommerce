@@ -1,13 +1,13 @@
 import { useState, } from "react";
-import { DashboardLayout } from "../components"
-import { TableHOC } from "../components"
+import { DashboardLayout } from "../../components"
+import { TableHOC } from "../../components"
 import type { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
-import { useAdminProductsQuery } from "../store/api/productAPI";
-import type { Product } from "../types/product.type";
-import { InputBox } from "../components/forms/InputBox";
-import { useDebounce } from "../hooks/useDebounce";
+import { useAdminProductsQuery } from "../../store/api/productAPI";
+import type { Product } from "../../types/product.type";
+import { InputBox } from "../../components/forms/InputBox";
+import { useDebounce } from "../../hooks/useDebounce";
 
 // interface Product {
 //   image: string;

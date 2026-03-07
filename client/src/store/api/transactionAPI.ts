@@ -3,7 +3,7 @@ import { baseQueryWithClerk } from "./baseQueryWithAuth";
 import { getToken } from "../../utils/tokenManager";
 import type { ApiResponse } from "../../types/api.type";
 import { apiPaths } from "../../utils/apiPath";
-import type { Order } from "../../types/transaction.type";
+import type { NewOrder, Order } from "../../types/transaction.type";
 
 export const transactionAPI = createApi({
     reducerPath: "transactionAPI",
@@ -13,7 +13,7 @@ export const transactionAPI = createApi({
     endpoints: (builder) => ({
 
         // Create Order
-        createOrder: builder.mutation<ApiResponse, Order>({
+        createOrder: builder.mutation<ApiResponse, NewOrder>({
             query: (order) => ({
                 url: apiPaths.orders.root,
                 method: "POST",

@@ -43,6 +43,7 @@ export const apiPaths = {
 
     payments: {
         root: "/payments",
+        createPayment: "payments/create"
     },
 } as const satisfies ApiPaths;
 

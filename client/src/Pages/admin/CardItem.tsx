@@ -1,8 +1,8 @@
 import { FaTrash } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 // import type { CartItem } from "../types/cart.type";
-import { useAppDispatch } from "../store/hooks";
-import type { CartItem } from "../types/cart.type";
+import { useAppDispatch } from "../../store/hooks";
+import type { CartItem } from "../../types/cart.type";
 
 export type CartItemProps = {
     // productId: string;

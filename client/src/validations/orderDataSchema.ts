@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /* ORDER ITEM */
 export const orderItemSchema = z.object({
-    product: z.string().min(1, "Product ID is required"),
+    productId: z.string().min(1, "Product ID is required"),
     name: z.string(),
     price: z.number().min(0),
     quantity: z.number().min(1),
@@ -39,7 +39,7 @@ export const orderStatusSchema = z.enum([
 export const orderSchema = z.object({
     buyer: z.string().min(1),
 
-    orderItem: z.array(orderItemSchema).min(1),
+    orderItems: z.array(orderItemSchema).min(1),
 
     shippingInfo: shippingInfoSchema,
 
@@ -48,11 +48,24 @@ export const orderSchema = z.object({
     paymentInfo: paymentInfoSchema,
 
     subtotal: z.number().min(0),
-    taxPrice: z.number().min(0),
-    shippingCharge: z.number().min(0),
-    totalPrice: z.number().min(0),
+    tax: z.number().min(0),
+    shippingCharges: z.number().min(0),
+    total: z.number().min(0),
     discount: z.number().min(0).default(0),
 
     orderStatus: orderStatusSchema.default("Processing"),
 });
+
+export const newOrderSchema = z.object({
+    orderItems: z.array(orderItemSchema).min(1),
+
+    shippingInfo: shippingInfoSchema,
+
+    coupon: z.string().optional(),
+    subtotal: z.number().min(0),
+    tax: z.number().min(0),
+    shippingCharges: z.number().min(0),
+    total: z.number().min(0),
+    discount: z.number().min(0).default(0),
+})
 

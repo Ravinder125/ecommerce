@@ -1,12 +1,12 @@
-import { DashboardLayout } from "../components"
-import { TableHOC } from "../components"
+import { DashboardLayout } from "../../components"
+import { TableHOC } from "../../components"
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 import type { ColumnDef } from "@tanstack/react-table";
-import { useAllUsersQuery, type Customer } from "../store/api/syncProfileAPI";
+import { useAllUsersQuery, type Customer } from "../../store/api/syncProfileAPI";
 import toast from "react-hot-toast";
 import { useState } from "react";
-import type { TablePagination } from "../components/TableHOC";
+import type { TablePagination } from "../../components/TableHOC";
 
 
 const columns: ColumnDef<Customer>[] = [

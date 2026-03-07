@@ -1,6 +1,6 @@
 
 import type z from "zod";
-import type { orderItemSchema, orderSchema, orderStatusSchema, paymentInfoSchema, paymentMethodSchema, shippingInfoSchema } from "../validations/orderDataSchema";
+import type { newOrderSchema, orderItemSchema, orderSchema, orderStatusSchema, paymentInfoSchema, paymentMethodSchema, shippingInfoSchema } from "../validations/orderDataSchema";
 
 // export type OrderItem = {
 //     product: string
@@ -64,4 +64,5 @@ export type ShippingInfo = z.infer<typeof shippingInfoSchema>;
 export type PaymentInfo = z.infer<typeof paymentInfoSchema>;
 export type PaymentMethod = z.infer<typeof paymentMethodSchema>;
 export type OrderStatus = z.infer<typeof orderStatusSchema>;
-export type Order = z.infer<typeof orderSchema>; 
+export type Order = z.infer<typeof orderSchema>;
+export type NewOrder = z.infer<typeof newOrderSchema>; 

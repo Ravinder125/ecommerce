@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { DashboardLayout } from "../../components"
+import { DashboardLayout } from "../../../components"
 
 
 const formatTime = (timeInSeconds: number) => {

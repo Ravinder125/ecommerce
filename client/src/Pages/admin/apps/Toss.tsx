@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { DashboardLayout } from "../../components"
+import { DashboardLayout } from "../../../components"
 
 const Toss = () => {
     const [angle, setAngle] = useState<number>(0);

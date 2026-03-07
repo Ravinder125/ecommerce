@@ -12,19 +12,21 @@ const corsOptions: CorsOptions = {
     credentials: true
 }
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
-const STRIPE_KEY_PUBLISHABLE_KEY = process.env.STRIPE_KEY_PUBLISHABLE_KEY;
-// const CLERK_PUBLISHABLE_KEY = process.env.CLERK_PUBLISHABLE_KEY as string
+// const STRIPE_KEY_PUBLISHABLE_KEY = process.env.STRIPE_KEY_PUBLISHABLE_KEY;
+const CLERK_PUBLISHABLE_KEY = process.env.CLERK_PUBLISHABLE_KEY as string
 const CLERK_SECRET_KEY = process.env.CLERK_SECRET_KEY as string
 
-if (!STRIPE_SECRET_KEY || !STRIPE_KEY_PUBLISHABLE_KEY) {
+if (!STRIPE_SECRET_KEY) {
     throw new Error("Stripe keys are missing")
 }
 
-if (!CLERK_SECRET_KEY) {
+if (!CLERK_SECRET_KEY || !CLERK_PUBLISHABLE_KEY) {
     throw new Error("Clerk keys are missing")
 }
 
-export const stripe = new Stripe(STRIPE_SECRET_KEY)
+export const stripe = new Stripe(STRIPE_SECRET_KEY, {
+    apiVersion: "2026-02-25.clover"
+})
 
 app.use(clerkMiddleware({ secretKey: CLERK_SECRET_KEY, publishableKey: CLERK_PUBLISHABLE_KEY }))
 // app.use(requireAuth())

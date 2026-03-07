@@ -1,7 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Layout, TableHOC } from "../components";
+import { Layout, TableHOC } from "../../components";
 
 
 type DataType = {
