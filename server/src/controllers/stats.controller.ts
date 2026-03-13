@@ -207,10 +207,10 @@ export const Dashboard = asyncHandler(async (req: Request, res: Response) => {
 
     const modifiedLatestTransactions = latestTransactions.map(l => ({
         _id: l._id,
-        orderItems: l.orderItem?.length | 0,
+        orderItems: l.orderItems?.length | 0,
         status: l.orderStatus,
         discount: l.discount,
-        total: l.totalPrice,
+        total: l.total,
     }))
 
     const stats = {

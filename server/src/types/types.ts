@@ -1,4 +1,5 @@
 import { Types } from 'mongoose'
+import { IOrder, IOrderItem } from '../models/order.models.js';
 export interface RegisterUserRequestBody {
     name: string;
     email: string;
@@ -44,22 +45,15 @@ export interface InvalidateCacheProps {
     order?: boolean;
     admin?: boolean;
 }
+export type PaymentMethod = "COD" | "Card" | "UPI"
 
-export interface OrderItemType {
-    productId: Types.ObjectId;
-    name: string;
-    price: number;
-    quantity: number
-    image: string;
-}
+export type PaymentStatus = "Succeeded" | "Failed" | "Processing";
 
-export interface OrderItemBodyType extends OrderItemType {
-    product: string
-}
+export type OrderStatus = "Processing" | "Shipped" | "Delivered" | "Cancelled";
 
-export interface NewOrderRequestBody {
-    buyer: string;
-    orderItem: OrderItemBodyType[];
+
+export type NewOrderRequestBody = {
+    orderItems: IOrderItem[];
 
     shippingInfo: {
         address: string;
@@ -70,18 +64,16 @@ export interface NewOrderRequestBody {
         phone: string;
     }
 
-    paymentMethod: "COD" | "Card" | "UPI"
+    paymentMethod: PaymentMethod
     paymentInfo?: {
         id: string;
-        status: string;
+        status: PaymentStatus
     };
 
     subtotal: number;
-    taxPrice: number;
-    shippingCharge: number;
-    totalPrice: number;
+    tax: number;
+    shippingCharges: number;
+    total: number;
     discount: number;
 
-    orderStatus?: "Processing" | "Shipped" | "Delivered" | "Cancelled";
 }
-

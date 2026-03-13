@@ -5,8 +5,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { validationResult } from "express-validator";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.models.js";
-import { OrderItemType } from "../types/types.js";
-import { IShippingInfo } from "../models/order.models.js";
+import { IOrderItem, IShippingInfo } from "../models/order.models.js";
 import { Product } from "../models/product.models.js";
 import { stripe } from "../app.js";
 
@@ -21,7 +20,7 @@ export const createPaymentIntent = asyncHandler(async (req, res) => {
     }
 
     const { coupon, items, shippingInfo } = req.body as {
-        items: OrderItemType[],
+        items: IOrderItem[],
         shippingInfo: IShippingInfo | undefined;
         coupon: string | undefined;
     };

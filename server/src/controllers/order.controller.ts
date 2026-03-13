@@ -15,40 +15,40 @@ export const createOrder = asyncHandler(
         res: Response
     ) => {
         const errors = validationResult(req);
+        console.log(errors)
         if (!errors.isEmpty()) {
             const errorMessages = errors.array().map(e => e.msg);
             throw new ApiError(400, "Validation Error", errorMessages);
         }
 
+        const buyer = req.user?._id;
+
         const {
-            buyer,
             discount,
-            orderItem,
+            orderItems,
             paymentMethod,
-            shippingCharge,
+            shippingCharges,
             shippingInfo,
             subtotal,
-            taxPrice,
-            totalPrice,
-            orderStatus,
-            paymentInfo
+            paymentInfo,
+            tax,
+            total,
         } = req.body
 
         const order = await Order.create({
             buyer,
             discount,
-            orderItem,
+            orderItems,
             paymentMethod,
-            shippingCharge,
+            paymentInfo,
+            shippingCharges,
             shippingInfo,
             subtotal,
-            taxPrice,
-            totalPrice,
-            orderStatus,
-            paymentInfo
+            tax,
+            total,
         })
 
-        await reduceStock(orderItem)
+        await reduceStock(orderItems)
 
         return res.status(201).json(
             new ApiResponse(200, order, "Order placed successfully ")

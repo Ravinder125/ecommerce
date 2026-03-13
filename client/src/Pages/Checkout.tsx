@@ -8,7 +8,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { useState, type FormEvent } from 'react';
 import toast from 'react-hot-toast';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { useCreateOrderMutation } from '../store/api/transactionAPI';
+import { useCreateOrderMutation, } from '../store/api/transactionAPI';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { clearCart } from '../store/reducers/cartSlice';
 import type { NewOrder } from '../types/transaction.type';
@@ -54,7 +54,6 @@ const CheckoutForm = () => {
             total,
             tax,
         }
-
         const { error, paymentIntent } = await stripe.confirmPayment({
             elements,
             confirmParams: { return_url: window.location.origin },
@@ -67,7 +66,15 @@ const CheckoutForm = () => {
         }
 
         if (paymentIntent.status === "succeeded") {
-            const res = await newOrder(orderData);
+            const res = await newOrder({
+                ...orderData,
+                paymentInfo: {
+                    id: paymentIntent.id,
+                    status: 'Succeeded'
+                },
+                paymentMethod: "Card"
+            }
+            );
             dispatch(clearCart());
             ReduxResponseHandle(res, navigate, "/orders")
         }
@@ -76,9 +83,9 @@ const CheckoutForm = () => {
 
     return (
         <div className='checkout-container'>
-            <form onSubmit={submitHandler}>
+            <form onSubmit={submitHandler} className='card' >
                 <PaymentElement />
-                <button disabled={isProcessing} type='submit' >
+                <button disabled={isProcessing} type='submit' className='submit-btn' >
                     {isProcessing ? "Processing..." : "Pay"}
                 </button>
             </form>

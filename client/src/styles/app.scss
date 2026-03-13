@@ -352,34 +352,6 @@ button {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .submit-btn {
     @include mixin.btn;
     margin: 1rem auto;
@@ -809,6 +781,15 @@ button {
         }
 
     }
+}
+
+.checkout-container {
+    height: 100vh;
+    width: 100vw;
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+    @include flex(unset, center, center)
 }
 
 

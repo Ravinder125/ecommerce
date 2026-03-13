@@ -2,10 +2,7 @@
 import { body } from "express-validator";
 
 export const createOrderValidator = [
-    body("buyer")
-        .notEmpty().withMessage("Buyer ID is required"),
-
-    body("orderItems.*.product")
+    body("orderItems.*.productId")
         .notEmpty().withMessage("Product ID is required")
         .isMongoId().withMessage("Product ID must be a valid Mongo ID"),
 
@@ -47,13 +44,20 @@ export const createOrderValidator = [
         .notEmpty().withMessage("Payment ID is required"),
 
     body("paymentInfo.status")
-        .notEmpty().withMessage("Payment status is required"),
+        .notEmpty().withMessage("Payment Status is required")
+        .isIn(["Succeeded", "Failed", "Processing"])
+        .withMessage("Payment Status can only be Succeeded, Failed ,Processing"),
 
-    body("taxPrice")
+    body("paymentMethod")
+        .notEmpty().withMessage("Payment Method is required")
+        .isIn(["COD", "Card", "UPI"])
+        .withMessage("Payment Method can only be COD, Card, UPI"),
+
+    body("tax")
         .notEmpty().withMessage("Tax amount is required")
         .isNumeric().withMessage("Tax amount must be a number"),
 
-    body("shippingCharge")
+    body("shippingCharges")
         .notEmpty().withMessage("Shipping amount is required")
         .isNumeric().withMessage("Shipping amount must be a number"),
 
@@ -61,7 +65,7 @@ export const createOrderValidator = [
         .notEmpty().withMessage("Discount amount is required")
         .isNumeric().withMessage("Discount amount must be a number"),
 
-    body("totalPrice")
+    body("total")
         .notEmpty().withMessage("Total amount is required")
         .isNumeric().withMessage("Total amount must be a number"),
 ];

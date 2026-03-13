@@ -1,11 +1,11 @@
+import { IOrderItem } from "../models/order.models.js";
 import { Product } from "../models/product.models.js";
-import { OrderItemBodyType } from "../types/types.js";
 
-export const reduceStock = async (orderItem: OrderItemBodyType[]) => {
+export const reduceStock = async (orderItem: IOrderItem[]) => {
     const res = await Promise.all(
         orderItem.map((order => {
             Product.findByIdAndUpdate(
-                order.product,
+                order.productId,
                 {
                     $inc: {
                         stock: - Number(order.quantity)

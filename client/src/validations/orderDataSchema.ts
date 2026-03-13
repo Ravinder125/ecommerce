@@ -22,7 +22,7 @@ export const shippingInfoSchema = z.object({
 /* PAYMENT INFO */
 export const paymentInfoSchema = z.object({
     id: z.string().trim(),
-    status: z.enum(["succeeded", "pending", "failed"]),
+    status: z.enum(["Succeeded", "Failed", "Processing"]),
 });
 
 /* ENUMS */

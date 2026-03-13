@@ -1,16 +1,23 @@
 import mongoose, { Schema, Types } from 'mongoose';
-import { NewOrderRequestBody, OrderItemType } from '../types/types.js';
-
-export interface IOrderItemType extends OrderItemType {
-    product: Types.ObjectId;
-}
+import { NewOrderRequestBody, OrderStatus } from '../types/types.js';
 
 export interface IOrder extends Document, NewOrderRequestBody {
-    deliveredAt?: Date;
+    _id: Types.ObjectId;
+    buyer: string,
+    deliveredAt: Date;
+    orderStatus?: OrderStatus;
     createdAt: Date;
     updatedAt: Date;
-    _id: Types.ObjectId
 }
+
+export interface IOrderItem {
+    productId: Types.ObjectId;
+    name: string;
+    price: number;
+    quantity: number
+    image: string;
+}
+
 
 export interface IShippingInfo {
     address: string,
@@ -49,8 +56,8 @@ export const ShippingSchema = new mongoose.Schema<IShippingInfo>({
 }, { _id: false })
 
 
-const OrderItemSchema = new mongoose.Schema<IOrderItemType>({
-    product: {
+const OrderItemSchema = new mongoose.Schema<IOrderItem>({
+    productId: {
         type: Schema.Types.ObjectId,
         ref: "Product",
         required: [true, "Product ID is required"],
@@ -76,7 +83,7 @@ const OrderSchema = new mongoose.Schema<IOrder>(
             required: true,
             trim: true,
         },
-        orderItem: [OrderItemSchema],
+        orderItems: [OrderItemSchema],
         shippingInfo: ShippingSchema,
         paymentMethod: {
             type: String,
@@ -88,7 +95,11 @@ const OrderSchema = new mongoose.Schema<IOrder>(
                 type: String,
                 trim: true,
             },
-            status: String
+            status: {
+                type: String,
+                enum: ["Succeeded", "Failed", "Processing"],
+                default: "Processing"
+            }
         },
         subtotal: {
             type: Number,
@@ -98,22 +109,22 @@ const OrderSchema = new mongoose.Schema<IOrder>(
             type: Number,
             default: 0,
         },
-        taxPrice: {
+        tax: {
             type: Number,
             required: [true, "Tax price is required"]
         },
-        shippingCharge: {
+        shippingCharges: {
             type: Number,
             default: 0
         },
-        totalPrice: {
+        total: {
             type: Number,
             required: true,
         },
         orderStatus: {
             type: String,
             enum: ["Processing", "Shipped", "Delivered", "Cancelled"],
-            default: ["Processing"]
+            default: "Processing"
         },
         deliveredAt: Date,
     }, { timestamps: true })
