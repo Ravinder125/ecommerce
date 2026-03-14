@@ -15,7 +15,7 @@ const columns: ColumnDef<Order>[] = [
   },
   {
     header: "Amount",
-    accessorKey: "totalPrice",
+    accessorKey: "total",
   },
   {
     header: "Discount",

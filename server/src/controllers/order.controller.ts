@@ -4,9 +4,10 @@ import { NewOrderRequestBody } from "../types/types.js";
 import { validationResult } from "express-validator";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
-import { Order } from "../models/order.models.js";
+import { IOrder, Order } from "../models/order.models.js";
 import { reduceStock } from "../utils/features.js";
-import { isValidObjectId } from "mongoose";
+import mongoose, { isValidObjectId, ObjectId } from "mongoose";
+import { Product } from "../models/product.models.js";
 
 
 export const createOrder = asyncHandler(
@@ -68,58 +69,54 @@ export const getMyOrders = asyncHandler(async (req: Request, res: Response) => {
 export const adminOrders = asyncHandler(async (req: Request, res: Response) => {
 
     const userId = req?.user?._id
-
-
     const orders = await Order.aggregate([
-        // Step 1: break orders into individual items
-        { $unwind: "$orderItem" },
+        // Step 1: unwind items
+        { $unwind: "$orderItems" },
 
-        // Step 2: join each orderItem.product with Product collection
+        // Step 2: lookup product for each item
         {
             $lookup: {
                 from: "products",
-                localField: "orderItem.product",
+                localField: "orderItems.productId",
                 foreignField: "_id",
                 as: "productDoc"
             }
         },
 
-        // Step 3: flatten productDoc array
+        // Step 3: flatten productDoc
         { $unwind: "$productDoc" },
 
-        // Step 4: filter only items owned by this admin
+        // Step 4: filter only items whose product is owned by this admin
         {
             $match: {
-                "productDoc.owner": userId // 🔑
+                "productDoc.owner": userId
             }
         },
 
-        // Step 5: rebuild order with only the filtered items
+        // Step 5: regroup
         {
             $group: {
                 _id: "$_id",
                 buyer: { $first: "$buyer" },
-                // shippingInfo: { $first: "$shippingInfo" },
-                // paymentMethod: { $first: "$paymentMethod" },
-                // paymentInfo: { $first: "$paymentInfo" },
-                // subtotal: { $first: "$subtotal" },
+                shippingInfo: { $first: "$shippingInfo" },
+                paymentMethod: { $first: "$paymentMethod" },
+                paymentInfo: { $first: "$paymentInfo" },
+                subtotal: { $first: "$subtotal" },
                 discount: { $first: "$discount" },
-                // taxPrice: { $first: "$taxPrice" },
-                // shippingCharge: { $first: "$shippingCharge" },
-                totalPrice: { $first: "$totalPrice" },
+                tax: { $first: "$tax" },
+                shippingCharges: { $first: "$shippingCharges" },
+                total: { $first: "$total" },
                 orderStatus: { $first: "$orderStatus" },
-                // deliveredAt: { $first: "$deliveredAt" },
-                // createdAt: { $first: "$createdAt" },
-                // updatedAt: { $first: "$updatedAt" },
-                quantity: { $sum: "$orderItem.quantity" },
-
-                // Collect only the matching order items
-                orderItem: { $push: "$orderItem" }
+                createdAt: { $first: "$createdAt" },
+                updatedAt: { $first: "$updatedAt" },
+                orderItems: { $push: "$orderItems" },
+                quantity: { $sum: "$orderItems.quantity" }
             }
-        }
-    ]);
+        },
 
-
+        // Step 6: sort by most recent
+        { $sort: { createdAt: -1 } }
+    ])
     if (!orders) throw new ApiError(401, "No order Found")
 
     return res.status(200).json(
