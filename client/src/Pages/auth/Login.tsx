@@ -24,6 +24,15 @@ const Login = () => {
         if (!isLoaded || !setActive || !signIn) return;
 
         try {
+            if (!password?.trim()) {
+                throw new Error("Password is required")
+            }
+
+            if (password?.trim().length <= 6) {
+                throw new Error("Password must be 6 characters longs")
+            }
+
+
             const result = await signIn.create({
                 password,
                 identifier: email
@@ -36,13 +45,11 @@ const Login = () => {
             navigate("/")
 
         } catch (error: any) {
-            const errMessage = error.errors?.[0]?.message
-
-            console.error(errMessage);
+            const errMessage = error.message
             toast.error(errMessage)
+            setError(errMessage)
 
         }
-
     }
 
     const onGoogleClick = async () => {
@@ -64,17 +71,6 @@ const Login = () => {
                     <h2>Login Please</h2>
                     <p>Enter you credentials to get yourself login</p>
                 </div>
-                {/* <div>
-                    <label>Gender</label>
-                    <select
-                        value={gender}
-                        onChange={({ target }) => setGender(target.value)}
-                    >
-                        <option value="" disabled>Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                    </select>
-                </div> */}
                 <form onSubmit={handleSubmit}>
                     <InputBox
                         type="email"
@@ -99,6 +95,8 @@ const Login = () => {
                         para="Don't have an account"
                         url="/signup"
                     />
+
+                    {error && <p className="form-error">{error}</p>}
                     <button className="submit-btn" type="submit">
                         {isLoading ? "Loading..." : "Login"}
                     </button>

@@ -20,7 +20,7 @@ import UserProvider from "./providers/UserProvider"
 // Auth Routes 
 const Signup = lazy(() => import("./pages/auth/Signup"))
 const Login = lazy(() => import("./pages/auth/Login"))
-const Logout = lazy(() => import("./pages/auth/Logout"))
+// const Logout = lazy(() => import("./pages/auth/Logout"))
 const VerifyEmail = lazy(() => import("./pages/auth/VerifyEmail"))
 const CompleteProfile = lazy(() => import("./pages/auth/CompleteProfile"))
 

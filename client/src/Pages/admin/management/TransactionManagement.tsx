@@ -4,31 +4,10 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import { useGetOrderQuery, useProcessOrderMutation, } from "../../../store/api/transactionAPI";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import { ReduxResponseHandle } from "../../../utils/ReduxResponseHandle";
 
 
-const orderItems = [
-    {
-        name: "Wireless Mouse",
-        image: "https://www.bbassets.com/media/uploads/p/l/40341612_1-portronics-chyro-10000mah-magnetic-wireless-fast-charging-power-bank-black.jpg",
-        price: 799,
-        quantity: 2,
-        _id: "item_001",
-    },
-    {
-        name: "Mechanical Keyboard",
-        image: "https://www.bbassets.com/media/uploads/p/l/40341612-2_1-portronics-chyro-10000mah-magnetic-wireless-fast-charging-power-bank-black.jpg",
-        price: 2499,
-        quantity: 1,
-        _id: "item_002",
-    },
-    {
-        name: "HD Monitor",
-        image: "https://www.bbassets.com/media/uploads/p/l/40341612-4_1-portronics-chyro-10000mah-magnetic-wireless-fast-charging-power-bank-black.jpg",
-        price: 9999,
-        quantity: 1,
-        _id: "item_003",
-    },
-];
+
 
 const TransactionManagement = () => {
 
@@ -50,8 +29,8 @@ const TransactionManagement = () => {
                 orderId: id,
                 isCancelled: isCancelled
             })
-
-            if (res.data?.data) {
+            const postRes = ReduxResponseHandle(res, null, null, true)
+            if (postRes) {
                 toast.success("Order processed successfully")
             }
         } catch (error) {
@@ -73,12 +52,12 @@ const TransactionManagement = () => {
                 }}>
                     <h2>Order Items</h2>
 
-                    {data?.data.orderItem.map(({ product, name, quantity, price }, idx) => (
+                    {data?.data.orderItems.map(({ productId, name, quantity, price, image }) => (
                         <ProductCard
-                            key={product}
+                            key={productId}
                             name={name}
-                            image={orderItems[idx].image}
-                            product={product}
+                            image={image}
+                            productId={productId}
                             quantity={quantity}
                             price={price}
                         />
@@ -98,12 +77,28 @@ const TransactionManagement = () => {
                     </p>
 
                     <h5>Amount Info</h5>
-                    <p>Subtotal: {data?.data.subtotal}</p>
-                    <p>Shipping Charges: {data?.data.shippingCharge}</p>
-                    <p>Tax: {data?.data.taxPrice}</p>
-                    <p>Discount: {data?.data.discount}</p>
-                    <p>Total: {data?.data.totalPrice}</p>
+                    <p>Subtotal : {data?.data.subtotal}</p>
+                    <p>Shipping Charges : {data?.data.shippingCharges}</p>
+                    <p>Tax : {data?.data.tax}</p>
+                    <p>Discount : {data?.data.discount}</p>
+                    <p>Total : {data?.data.total}</p>
 
+                    <h5>Payment Info</h5>
+                    <p>Payment ID : {data?.data.paymentInfo.id}</p>
+                    <p>Payment Method : {data?.data.paymentMethod}</p>
+                    <p>Payment Status :
+                        {" "}<span
+                            className={`
+                                ${data?.data?.paymentInfo.status === "Processing"
+                                    ? "purple"
+                                    : data?.data?.paymentInfo.status === "Succeeded"
+                                        ? "green"
+                                        : "yellow"
+                                }`
+                            }>
+                            {data?.data.paymentInfo.status}
+                        </span>
+                    </p>
                     <h5>Status Info</h5>
                     <p>Status:
                         <span
@@ -122,6 +117,7 @@ const TransactionManagement = () => {
                             {" "} {data?.data?.orderStatus}
                         </span>
                     </p>
+                    <button className="submit-btn" onClick={() => setIsCancelled(true)}>Cancel</button>
                     <button onClick={updateHandler} className="submit-btn">Process Status</button>
                 </article>
             </main>
@@ -131,23 +127,15 @@ const TransactionManagement = () => {
 
 export default TransactionManagement
 
-// type ProductCardProps = {
-//     name: string,
-//     image: string,
-//     price: number,
-//     quantity: number,
-//     _id?: string,
-// }
-
 const ProductCard = ({ name,
     image,
     price,
     quantity,
-    product
+    productId
 }: OrderItem & { image: string }) => (
     <div className="transaction-product--card">
         <img src={image} alt={name} />
-        <Link to={`/admin/products/${product}`}>{name}</Link>
+        <Link to={`/admin/products/${productId}`}>{name}</Link>
         <span>${price} X {quantity} = ${price * quantity}</span>
     </div>
 )

@@ -1,12 +1,12 @@
-import { useState, type FormEvent } from "react"
-import { DashboardLayout } from "../../../components"
-import { axiosInstance } from "../../../utils/axiosInstance";
-import { apiPaths } from "../../../utils/apiPath";
+import axios from "axios";
+import { useState, type FormEvent } from "react";
 import toast from "react-hot-toast";
+import { DashboardLayout } from "../../../components";
 import { InputBox } from "../../../components/forms/InputBox";
+import { apiPaths } from "../../../utils/apiPath";
 
 
-const allLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+const allLetters = "ABCDEFGHIJKLMNOPQRSOTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const allNumbers = "1234567890";
 const allSymbols = "!@#$%&*()_+";
 
@@ -59,7 +59,7 @@ const Coupon = () => {
             return;
         }
 
-        axiosInstance.post(apiPaths.coupons.root, { code: result, amount })
+        axios.post(apiPaths.coupons.root, { code: result, amount })
             .then((data) => {
                 toast.success("Coupon successfully created")
                 console.log(data)

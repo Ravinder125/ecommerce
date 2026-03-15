@@ -5,8 +5,8 @@ export const Pagination = (
         page,
         totalPages,
         onPageChange,
-        limit,
-        onLimitChange
+        // limit,
+        // onLimitChange
     }: PaginationProps) => {
     return <div className="pagination">
         <button

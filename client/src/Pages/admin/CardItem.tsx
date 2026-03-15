@@ -1,7 +1,7 @@
 import { FaTrash } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 // import type { CartItem } from "../types/cart.type";
-import { useAppDispatch } from "../../store/hooks";
+// import { useAppDispatch } from "../../store/hooks";
 import type { CartItem } from "../../types/cart.type";
 
 export type CartItemProps = {
@@ -26,8 +26,8 @@ const CardItem = ({
     removeHandler,
 }: CartItemProps) => {
 
-    const { productId, name, stock, image, price, quantity } = cartItem;
-    const dispatch = useAppDispatch();
+    const { productId, name,  image, price, quantity } = cartItem;
+    // const dispatch = useAppDispatch();
 
     // const addToCartHandler = (item: CartItem) => {
     //     if (item.stock < 1) {

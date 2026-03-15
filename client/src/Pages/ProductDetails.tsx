@@ -1,18 +1,16 @@
 import { useParams } from "react-router-dom"
 import { useGetProductQuery } from "../store/api/productAPI"
 import { useState } from "react"
-import { MdOutlineStarRate } from "react-icons/md"
 import AddToCart from "../components/AddToCart"
 import { Layout } from "../components"
-import { useAppSelector } from "../store/hooks"
 import Rating from "./Rating"
 
 const ProductDetails = () => {
     const params = useParams()
     const id = params.id
     const [activeIdx, setActiveIndex] = useState<number>(0);
-    const productCart = useAppSelector(state => state.cart.items.find(p => p.productId === id))
     const { isError, isFetching, isLoading, data } = useGetProductQuery(id!, {})
+    
     if (isError) {
         return <div>Something went wrong</div>
     }
@@ -26,7 +24,7 @@ const ProductDetails = () => {
     }
 
     const product = data?.data
-    let rating = product?.ratings;
+    // let rating = product?.ratings;
     return (
         <Layout>
             <div className="product-details">

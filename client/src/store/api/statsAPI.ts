@@ -12,7 +12,6 @@ import type { BarChart, LineChart, PieChart } from "../../types/commone.type";
 export const statsAPI = createApi({
     reducerPath: "statsAPI",
     baseQuery: baseQueryWithClerk(getToken),
-    // tagTypes: ["Dashboard"],
 
     endpoints: (builder) => ({
 
@@ -48,6 +47,8 @@ export const statsAPI = createApi({
 
             })
         }),
+
+        
     })
 
 })

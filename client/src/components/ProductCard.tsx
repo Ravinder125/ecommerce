@@ -1,14 +1,11 @@
 import { FaPlus } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import type { CartItem } from "../types/cart.type";
 
 
-interface ProductsProps {
+type ProductsProps = Pick<CartItem, "image" | "name" | "price" | "stock"> & {
     _id: string,
-    name: string,
-    price: number,
-    image: string,
-    stock: number,
-    handler: () => void;
+    handler: (carItem: CartItem) => void;
 }
 
 // const server = "jlajsdljf";
@@ -24,7 +21,14 @@ const ProductCard = ({ _id, name, price, image, stock, handler }
             <Link to={`/product-details/${_id}`}>Read more </Link>
             <div>
                 <button
-                    onClick={handler}
+                    onClick={() => handler({
+                        image,
+                        name,
+                        price,
+                        productId: _id,
+                        quantity: 1,
+                        stock
+                    })}
                 >
                     <FaPlus />
                 </button>

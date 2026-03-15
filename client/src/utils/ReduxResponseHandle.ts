@@ -15,15 +15,20 @@ type ResType<T> =
 export const ReduxResponseHandle = <T = null>(
     res: ResType<T>,
     navigate?: NavigateFunction | null,
-    url?: string | null
+    url?: string | null,
+    returnData: boolean = false,
 ) => {
+    console.log("working")
     if ("data" in res) {
         toast.success(res.data.message!)
         if (navigate && url?.trim()) navigate(url)
+        else if (returnData) return res.data.data
 
     } else {
         const error = res.error as FetchBaseQueryError;
         const messageResponse = error.data as ApiResponse<T>;
-        toast.error(messageResponse.message!);
+        throw new Error(messageResponse.message)
     }
 }
+
+// toast.error(messageResponse.message!);

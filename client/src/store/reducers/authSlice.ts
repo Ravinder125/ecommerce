@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 // import { fetchUser } from "./authThunk";
 import type { AuthState, User } from "../../types/user.type";
-import { fetchUser } from "../thunks/authThunk";
+// import { fetchUser } from "../thunks/authThunk";
 
 
 const initialState: AuthState = {
@@ -17,26 +17,26 @@ const authSlice = createSlice({
             state.user = null;
             state.isLoading = false;
         },
-        getUser(state, action: PayloadAction<User>) {
+        getUser(state, action: PayloadAction<User | null>) {
             state.user = action.payload
             state.isLoading = false
         },
     },
 
-    extraReducers: builder => {
-        builder
-            .addCase(fetchUser.pending, state => {
-                state.isLoading = true;
-            })
-            .addCase(fetchUser.fulfilled, (state, action) => {
-                state.user = action.payload;
-                state.isLoading = false;
-            })
-            .addCase(fetchUser.rejected, state => {
-                state.user = null;
-                state.isLoading = false;
-            });
-    },
+    // extraReducers: builder => {
+    //     builder
+    //         .addCase(fetchUser.pending, state => {
+    //             state.isLoading = true;
+    //         })
+    //         .addCase(fetchUser.fulfilled, (state, action) => {
+    //             state.user = action.payload;
+    //             state.isLoading = false;
+    //         })
+    //         .addCase(fetchUser.rejected, state => {
+    //             state.user = null;
+    //             state.isLoading = false;
+    //         });
+    // },
 });
 
 export const { clearUser, getUser } = authSlice.actions;

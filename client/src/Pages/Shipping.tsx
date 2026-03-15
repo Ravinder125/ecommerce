@@ -1,15 +1,16 @@
 import axios from "axios"
 import { useEffect, useState, type FormEvent } from "react"
+import toast from "react-hot-toast"
 import { BiArrowBack } from "react-icons/bi"
 import { useNavigate } from "react-router-dom"
 import { Layout } from "../components"
+import { useCreatePaymentMutation } from "../store/api/paymentAPI"
 import { useAppDispatch, useAppSelector } from "../store/hooks"
+import { saveShippingInfo } from "../store/reducers/cartSlice"
 import type { ShippingInfo } from "../types/transaction.type"
 import { handleChangeHOC } from "../utils/handleInputChange"
-import { saveShippingInfo } from "../store/reducers/cartSlice"
-import { axiosInstance } from "../utils/axiosInstance"
-import { apiPaths } from "../utils/apiPath"
-import toast from "react-hot-toast"
+import { InitialShippingInfoData } from "../utils/InitialFormData"
+import { ReduxResponseHandle } from "../utils/ReduxResponseHandle"
 
 
 const Shipping = () => {
@@ -20,19 +21,12 @@ const Shipping = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
-    const [shippingInfo, setShippingInfo] = useState<ShippingInfo>({
-        address: "",
-        city: "",
-        state: "",
-        country: "",
-        phone: "",
-        pinCode: 0
-    })
+    const [shippingInfo, setShippingInfo] = useState<ShippingInfo>(InitialShippingInfoData)
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
 
     const { onInput } = handleChangeHOC<ShippingInfo>(setShippingInfo)
-
+    const createPaymentApi = useCreatePaymentMutation()[0];
     const [countries, setCountries] = useState<string[]>([]);
 
     const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
@@ -43,19 +37,26 @@ const Shipping = () => {
 
         try {
             setLoading(true)
-            const { data } = await axiosInstance.post(apiPaths.payments.createPayment, {
-                items: items,
+            const res = await createPaymentApi({
+                items,
                 shippingInfo,
                 coupon,
             })
-            navigate("/pay", {
-                state: data.data.clientSecret
-            })
-        } catch (error) {
-            console.log(error);
-            toast.error("Something went wrong")
+
+            const data = ReduxResponseHandle<{ clientSecret: string }>(res, null, null, true)
+
+            navigate("/pay", { state: data?.clientSecret })
+        } catch (error: any) {
+            let errMessage =
+                error?.data?.message
+                || error.message
+                || "Something went wrong"
+
+            toast.error(errMessage)
+            setError(errMessage)
         } finally {
             setLoading(false)
+            setShippingInfo(InitialShippingInfoData)
         }
 
     }
@@ -130,15 +131,6 @@ const Shipping = () => {
                         required
                     />
 
-                    {/* <input
-                        type="text"
-                        name="pinCode"
-                        value={shippingInfo.pinCode}
-                        onChange={onInput("pinCode")}
-                        placeholder="ex.11000"
-                        required
-                    /> */}
-
                     <select
                         name="country"
                         required
@@ -155,7 +147,7 @@ const Shipping = () => {
                         ))}
 
                     </select>
-
+                    {error && <p className="form-error">{error}</p>}
                     <button type="submit" disabled={loading}>{loading ? "Loading..." : "Pay Now"}</button>
                 </form>
             </div>

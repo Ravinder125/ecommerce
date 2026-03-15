@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import dotenv from 'dotenv'
 import morgan from 'morgan'
 import cors, { CorsOptions } from 'cors'
@@ -38,7 +38,7 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }))
 app.use(morgan("dev"))
 
 // Health Check
-app.get("/api/v1/health", (_, res) => res.send("Api working with /api/v1"))
+app.get("/api/v1/health", (_:Request, res:Response) => res.send("Api working with /api/v1"))
 
 // Importing Routes
 import userRouter from './routes/user.routes.js'
@@ -46,7 +46,6 @@ import productRouter from './routes/product.routes.js'
 import orderRouter from './routes/order.routes.js'
 import paymentRouter from './routes/payment.routes.js'
 import dashboardRouter from './routes/stats.routes.js'
-import clerkRoute from './middlewares/clerkWebhook.js'
 
 // route - /api/v1/users/register
 app.use("/api/v1/users", userRouter);

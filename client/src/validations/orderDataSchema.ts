@@ -37,6 +37,8 @@ export const orderStatusSchema = z.enum([
 
 /* ORDER */
 export const orderSchema = z.object({
+    _id: z.string().min(1),
+
     buyer: z.string().min(1),
 
     orderItems: z.array(orderItemSchema).min(1),

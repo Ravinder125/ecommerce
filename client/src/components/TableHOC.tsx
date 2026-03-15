@@ -5,7 +5,6 @@ import {
     getPaginationRowModel,
     flexRender,
     type ColumnDef,
-    type OnChangeFn,
     type PaginationState,
     type Updater,
 } from "@tanstack/react-table";

@@ -2,11 +2,12 @@ import { useState } from "react"
 import { Layout, ProductCard } from "../components"
 import preData from '../assets/products.json'
 import { useAppDispatch } from "../store/hooks";
-import { addToCart, type CartItem } from "../store/reducers/cartSlice";
+import { addToCart } from "../store/reducers/cartSlice";
 import { useAllProductsQuery } from "../store/api/productAPI";
 import { useDebounce } from "../hooks/useDebounce";
 import type { Limit } from "../types/pagination.type";
 import { Pagination } from "../components/Pagination";
+import type { CartItem } from "../types/cart.type";
 
 
 const Search = () => {
@@ -15,7 +16,6 @@ const Search = () => {
     const [maxPrice, setMaxPrice] = useState<number>(10000);
     const [category, setCategory] = useState<string>("");
     const [page, setPage] = useState<number>(1)
-    // const [totalPages, setTotalPages] = useState<number>(1)
     const [limit, setLimit] = useState<Limit>(10)
 
     const dispatch = useAppDispatch()
@@ -24,8 +24,6 @@ const Search = () => {
         dispatch(addToCart(product))
     }
 
-    // const isPrevPage = page > 1;
-    // const isNextPage = page < 4;
     const debounceSearch = useDebounce(search, 800);
     const debounceMaxPrice = useDebounce(maxPrice, 800);
 
@@ -106,13 +104,7 @@ const Search = () => {
                                         price={price}
                                         image={images[0] ?? preData.products[0].image}
                                         stock={stock}
-                                        handler={() => addToCartHandler({
-                                            productId: _id,
-                                            image: preData.products[0].image,
-                                            price,
-                                            name,
-                                            stock
-                                        })}
+                                        handler={addToCartHandler}
                                     />
                                 }
                                 )
@@ -127,21 +119,6 @@ const Search = () => {
                             onLimitChange={((limit: Limit) => setLimit(limit))}
                         />
                     </div>
-                    {/* <article>
-                        <button
-                            disabled={!isPrevPage}
-                            onClick={() => setPage(prev => prev !== 0 ? --prev : prev)}
-                        >
-                            Prev
-                        </button>
-                        <span>{page} of {totalPages}</span>
-                        <button
-                            disabled={!isNextPage}
-                            onClick={() => setPage(prev => prev !== Number(data?.data.totalPages) ? ++prev : prev)}
-                        >
-                            Next
-                        </button>
-                    </article> */}
                 </main>
             </div>
         </Layout>

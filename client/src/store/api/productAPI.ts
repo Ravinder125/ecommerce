@@ -14,6 +14,7 @@ export type UploadProductImagesQuery = {
   id: string;
 }
 
+
 export const productAPI = createApi({
   reducerPath: "productAPI",
   baseQuery: baseQueryWithClerk(getToken),
@@ -68,7 +69,7 @@ export const productAPI = createApi({
     // GET ADMIN PRODUCTS
     adminProducts: builder.query<ApiResponse<AdminGetResponse>, GetProductsQuery>({
       query: ({
-        category = "all",
+        category = "",
         maxPrice = 1000000,
         page = 1,
         search = "",

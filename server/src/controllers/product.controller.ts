@@ -196,6 +196,7 @@ export const getSingleProduct = asyncHandler(async (req: Request, res: Response)
 
 export const getAdminProducts = asyncHandler(
     async (req: Request<{}, {}, {}, RequestProductQuery>, res: Response) => {
+        console.log("working")
         const userId = req.user?._id
         const { limit, page, search, sort, category, maxPrice } = req.query;
 
@@ -225,13 +226,14 @@ export const getAdminProducts = asyncHandler(
                 price: sort === "asc" ? 1 : -1,
                 createdAt: -1
             })
+
         const [productDocs, productCount] = await Promise.all([
             productPromise,
-            Product.countDocuments(baseQuery)
+            Product.countDocuments({ ...baseQuery, owner: userId })
         ])
 
-        if (!productDocs) throw new ApiError(400, "No product not found");
-
+        if (!productDocs?.length) throw new ApiError(400, "No product not found");
+        
         const totalPages = Math.round(productCount / pageSize)
         const productsList = productDocs.map(p => {
             return { ...p.toObject(), images: p.images.map(i => i.image) }

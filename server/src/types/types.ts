@@ -31,7 +31,7 @@ export type RequestProductQuery = {
 
 
 
-export interface BaseQuery {
+export type BaseQuery ={
     name?: {
         $regex: string;
         $options: string;

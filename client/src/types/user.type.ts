@@ -1,4 +1,5 @@
 import type { GENDERS, USER_ROLE } from "../utils/data";
+import type { UserPayload } from "../validations/completeProfileSchema";
 
 export interface User {
   _id: string;
@@ -8,6 +9,10 @@ export interface User {
   role: UserRole;
   gender: Genders,
   // createdAt: string;
+}
+export type CompleteFormData = Omit<UserPayload, "email" | "gender" | "avatar"> & {
+  gender: string;
+  avatar: File | null
 }
 
 export type AuthState = {

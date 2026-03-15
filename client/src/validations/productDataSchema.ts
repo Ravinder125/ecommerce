@@ -60,7 +60,8 @@ export const productDataSchema = z.object({
     description: z
         .string()
         .trim()
-        .min(1, { message: "Description is required" })
+        .min(1, { message: "Description is required" }),
+    images: imagesSchema
 })
 
 export const updateProductDataSchema = z.object({

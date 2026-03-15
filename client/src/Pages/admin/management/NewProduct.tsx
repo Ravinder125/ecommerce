@@ -1,17 +1,17 @@
-import { useEffect, useRef, useState, type FormEvent, } from "react"
+import { useState, type FormEvent } from "react"
+import toast from "react-hot-toast"
 import { DashboardLayout } from "../../../components"
+import { ImageSelector } from "../../../components/forms/ImageSelector"
+import { createTypedInput } from "../../../components/forms/InputBox"
+import TextArea from "../../../components/forms/TextArea"
+import { useCreateProductMutation, useUploadProductImagesMutation } from "../../../store/api/productAPI"
+import { handleChangeHOC } from "../../../utils/handleInputChange"
+import { InitialProductFormData } from "../../../utils/InitialFormData"
+import { ReduxResponseHandle } from "../../../utils/ReduxResponseHandle"
 import { validateData } from "../../../utils/validateFields"
 import { productDataSchema, type NewProductFormData } from "../../../validations/productDataSchema"
-import { handleChangeHOC } from "../../../utils/handleInputChange"
-import { useCreateProductMutation, useProductCategoriesQuery, useUploadProductImagesMutation } from "../../../store/api/productAPI"
-import { createTypedInput } from "../../../components/forms/InputBox"
-import toast from "react-hot-toast"
-import TextArea from "../../../components/forms/TextArea"
-import { InitialProductFormData } from "../../../utils/InitialFormData"
 import SelectCategory from "./SelectCategory"
-import type { FetchBaseQueryError } from "@reduxjs/toolkit/query"
-import type { ApiResponse } from "../../../types/api.type"
-import { imageHandler } from "../../../utils/imageHandler"
+import { useNavigate } from "react-router-dom"
 
 
 
@@ -20,17 +20,16 @@ const InputBox = createTypedInput<NewProductFormData>()
 const NewProduct = () => {
     const [error, setError] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
-    const ref = useRef<HTMLInputElement>(null)
-    const [imagePrev, setImagePrev] = useState<string>("")
-
     const [formData, setFormData] = useState<NewProductFormData>(InitialProductFormData)
 
+    const navigate = useNavigate();
     const newProductApi = useCreateProductMutation()[0];
     const uploadImages = useUploadProductImagesMutation()[0];
 
     const { onInput, handleInputChange } = handleChangeHOC(setFormData)
 
     const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
+        console.log("working")
         e.preventDefault();
         setError("")
         const payload = {
@@ -39,66 +38,36 @@ const NewProduct = () => {
             price: Number(formData.price)
         }
 
-        const result = validateData(productDataSchema, payload)
-        if (!result.success) {
-            console.log(result)
-            setError(result.message!)
-            return;
-        }
         try {
-            const res = await newProductApi(result.data!)
-
-            if (res?.data) {
-                if (res?.data?.data._id) {
-                    await uploadImages({
-                        id: res.data.data._id,
-                        images: [formData.image!]
-                    })
-                }
-                toast.success(res.data.message!)
-                // toast.success("Profile completed")
-            } else {
-                const err = res.error as FetchBaseQueryError
-                const message = (err.data as ApiResponse).message
-                throw new Error(message)
+            const result = validateData(productDataSchema, payload)
+            if (!result.success) {
+                throw new Error(result.message)
             }
 
+            setLoading(true)
+            const res = await newProductApi(result.data!)
+            const postRes = ReduxResponseHandle(res, null, "", true)
+            const res2 = await uploadImages({
+                id: postRes!._id,
+                images: formData.images
+            })
+            ReduxResponseHandle(res2,navigate, "/admin/products")
+            
         } catch (error: any) {
-
-            let errMessage =
+            let errMessage: string =
                 error?.data?.message
                 || error.message
                 || "Something went wrong"
 
             toast.error(errMessage)
             setError(errMessage)
-
-            console.error("Sync error:", error)
+            // console.error("Sync error:", error)
         } finally {
             setFormData(InitialProductFormData)
             setLoading(false)
         }
 
     }
-
-
-    useEffect(() => {
-        if (!formData.image) return;
-        imageHandler(formData.image!, (base) => setImagePrev(base))
-    }, [formData.image])
-
-    // if (isError) {
-    //     toast.error(error)
-    //     return <div>Something went wrong</div>
-    // }
-
-    // if (isFetching) {
-    //     return <div>Loading...</div>
-    // }
-
-    // if (isLoading) {
-    //     return <div>Loading...</div>
-    // }
 
     return (
         <DashboardLayout>
@@ -144,8 +113,7 @@ const NewProduct = () => {
                                 placeholder="Enter product stock"
                                 value={String(formData.stock)}
                                 onChange={onInput("stock")}
-
-                                required
+                                required={true}
                             />
 
 
@@ -161,16 +129,14 @@ const NewProduct = () => {
                                 alignItems: "center",
                                 // justifyContent: "center"
                             }}>
-
-                                <InputBox
-                                    name="image"
-                                    type="file"
-                                    inputRef={ref}
-                                    value={formData.image}
-                                    onChange={(e) => handleInputChange("image", e.target.files?.[0])}
-                                    label="Image"
-                                    imgPrev={imagePrev}
-                                    action={() => ref.current?.click()}
+                                <ImageSelector
+                                    name="images"
+                                    existingImages={[]}
+                                    onChange={(e) => handleInputChange("images", e)}
+                                    value={formData.images}
+                                    label="Images"
+                                    multiple={true}
+                                    required={true}
                                 />
                             </div>
 

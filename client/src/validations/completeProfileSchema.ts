@@ -1,8 +1,9 @@
 import { z } from "zod";
 import type { Genders, UserRole } from "../types/user.type";
 import { GENDERS, USER_ROLE } from "../utils/data";
+import { imageSchema } from "./productDataSchema";
 
-export const completeFormDataSchema = z.object({
+export const userFormDataSchema = z.object({
     email: z.string().email("Invalid email address"),
 
     name: z
@@ -25,7 +26,7 @@ export const completeFormDataSchema = z.object({
         "Invalid date of birth"
     ),
 
-    avatar: z.string().nullable(),
+    avatar: imageSchema
 });
 
-export type UserPayload = z.infer<typeof completeFormDataSchema>; 
+export type UserPayload = z.infer<typeof userFormDataSchema>; 

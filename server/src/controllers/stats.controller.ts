@@ -70,13 +70,13 @@ export const Dashboard = asyncHandler(async (req: Request, res: Response) => {
         // Revenue aggregation
         Order.aggregate<RevenueAgg>([
             { $match: getMonthBaseQuery(thisMonth.start, thisMonth.end) },
-            { $group: { _id: null, total: { $sum: "$totalPrice" } } },
+            { $group: { _id: null, total: { $sum: "$total" } } },
         ]),
         Order.aggregate<RevenueAgg>([
             {
                 $match: { ...getMonthBaseQuery(lastMonth.start, lastMonth.end) }
             },
-            { $group: { _id: null, total: { $sum: "$totalPrice" } } },
+            { $group: { _id: null, total: { $sum: "$total" } } },
         ]),
         Order.aggregate<RevenueAgg>([
             {
@@ -93,7 +93,7 @@ export const Dashboard = asyncHandler(async (req: Request, res: Response) => {
                         year: { $year: "$createdAt" },
                         month: { $month: "$createdAt" },
                     },
-                    total: { $sum: "$totalPrice" },
+                    total: { $sum: "$total" },
                 },
             },
             {
@@ -204,6 +204,7 @@ export const Dashboard = asyncHandler(async (req: Request, res: Response) => {
     const lastMonthRevenue = lastMonthRevenueAgg[0]?.total ?? 0;
 
     const categories = await getInventory(productCategories)
+    console.log(latestTransactions)
 
     const modifiedLatestTransactions = latestTransactions.map(l => ({
         _id: l._id,
@@ -212,7 +213,6 @@ export const Dashboard = asyncHandler(async (req: Request, res: Response) => {
         discount: l.discount,
         total: l.total,
     }))
-
     const stats = {
         ratio: {
             male: maleUsersCount,
@@ -253,10 +253,10 @@ export const getPieCharts = asyncHandler(async (req: Request, res: Response) => 
         Order.countDocuments({ orderStatus: "Canceled" }),
         Order.find({}).select([
             "discount",
-            "taxPrice",
-            "shippingCharge",
-            "subTotal",
-            "totalPrice"
+            "tax",
+            "shippingCharges",
+            "subtotal",
+            "total"
         ]),
 
         // Product category count

@@ -2,17 +2,23 @@ import { useEffect, useState } from "react";
 
 export const useImageHandler = (files: File[]): string[] => {
     const [previews, setPreviews] = useState<string[]>([])
-    // console.log("image handler state rendered")
+
     useEffect(() => {
-        if (!files.length) {
+        if (!files?.length) {
             setPreviews([])
             return;
         }
-        // console.log("image handler effect rendered")
 
-        const urls = files.map(file =>
-            URL.createObjectURL(file)
-        );
+
+    // Guard: filter out anything that isn't actually a File
+    const validFiles = files.filter(f => f instanceof File)
+
+    if (!validFiles.length) {
+        setPreviews([])
+        return
+    }
+
+        const urls = files.map(file => URL.createObjectURL(file));
         setPreviews(urls)
 
         return () => {
@@ -21,6 +27,5 @@ export const useImageHandler = (files: File[]): string[] => {
 
     }, [files])
 
-    // console.log("image handler comp rendered")
     return previews
 }

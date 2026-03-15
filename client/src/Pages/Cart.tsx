@@ -1,21 +1,20 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { VscError } from "react-icons/vsc";
 import { Link } from "react-router-dom";
 import { Layout } from "../components";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import CardItem from "./admin/CardItem";
-import { axiosInstance } from "../utils/axiosInstance";
-import axios from "axios";
 import { addToCart, calculatePrice, discountApplied, removeToCart, saveCoupon } from "../store/reducers/cartSlice";
 import type { CartItem } from "../types/cart.type";
 import { apiPaths } from "../utils/apiPath";
+import CardItem from "./admin/CardItem";
 
 
 
 const Cart = () => {
     const {
         items,
-        coupon,
+        // coupon,
         discount,
         shippingCharges,
         subtotal,
@@ -46,7 +45,7 @@ const Cart = () => {
     useEffect(() => {
         const { token: cancelToken, cancel } = axios.CancelToken.source()
         const timeout = setTimeout(() => {
-            axiosInstance.post(`${apiPaths.coupons.applyDiscount}?code=${couponCode}`, {
+            axios.post(`${apiPaths.coupons.applyDiscount}?code=${couponCode}`, {
                 cancelToken,
             })
                 .then((res) => {

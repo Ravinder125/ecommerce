@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import {  useMemo } from "react";
 import { useImageHandler } from "../../hooks/useImageHandler";
 import { ImageCarousel } from "../ImageCarousel";
 
@@ -9,7 +9,7 @@ type ImageSelector = {
     required?: boolean;
     label?: string;
     multiple?: boolean
-    existingImages?: string[]
+    existingImages: string[]
     setDeleteImages?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
@@ -17,21 +17,18 @@ export const ImageSelector = ({
     name,
     onChange,
     label = "Choose Image",
-    value = [],
+    value,
     multiple = false,
     required = false,
-    setDeleteImages,
-    existingImages = []
+    // setDeleteImages,
+    existingImages
 }: ImageSelector) => {
-    console.log("Image rendered")
-
     const previews = useImageHandler(value)
 
     const allPreviews = useMemo(
-        () => [...existingImages, ...previews]
-        , [previews, existingImages])
-
-
+        () => [...(existingImages ?? []), ...previews],  // ← nullish fallback
+        [previews, existingImages]
+    )
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (!files) return;
@@ -64,9 +61,9 @@ export const ImageSelector = ({
                 {label}
             </label>
 
-            {/* {allPreviews.length > 0 && (
-                <ImageCarousel images={allPreviews} onRemove={handleRemove} />
-            )} */}
+            {allPreviews.length > 0 && (
+                <ImageCarousel images={allPreviews} />
+            )}
         </div >
     )
 }

@@ -212,5 +212,3 @@ const CategoryItem = ({ color, value, heading }: CategoryItemProps) => (
 )
 
 export default Dashboard
-
-// 2:2

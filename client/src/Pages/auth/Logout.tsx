@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useAuth, useClerk } from "@clerk/clerk-react";
+import {  useClerk } from "@clerk/clerk-react";
 
 const Logout = () => {
     //   const { signOut, sessionId, isLoaded } = useAuth();

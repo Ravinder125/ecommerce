@@ -33,6 +33,7 @@ const columns: ColumnDef<ModifiedLatestTransactions>[] = [
 
 
 const DashboardTable = ({ data = [] }: { data: ModifiedLatestTransactions[] }) => {
+    console.log(data)
     return TableHOC<ModifiedLatestTransactions>(columns, data, "transaction-box", "Top Transaction")()
 
 }

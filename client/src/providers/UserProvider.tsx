@@ -1,17 +1,12 @@
-import { useEffect } from "react";
-import { useUser } from "@clerk/clerk-react";
 import { useAppDispatch } from "../store/hooks";
-import { fetchUser } from "../store/thunks/authThunk";
+import { useGetProfileQuery } from "../store/api/syncProfileAPI";
+import { getUser } from "../store/reducers/authSlice";
 
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
-    const { user, isLoaded } = useUser();
     const dispatch = useAppDispatch();
-
-    useEffect(() => {
-        if (!isLoaded) return;
-        if (user) dispatch(fetchUser());
-    }, [isLoaded, user]);
-
+    const { isLoading, data } = useGetProfileQuery();
+    if (isLoading) return <div>Loading...</div>
+    dispatch(getUser(data?.data ?? null))
     return <>{children}</>
 };
 
