@@ -1,5 +1,5 @@
 import { DashboardLayout } from "../../components"
-import { DoughnutChart, PieChart } from "../../components/";
+import { DoughnutChart, PieChart } from "../../components";
 import { useDashboardPieChartQuery } from "../../store/api/statsAPI";
 import toast from "react-hot-toast";
 

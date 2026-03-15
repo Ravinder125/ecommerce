@@ -10,7 +10,7 @@ const ProductDetails = () => {
     const id = params.id
     const [activeIdx, setActiveIndex] = useState<number>(0);
     const { isError, isFetching, isLoading, data } = useGetProductQuery(id!, {})
-    
+
     if (isError) {
         return <div>Something went wrong</div>
     }

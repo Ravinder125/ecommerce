@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react"
-import { ExternalAuth, RedirectToOtherAuthPage } from "./Signup";
+import { ExternalAuth, RedirectToOtherAuthPage } from "./signup";
 import { InputBox } from "../../components/forms/InputBox";
 import { useSignIn } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";

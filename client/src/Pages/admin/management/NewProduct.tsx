@@ -51,8 +51,8 @@ const NewProduct = () => {
                 id: postRes!._id,
                 images: formData.images
             })
-            ReduxResponseHandle(res2,navigate, "/admin/products")
-            
+            ReduxResponseHandle(res2, navigate, "/admin/products")
+
         } catch (error: any) {
             let errMessage: string =
                 error?.data?.message

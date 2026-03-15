@@ -6,8 +6,8 @@ import {
 } from "react-router-dom"
 // import { Loader } from './components'
 import { ThemeProvider } from "./context/themeContext"
-import ProtectedRoutes from "./pages/ProtectedRoutes"
-import PublicRoutes from "./pages/PublicRoutes"
+import ProtectedRoutes from "./pages/productDetails"
+import PublicRoutes from "./pages/publicRoutes"
 
 import { Toaster } from 'react-hot-toast'
 // import AuthSync from "./components/AuthSync"
@@ -18,41 +18,41 @@ import UserProvider from "./providers/UserProvider"
 
 
 // Auth Routes 
-const Signup = lazy(() => import("./pages/auth/Signup"))
-const Login = lazy(() => import("./pages/auth/Login"))
+const Signup = lazy(() => import("./pages/auth/signup"))
+const Login = lazy(() => import("./pages/auth/login"))
 // const Logout = lazy(() => import("./pages/auth/Logout"))
-const VerifyEmail = lazy(() => import("./pages/auth/VerifyEmail"))
-const CompleteProfile = lazy(() => import("./pages/auth/CompleteProfile"))
+const VerifyEmail = lazy(() => import("./pages/auth/verifyEmail"))
+const CompleteProfile = lazy(() => import("./pages/auth/completeProfile"))
 
 
-const Home = lazy(() => import("./pages/Home"))
-const Profile = lazy(() => import("./pages/Profile"))
-const Dashboard = lazy(() => import("./pages/admin/Dashboard"))
-const Search = lazy(() => import("./pages/Search"))
-const Cart = lazy(() => import("./pages/Cart"))
-const Shipping = lazy(() => import("./pages/Shipping"))
-const Checkout = lazy(() => import("./pages/Checkout"))
-const Orders = lazy(() => import("./pages/admin/Orders"))
-const OrderDetails = lazy(() => import("./pages/admin/OrderDetails"))
+const Home = lazy(() => import("./pages/home"))
+const Profile = lazy(() => import("./pages/profile"))
+const Dashboard = lazy(() => import("./pages/admin/dashboard"))
+const Search = lazy(() => import("./pages/search"))
+const Cart = lazy(() => import("./pages/cart"))
+const Shipping = lazy(() => import("./pages/shipping"))
+const Checkout = lazy(() => import("./pages/checkout"))
+const Orders = lazy(() => import("./pages/admin/orders"))
+const OrderDetails = lazy(() => import("./pages/admin/orderDetails"))
 
 // Product Management routes
-const ProductDetails = lazy(() => import("./pages/ProductDetails"))
-const Products = lazy(() => import("./pages/admin/Products"))
-const NewProduct = lazy(() => import("./pages/admin/management/NewProduct"))
-const ProductManagement = lazy(() => import("./pages/admin/management/ProductManagement"))
-const Customers = lazy(() => import("./pages/admin/Customers"))
+const ProductDetails = lazy(() => import("./pages/productDetails"))
+const Products = lazy(() => import("./pages/admin/products"))
+const NewProduct = lazy(() => import("./pages/admin/management/newProduct"))
+const ProductManagement = lazy(() => import("./pages/admin/management/productManagement"))
+const Customers = lazy(() => import("./pages/admin/customers"))
 
 // Transaction Management routes
-const Transaction = lazy(() => import("./pages/admin/Transaction"))
-const TransactionManagement = lazy(() => import("./pages/admin/management/TransactionManagement"))
-const BarCharts = lazy(() => import("./pages/charts/BarCharts"))
-const LineCharts = lazy(() => import("./pages/charts/LineCharts"))
-const PieCharts = lazy(() => import("./pages/charts/PieCharts"))
+const Transaction = lazy(() => import("./pages/admin/transaction"))
+const TransactionManagement = lazy(() => import("./pages/admin/management/transactionManagement"))
+const BarCharts = lazy(() => import("./pages/charts/barCharts"))
+const LineCharts = lazy(() => import("./pages/charts/lineCharts"))
+const PieCharts = lazy(() => import("./pages/charts/pieCharts"))
 
 // Apps Routes
-const StopWatch = lazy(() => import("./pages/admin/apps/StopWatch"))
-const Coupon = lazy(() => import("./pages/admin/apps/Coupon"))
-const Toss = lazy(() => import("./pages/admin/apps/Toss"))
+const StopWatch = lazy(() => import("./pages/admin/apps/stopWatch"))
+const Coupon = lazy(() => import("./pages/admin/apps/coupon"))
+const Toss = lazy(() => import("./pages/admin/apps/toss"))
 
 function App() {
 
