@@ -11,7 +11,7 @@ import { HiTrendingDown, HiTrendingUp } from "react-icons/hi"
 // import data from '../assets/data.json'
 import { BiMaleFemale } from "react-icons/bi"
 import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md"
-import { useTheme } from '../../context/themeContext'
+import { useTheme } from "../../context/themeContext"
 import { useState } from "react"
 import { useDashboardQuery } from "../../store/api/statsAPI"
 

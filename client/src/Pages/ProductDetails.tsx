@@ -1,18 +1,19 @@
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useGetProductQuery } from "../store/api/productAPI"
 import { useState } from "react"
 import AddToCart from "../components/AddToCart"
 import { Layout } from "../components"
-import Rating from "./Rating"
+import Rating from "./rating"
 
 const ProductDetails = () => {
     const params = useParams()
     const id = params.id
+    const navigate = useNavigate()
     const [activeIdx, setActiveIndex] = useState<number>(0);
-    const { isError, isFetching, isLoading, data } = useGetProductQuery(id!, {})
-
+    const { isError, isFetching, isLoading, data } = useGetProductQuery(id!)
     if (isError) {
-        return <div>Something went wrong</div>
+
+        // return <div>Something went wong</div>
     }
 
     if (isLoading) {

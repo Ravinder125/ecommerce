@@ -59,11 +59,13 @@ export const productAPI = createApi({
 
     // GET LATEST
     latestProducts: builder.query<ApiResponse<Product[]>, void>({
-      query: () => ({
-        url: apiPaths.products.latest,
-        method: "GET",
-      }),
-      providesTags: ["Product"],
+      query: () => {
+        console.log("working")
+        return {
+          url: apiPaths.products.latest,
+          method: "GET"
+        }
+      }
     }),
 
     // GET ADMIN PRODUCTS

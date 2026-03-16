@@ -10,7 +10,7 @@ import { InitialProductFormData } from "../../../utils/InitialFormData"
 import { ReduxResponseHandle } from "../../../utils/ReduxResponseHandle"
 import { validateData } from "../../../utils/validateFields"
 import { productDataSchema, type NewProductFormData } from "../../../validations/productDataSchema"
-import SelectCategory from "./SelectCategory"
+import SelectCategory from "./selectCategory"
 import { useNavigate } from "react-router-dom"
 
 

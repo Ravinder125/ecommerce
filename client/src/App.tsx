@@ -6,7 +6,7 @@ import {
 } from "react-router-dom"
 // import { Loader } from './components'
 import { ThemeProvider } from "./context/themeContext"
-import ProtectedRoutes from "./pages/productDetails"
+import ProtectedRoutes from "./pages/protectedRoutes"
 import PublicRoutes from "./pages/publicRoutes"
 
 import { Toaster } from 'react-hot-toast'
@@ -66,7 +66,6 @@ function App() {
           <Suspense fallback={<PageSkeleton />}>
             <Routes>
 
-              <Route path="/product-details/:id" element={<ProductDetails />} />
 
               {/* Auth Routes */}
               <Route element={<PublicRoutes />}>
@@ -80,6 +79,7 @@ function App() {
               <Route element={<ProtectedRoutes />}>
                 <Route path="/complete-profile" element={<CompleteProfile />} />
                 <Route path="/" element={<Home />} />
+                <Route path="/product-details/:id" element={<ProductDetails />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/cart" element={<Cart />} />
 

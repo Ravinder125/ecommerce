@@ -64,9 +64,6 @@ const CompleteProfile = () => {
         }
     }
 
-
-
-
     return (
         <div className="auth-layout">
             <div className="card">

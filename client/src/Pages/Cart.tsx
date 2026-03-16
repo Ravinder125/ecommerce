@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { addToCart, calculatePrice, discountApplied, removeToCart, saveCoupon } from "../store/reducers/cartSlice";
 import type { CartItem } from "../types/cart.type";
 import { apiPaths } from "../utils/apiPath";
-import CardItem from "./admin/CardItem";
+import CardItem from "./admin/cardItem";
 
 
 
