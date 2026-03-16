@@ -57,8 +57,19 @@ export const createOrder = asyncHandler(
     })
 
 export const getMyOrders = asyncHandler(async (req: Request, res: Response) => {
-    const { userId } = req.query;
-    const orders = await Order.find({ buyer: userId }).lean()
+    const userId = req.user?._id
+    const orders = await Order.aggregate([
+        { $match: { buyer: userId } },
+        {
+            $project: {
+                _id: "$_id",
+                quantity: { $sum: "$orderItems.quantity" },
+                total: "$total",
+                discount: "$discount",
+                orderStatus: "$orderStatus"
+            }
+        }
+    ])
     if (!orders) throw new ApiError(401, "No order Found")
 
     return res.status(200).json(

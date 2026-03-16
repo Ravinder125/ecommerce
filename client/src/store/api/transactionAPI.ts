@@ -8,7 +8,14 @@ import type { NewOrder, Order, PaymentInfo, PaymentMethod } from "../../types/tr
 export type CreateOrderRequest = NewOrder & {
     paymentMethod: PaymentMethod
     paymentInfo: PaymentInfo
+}
 
+export type TableOrder = {
+    _id: string;
+    total: number;
+    quantity: number;
+    discount: number;
+    orderStatus: string;
 }
 
 export const transactionAPI = createApi({
@@ -42,13 +49,21 @@ export const transactionAPI = createApi({
             })
         }),
 
-        processOrder: builder
-            .mutation<ApiResponse, { orderId: string, isCancelled?: boolean }>({
-                query: ({ orderId, isCancelled }) => ({
-                    url: `${apiPaths.orders.byId(orderId)}?isCancelled=${isCancelled}`,
-                    method: "PUT"
-                })
+        orders: builder.query<ApiResponse<TableOrder[]>, void>({
+            query: () => ({
+                url: apiPaths.orders.root,
+                method: "GET"
             })
+        }),
+
+        processOrder: builder.mutation<ApiResponse, { orderId: string, isCancelled?: boolean }>({
+            query: ({ orderId, isCancelled }) => ({
+                url: `${apiPaths.orders.byId(orderId)}?isCancelled=${isCancelled}`,
+                method: "PUT"
+            }),
+            invalidatesTags: ["Transactions"]
+        }),
+
     })
 })
 
@@ -57,4 +72,5 @@ export const {
     useAdminOrdersQuery,
     useGetOrderQuery,
     useProcessOrderMutation,
+    useOrdersQuery,
 } = transactionAPI
