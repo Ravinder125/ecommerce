@@ -1,10 +1,9 @@
-import { createApi } from "@reduxjs/toolkit/query/react"
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import type { ApiResponse, GetProductResponse, GetProductsQuery } from "../../types/api.type"
-import { apiPaths } from "../../utils/apiPath"
-import { getToken } from "../../utils/tokenManager"
-import { baseQueryWithClerk } from "./baseQueryWithAuth"
 import type { Product } from "../../types/product.type"
+import { apiPaths } from "../../utils/apiPath"
 import type { NewProductFormData, UpdateProductFormData } from "../../validations/productDataSchema"
+
 
 export type AdminGetResponse = Omit<GetProductResponse, "categories">
 export type GetProductQuery = Product & { description: string }
@@ -15,9 +14,17 @@ export type UploadProductImagesQuery = {
 }
 
 
+export const baseUrl = import.meta.env.VITE_BASE_URL
+
+if (!baseUrl) {
+  throw new Error("Base url is missing")
+}
+
 export const productAPI = createApi({
   reducerPath: "productAPI",
-  baseQuery: baseQueryWithClerk(getToken),
+  baseQuery: fetchBaseQuery({
+    baseUrl
+  }),
   tagTypes: ["Product"],
 
   endpoints: (builder) => ({

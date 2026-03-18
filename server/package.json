@@ -16,8 +16,6 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@clerk/clerk-sdk-node": "^4.13.23",
-    "@clerk/express": "^1.7.39",
     "@faker-js/faker": "^9.9.0",
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",

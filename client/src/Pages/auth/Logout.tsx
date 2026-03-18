@@ -1,18 +1,22 @@
 import { useEffect } from "react";
-import {  useClerk } from "@clerk/clerk-react";
+import { signOut } from 'firebase/auth'
+import { auth } from "../../config/firebase";
+import { Navigate } from "react-router-dom";
 
 const Logout = () => {
-    //   const { signOut, sessionId, isLoaded } = useAuth();
-    const { signOut } = useClerk()
-
     useEffect(() => {
-        // if (!isLoaded) return;
-        // if (!sessionId) return;
+        const logout = async () => {
+            try {
+                await signOut(auth)
+            } catch (error) {
 
-        signOut({ redirectUrl: "/login" });
+            }
+        }
+
+        logout()
     }, [signOut]);
 
-    return null;
+    return <Navigate to="/login" />;
 };
 
 export default Logout;

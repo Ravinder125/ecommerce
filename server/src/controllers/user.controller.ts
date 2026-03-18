@@ -3,10 +3,7 @@ import { User } from "../models/user.models.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { RegisterUserRequestBody } from "../types/types.js";
-import { validationResult } from "express-validator";
 import { ApiError } from "../utils/ApiError.js";
-// import { uploadOnCloudinary } from "../utils/cloudinary.js";
-import { getAuth, } from "@clerk/express";
 
 
 export const registerUser = asyncHandler(
@@ -14,25 +11,10 @@ export const registerUser = asyncHandler(
         req: Request<{}, {}, RegisterUserRequestBody>,
         res: Response
     ) => {
-        // const errors = validationResult(req);
-        // if (!errors.isEmpty()) {
-        //     const errMessages = errors.array().map(e => e.msg)
-        //     throw new ApiError(400, "Validation Error", errMessages)
-        // }
-        const { userId } = getAuth(req)
-
-        const { name, email, gender, role, dob } = req.body;
-        const isUserExists = await User.findById(userId)
+        const { name, email, gender, role, dob, _id } = req.body;
+        const isUserExists = await User.findById(_id)
         if (isUserExists) throw new ApiError(400, "User already exists")
-        // const localFilePath = req.file?.path;
 
-
-        // if (!localFilePath) throw new ApiError(400, "Avatar is required");
-        // const uploadImage = await uploadOnCloudinary(localFilePath);
-        // if (!uploadImage) throw new ApiError(500, "Error while uploading image on Cloudinary")
-        // const { public_id, url } = uploadImage;
-
-        // console.log(req.body)
         const user = await User.create({
             name,
             email,
@@ -40,7 +22,7 @@ export const registerUser = asyncHandler(
             // avatarId: public_id,
             gender,
             role,
-            _id: userId,
+            _id,
             dob: new Date(dob)
         });
 
@@ -56,14 +38,13 @@ export const registerUser = asyncHandler(
 
 export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
     const users = await User.find({}).select("name email gender avatar");
-    console.log(users)
     return res.status(200).json(
         new ApiResponse(200, users, "Successfully fetched users")
     )
 })
 
 export const getUser = asyncHandler(async (req: Request, res: Response) => {
-    const { userId } = getAuth(req)
+    const userId = req.params._id
     if (!userId) {
         throw new ApiError(400, "User Id is missing")
     }

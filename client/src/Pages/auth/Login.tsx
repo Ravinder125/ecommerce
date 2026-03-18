@@ -1,27 +1,26 @@
 import { useState, type FormEvent } from "react"
 import { ExternalAuth, RedirectToOtherAuthPage } from "./signup";
 import { InputBox } from "../../components/forms/InputBox";
-import { useSignIn } from "@clerk/clerk-react";
+import {
+    signInWithEmailAndPassword,
+    GoogleAuthProvider,
+    GithubAuthProvider,
+    signInWithPopup,
+} from 'firebase/auth'
+import { auth } from '../../config/firebase'
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useExternalLogin } from "../../hooks/useExternalSignIn";
 
 const Login = () => {
     const [password, setPassword] = useState<string>("")
     const [email, setEmail] = useState<string>("")
-    const { signIn, setActive, isLoaded } = useSignIn()
     const [error, setError] = useState<string>("")
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const navigate = useNavigate()
-    const {
-        loginWithGithub,
-        loginWithGoogle
-    } = useExternalLogin()
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        if (!isLoaded || !setActive || !signIn) return;
 
         try {
             if (!password?.trim()) {
@@ -32,36 +31,38 @@ const Login = () => {
                 throw new Error("Password must be 6 characters longs")
             }
 
-
-            const result = await signIn.create({
-                password,
-                identifier: email
-            })
-
-            if (result.status === "complete") {
-                await setActive({ session: result.createdSessionId })
+            setIsLoading(true)
+            const result = await signInWithEmailAndPassword(auth, email, password)
+            if (result.user) {
+                toast.success("Successfully logged in")
+                navigate("/")
             }
-            toast.success("Successfully logged in")
-            navigate("/")
 
         } catch (error: any) {
-            const errMessage = error.message
+            const errMessage = error?.message || "Login failed"
             toast.error(errMessage)
             setError(errMessage)
 
+        } finally {
+            setIsLoading(false)
         }
     }
 
-    const onGoogleClick = async () => {
-        setIsLoading(true)
-        await loginWithGoogle()
-        setIsLoading(false)
+    const loginWithGoogle = async () => {
+        try {
+            const provider = new GoogleAuthProvider()
+            await signInWithPopup(auth, provider)
+        } catch (error: any) {
+            toast.error(error.message)
+        }
     }
-    const onGithubClick = async () => {
-        setIsLoading(true)
-        await loginWithGithub()
-        setIsLoading(false)
-
+    const loginWithGitHub = async () => {
+        try {
+            const provider = new GithubAuthProvider()
+            await signInWithPopup(auth, provider)
+        } catch (error: any) {
+            toast.error(error.message)
+        }
     }
 
     return (
@@ -101,7 +102,7 @@ const Login = () => {
                         {isLoading ? "Loading..." : "Login"}
                     </button>
 
-                    <ExternalAuth onGoogleClick={onGoogleClick} onGithubClick={onGithubClick} />
+                    <ExternalAuth onGoogleClick={loginWithGoogle} onGithubClick={loginWithGitHub} />
                 </form>
 
             </div>

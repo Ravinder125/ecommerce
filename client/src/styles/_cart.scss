@@ -11,15 +11,13 @@
     display: flex;
 
     >section {
-        // width: 70%;
+        width: 100%;
+        overflow-y: auto;
 
         >h1 {
             @include heading(2px);
             text-align: center;
-
         }
-
-        overflow-y: auto;
 
         &::-webkit-scrollbar {
             display: none;
@@ -105,9 +103,10 @@
         }
 
 
-        
+
     }
 }
+
 .cart-item--btn {
     @include flex;
     gap: 2rem;

@@ -1,9 +1,13 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithClerk } from "./baseQueryWithAuth";
-import { getToken } from "../../utils/tokenManager";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { ApiResponse } from "../../types/api.type";
-import { apiPaths } from "../../utils/apiPath";
 import type { NewOrder, Order, PaymentInfo, PaymentMethod } from "../../types/transaction.type";
+import { apiPaths } from "../../utils/apiPath";
+
+export const baseUrl = import.meta.env.VITE_BASE_URL
+
+if (!baseUrl) {
+    throw new Error("Base url is missing")
+}
 
 export type CreateOrderRequest = NewOrder & {
     paymentMethod: PaymentMethod
@@ -20,7 +24,9 @@ export type TableOrder = {
 
 export const transactionAPI = createApi({
     reducerPath: "transactionAPI",
-    baseQuery: baseQueryWithClerk(getToken),
+    baseQuery: fetchBaseQuery({
+        baseUrl: baseUrl
+    }),
     tagTypes: ["Transactions"],
 
     endpoints: (builder) => ({

@@ -1,21 +1,22 @@
-import { createApi } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { ApiResponse } from '../../types/api.type';
-import { apiPaths } from '../../utils/apiPath';
-import { getToken } from '../../utils/tokenManager';
-import { baseQueryWithClerk } from './baseQueryWithAuth';
-import type { UserPayload } from '../../validations/completeProfileSchema';
 import type { User } from '../../types/user.type';
+import { apiPaths } from '../../utils/apiPath';
+import type { UserPayload } from '../../validations/completeProfileSchema';
 
 export const baseUrl = import.meta.env.VITE_BASE_URL
+
 if (!baseUrl) {
-    throw new Error("Base url is missing in User Api")
+    throw new Error("Base url is missing")
 }
 
 export type Customer = Omit<UserPayload, "role" | "avatar"> & { _id: string, avatar: string | null }
 
 export const syncProfileAPI = createApi({
     reducerPath: "userApi",
-    baseQuery: baseQueryWithClerk(getToken),
+    baseQuery: fetchBaseQuery({
+        baseUrl
+    }),
     tagTypes: ["users"],
 
     endpoints: (builder) => ({

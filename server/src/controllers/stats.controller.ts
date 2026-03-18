@@ -204,7 +204,6 @@ export const Dashboard = asyncHandler(async (req: Request, res: Response) => {
     const lastMonthRevenue = lastMonthRevenueAgg[0]?.total ?? 0;
 
     const categories = await getInventory(productCategories)
-    console.log(latestTransactions)
 
     const modifiedLatestTransactions = latestTransactions.map(l => ({
         _id: l._id,

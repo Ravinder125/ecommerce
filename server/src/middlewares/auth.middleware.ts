@@ -16,9 +16,16 @@ declare global {
 
 export const adminOnly = asyncHandler(
     async (req: Request, _: Response, next: NextFunction) => {
-        const user = req.user
+        const userId = req.query._id
+
+        if (!userId) {
+            throw new ApiError(400, "User ID is missing")
+        }
+
+        const user = await User.findById(userId)
+
         if (!user) {
-            throw new ApiError(400, "User is missing")
+            throw new ApiError(400, "Unauthorized Error")
         }
 
         if (user.role !== "admin") throw new ApiError(403, "Unauthorized Error")
@@ -26,18 +33,18 @@ export const adminOnly = asyncHandler(
         next()
     })
 
-export const authMiddleware = asyncHandler(
-    async (req: Request, _: Response, next: NextFunction) => {
-        const { userId } = getAuth(req);
-        if (!userId) throw new ApiError(401, "Unauthorized Error");
+// export const authMiddleware = asyncHandler(
+//     async (req: Request, _: Response, next: NextFunction) => {
+//         const userId = req.body._id
+//         if (!userId) throw new ApiError(401, "Unauthorized Error");
 
-        const user = await User
-            .findById(userId)
-            .select("-updatedAt -createdAt -_v");
+//         const user = await User
+//             .findById(userId)
+//             .select("-updatedAt -createdAt -_v");
 
-        if (!user) throw new ApiError(401, "Unauthorized Error");
+//         if (!user) throw new ApiError(401, "Unauthorized Error");
 
-        req.user = user;
-        next()
-    }
-)
+//         req.user = user;
+//         next()
+//     }
+// )

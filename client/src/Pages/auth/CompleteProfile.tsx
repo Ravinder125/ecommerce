@@ -1,12 +1,12 @@
 import { useState, type FormEvent } from "react"
 import toast from "react-hot-toast"
+import { ImageSelector } from "../../components/forms/ImageSelector"
 import { createTypedInput } from "../../components/forms/InputBox"
+import { auth } from "../../config/firebase"
+import { useSyncProfileMutation } from "../../store/api/syncProfileAPI"
+import type { CompleteFormData } from '../../types/user.type'
 import { handleChangeHOC } from '../../utils/handleInputChange'
 import { InitialCompleteFormData } from "../../utils/InitialFormData"
-import type { CompleteFormData } from '../../types/user.type'
-import { useUser } from '@clerk/clerk-react'
-import { ImageSelector } from "../../components/forms/ImageSelector"
-import { useSyncProfileMutation } from "../../store/api/syncProfileAPI"
 import { ReduxResponseHandle } from "../../utils/ReduxResponseHandle"
 import { validateData } from "../../utils/validateFields"
 import { userFormDataSchema, type UserPayload } from "../../validations/completeProfileSchema"
@@ -17,7 +17,7 @@ const CompleteProfile = () => {
     const [formData, setFormData] = useState<CompleteFormData>(InitialCompleteFormData)
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
-    const { user, isLoaded } = useUser()
+
     const { onInput, handleInputChange } = handleChangeHOC<CompleteFormData>(setFormData)
     const syncProfileAPI = useSyncProfileMutation()[0]
 
@@ -25,7 +25,6 @@ const CompleteProfile = () => {
         e.preventDefault()
         setError("")
         try {
-            if (!isLoaded || !user) return
 
             setIsLoading(true)
 
@@ -35,7 +34,8 @@ const CompleteProfile = () => {
                 gender: formData.gender,
                 name: formData.name,
                 role: formData.role,
-                email: user.emailAddresses[0].emailAddress
+                email: auth.currentUser?.email,
+                _id: auth.currentUser?.uid
             } as UserPayload
 
             const { success, data, message } = validateData(userFormDataSchema, payload)
@@ -117,39 +117,6 @@ const CompleteProfile = () => {
                         label="Avatar"
                         required={true}
                     />
-
-
-                    {/* <div className="input-box"> */}
-                    {/* <label htmlFor="image">image</label> */}
-                    {/* <input
-                            type="file"
-                            id="image"
-                            ref={ref}
-                            onChange={imageHandler}
-                            style={{ display: "none" }}
-                        /> */}
-                    {/* 
-                        {form.avatar && (
-                            <div className="image-preview">
-                                <div>
-                                    <img
-                                        src={typeof form.avatar === "string" ? form.avatar : ""}
-                                    />
-                                    <MdDelete onClick={() => setForm(prev => ({ ...prev, avatar: "" }))} />
-                                </div>
-                            </div>
-                        )
-                        } */}
-                    {/* </div> */}
-                    {/* <InputBox
-                        label="Avatar URL"
-                        type="file"
-                        name="avatar"
-                        value={typeof form.avatar === "string" ? form.avatar : ""}
-                        placeholder="Avatar URL"
-                        onChange={e => setForm({ ...form, avatar: e.target.value })}
-                        required
-                    /> */}
                     <p className="form-error">{error}</p>
                     <button
                         disabled={isLoading}

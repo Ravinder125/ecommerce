@@ -13,7 +13,6 @@ import { Toaster } from 'react-hot-toast'
 // import AuthSync from "./components/AuthSync"
 import { PageSkeleton } from "./components/skeletons/PageSkeleton"
 import UserProvider from "./providers/UserProvider"
-
 // Routes
 
 
@@ -56,7 +55,6 @@ const Toss = lazy(() => import("./pages/admin/apps/toss"))
 
 function App() {
 
-
   return (
     <UserProvider>
       <ThemeProvider>
@@ -65,23 +63,21 @@ function App() {
           {/* <AuthSync /> */}
           <Suspense fallback={<PageSkeleton />}>
             <Routes>
-
-
               {/* Auth Routes */}
               <Route element={<PublicRoutes />}>
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/logout" element={<Signup />} />
                 <Route path="/verify-email" element={<VerifyEmail />} />
+                <Route path="/" element={<Home />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/product-details/:id" element={<ProductDetails />} />
               </Route>
 
               {/* Public Routes */}
               <Route element={<ProtectedRoutes />}>
                 <Route path="/complete-profile" element={<CompleteProfile />} />
-                <Route path="/" element={<Home />} />
-                <Route path="/product-details/:id" element={<ProductDetails />} />
-                <Route path="/search" element={<Search />} />
-                <Route path="/cart" element={<Cart />} />
 
                 <Route path="/profile" element={<Profile />} />
 
@@ -92,9 +88,6 @@ function App() {
                   <Route path="/orders" element={<Orders />} />
                   <Route path="/orders/:id" element={<OrderDetails />} />
                 </Route>
-
-
-                {/* <Route path="/home" element={<Home />} /> */}
 
                 <Route path="/admin/products" element={<Products />} />
                 <Route path="/admin/dashboard" element={<Dashboard />} />

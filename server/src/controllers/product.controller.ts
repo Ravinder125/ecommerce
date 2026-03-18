@@ -112,7 +112,6 @@ export const createNewProduct = asyncHandler(
     })
 
 export const getLatestProducts = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?._id
     const cacheKey = `latest-products`
 
     let latestProducts = await cache.get(cacheKey)
@@ -121,14 +120,12 @@ export const getLatestProducts = asyncHandler(async (req: Request, res: Response
             new ApiResponse(200, latestProducts, "Latest products fetched successfully")
         )
     }
-    const filterOptions = req.user?.role === "admin"
-        ? {}
-        : { owner: userId };
 
     latestProducts = await Product
-        .find(filterOptions)
+        .find({})
         .sort({ createdAt: -1 })
         .limit(10);
+
 
     const products = latestProducts.map((p: any) => {
         return {
@@ -146,11 +143,11 @@ export const getLatestProducts = asyncHandler(async (req: Request, res: Response
 
 export const getAllCategories = asyncHandler(async (_: Request, res: Response) => {
     let categories //= //await cache.get("categories")
-    // if (categories) {
-    //     return res.status(200).json(
-    //         new ApiResponse(200, categories, "Categories fetched successfully")
-    //     )
-    // }
+    if (categories) {
+        return res.status(200).json(
+            new ApiResponse(200, categories, "Categories fetched successfully")
+        )
+    }
 
     categories = await Product.distinct("category")
     return res.status(200).json(
@@ -162,11 +159,13 @@ export const getSingleProduct = asyncHandler(async (req: Request, res: Response)
     // const cacheKey = `product:${req.params?.id}`;
     let product //= await cache.get(cacheKey);
 
-    // if (product) {
-    //     return res.status(200).json(
-    //         new ApiResponse(200, product, "Product fetched successfully")
-    //     )
-    // }
+    if (product) {
+        return res.status(200).json(
+            new ApiResponse(200, product, "Product fetched successfully")
+        )
+    }
+
+    console.log(product)
 
     product = await Product.findById(req.params.id);
 
@@ -233,7 +232,7 @@ export const getAdminProducts = asyncHandler(
         ])
 
         if (!productDocs?.length) throw new ApiError(400, "No product not found");
-        
+
         const totalPages = Math.round(productCount / pageSize)
         const productsList = productDocs.map(p => {
             return { ...p.toObject(), images: p.images.map(i => i.image) }

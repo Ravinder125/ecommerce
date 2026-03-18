@@ -1,5 +1,3 @@
-
-import { useSignUp } from "@clerk/clerk-react"
 import React, { useState } from "react"
 import { createTypedInput } from "../../components/forms/InputBox"
 import { Link, useNavigate } from "react-router-dom"
@@ -9,7 +7,14 @@ import { InitialAuthUpData } from "../../utils/InitialFormData"
 import { handleChangeHOC } from "../../utils/handleInputChange"
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa6"
-import { useExternalSignUp } from "../../hooks/useExternalSignUp"
+import {
+    createUserWithEmailAndPassword,
+    GithubAuthProvider,
+    GoogleAuthProvider,
+    sendEmailVerification,
+    signInWithPopup
+} from 'firebase/auth'
+import { auth } from "../../config/firebase"
 
 
 const InputBox = createTypedInput<AuthFormData>()
@@ -19,50 +24,65 @@ export default function Signup() {
     const [form, setForm] = useState<AuthFormData>(InitialAuthUpData)
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    const navigate = useNavigate()
-    const { gitHubSignup, googleSignup } = useExternalSignUp()
 
-    const { signUp, isLoaded, } = useSignUp()
+    const navigate = useNavigate()
 
     const { onInput } = handleChangeHOC<AuthFormData>(setForm)
 
+    const redirectToVerifyEmail = () => navigate("/verify-email");
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (!isLoaded) return
 
         try {
-            await signUp.create({
-                emailAddress: form.email,
-                password: form.password,
-            })
+            setIsLoading(false)
+            const result =
+                await createUserWithEmailAndPassword(
+                    auth,
+                    form.email,
+                    form.password
+                )
 
-            await signUp.prepareEmailAddressVerification({
-                strategy: "email_code"
-            })
-
+            await sendEmailVerification(result.user)
 
             toast.success("Email verification code sent")
-            navigate("/verify-email");
+            redirectToVerifyEmail()
 
         } catch (error: any) {
             const errMessage = error.errors?.[0]?.message
             toast.error(errMessage)
-            console.error(errMessage || error);
+        } finally {
+            setIsLoading(false)
         }
     }
 
 
-    const handleGoogleClick = async () => {
-        setIsLoading(true)
-        await googleSignup()
-        setIsLoading(false)
+    const signUpWithGoogle = async () => {
+        try {
+            const provider = new GoogleAuthProvider()
+            const result = await signInWithPopup(auth, provider)
+            console.log(result)
+            if (result.user) {
+                navigate("/complete-profile")
+            }
+        } catch (error: any) {
+            toast.error(error.message || "Login failed")
+        }
     }
 
-    const handleGitHubClick = async () => {
-        setIsLoading(true)
-        await gitHubSignup()
-        setIsLoading(false)
+    const signUpWithGitHub = async () => {
+        try {
+            const provider = new GithubAuthProvider()
+            const result = await signInWithPopup(auth, provider)
+            if (result.user) {
+                navigate("/complete-profile")
+            }
+        } catch (error: any) {
+            toast.error(error.message || "Login failed")
+        }
     }
+
+
 
     return (
 
@@ -92,13 +112,12 @@ export default function Signup() {
                         required
                     />
 
-                    <div id="clerk-captcha"></div>
                     <RedirectToOtherAuthPage />
                     <button className="submit-btn" type="submit">
                         {isLoading ? "Loading..." : "SignUp"}
                     </button>
 
-                    <ExternalAuth onGoogleClick={handleGoogleClick} onGithubClick={handleGitHubClick} />
+                    <ExternalAuth onGoogleClick={signUpWithGoogle} onGithubClick={signUpWithGitHub} />
                 </form>
             </div>
         </div>

@@ -1,22 +1,22 @@
-import { useUser } from "@clerk/clerk-react";
-// import { useAppSelector } from "../store/hooks";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAppSelector } from "../store/hooks";
+import { auth } from "../config/firebase";
 
 export default function ProtectedRoutes() {
-  const { isSignedIn, isLoaded } = useUser();
-  const { user, isLoading } = useAppSelector(state => state.user);
+  const { isLoading, user } = useAppSelector(state => state.user)
   const location = useLocation()
-  if (!isLoaded) return null;
 
-  if (!isSignedIn) {
+
+  if (isLoading) return null;
+  if (!auth.currentUser) {
     return <Navigate to="/login" replace />;
   }
 
-  if (isLoading) return null;
-
-
-  if (!user?.role && location.pathname !== "/complete-profile") {
+  if (
+    auth.currentUser &&
+    location.pathname !== "/complete-profile" &&
+    !user
+  ) {
     return <Navigate to="/complete-profile" replace />;
   }
 
@@ -24,6 +24,8 @@ export default function ProtectedRoutes() {
     return <Navigate to="/" replace />
   }
 
-  return <Outlet />;
+
+
+  return <Outlet />
 
 }

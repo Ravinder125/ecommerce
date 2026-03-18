@@ -16,18 +16,24 @@ const TransactionManagement = () => {
     const params = useParams();
     const id = params.id
 
+
+    const processOrderApi = useProcessOrderMutation()[0]
+    const { data, isError, isLoading } = useGetOrderQuery(id!, { skip: !id })
+
     if (!id) {
         return <Navigate to="/admin/transactions" replace />
     }
 
-    const processOrderApi = useProcessOrderMutation()[0]
-    const { data, error, isLoading } = useGetOrderQuery(id)
+    const handleCancel = async () => {
+        setIsCancelled(true)
+        await updateHandler(true)
+    }
 
-    const updateHandler = async () => {
+    const updateHandler = async (cancelled: boolean = isCancelled) => {
         try {
             const res = await processOrderApi({
                 orderId: id,
-                isCancelled: isCancelled
+                isCancelled: cancelled
             })
             const postRes = ReduxResponseHandle(res, null, null, true)
             if (postRes) {
@@ -38,11 +44,7 @@ const TransactionManagement = () => {
         }
     }
     if (isLoading) return <div>Loading...</div>
-    if (error) {
-        toast.error(data?.message || "Something went wrong")
-        return <div>Something went wrong</div>
-    }
-
+    if (isError) return <div>Something went wrong</div>
 
     return (
         <DashboardLayout>
@@ -52,7 +54,7 @@ const TransactionManagement = () => {
                 }}>
                     <h2>Order Items</h2>
 
-                    {data?.data.orderItems.map(({ productId, name, quantity, price, image }) => (
+                    {data?.data && data?.data?.orderItems?.length > 0 && data.data.orderItems.map(({ productId, name, quantity, price, image }) => (
                         <ProductCard
                             key={productId}
                             name={name}
@@ -70,10 +72,10 @@ const TransactionManagement = () => {
                     <h5>User Info</h5>
                     <p>Name: {data?.data?.buyer ?? "user name"}</p>
                     <p>Address: {`
-                     ${data?.data?.shippingInfo?.address},
-                         ${data?.data.shippingInfo.city},
-                        ${data?.data.shippingInfo.country}, ${data?.data.shippingInfo.state},
-                        ${data?.data.shippingInfo.country}`}
+                     ${data?.data?.shippingInfo?.address ?? ""},
+                         ${data?.data.shippingInfo?.city ?? ""},
+                        ${data?.data.shippingInfo?.pinCode}, ${data?.data.shippingInfo?.state},
+                        ${data?.data.shippingInfo?.country}`}
                     </p>
 
                     <h5>Amount Info</h5>
@@ -117,8 +119,8 @@ const TransactionManagement = () => {
                             {" "} {data?.data?.orderStatus}
                         </span>
                     </p>
-                    <button className="submit-btn" onClick={() => setIsCancelled(true)}>Cancel</button>
-                    <button onClick={updateHandler} className="submit-btn">Process Status</button>
+                    <button className="submit-btn" onClick={handleCancel}>Cancel</button>
+                    <button className="submit-btn" onClick={() => updateHandler(false)}>Process Status</button>
                 </article>
             </main>
         </DashboardLayout >
@@ -136,6 +138,6 @@ const ProductCard = ({ name,
     <div className="transaction-product--card">
         <img src={image} alt={name} />
         <Link to={`/admin/products/${productId}`}>{name}</Link>
-        <span>${price} X {quantity} = ${price * quantity}</span>
+        <span>$ {price} X {quantity} = $ {price * quantity}</span>
     </div>
 )

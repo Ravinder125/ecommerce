@@ -4,6 +4,7 @@ import { GENDERS, USER_ROLE } from "../utils/data";
 import { imageSchema } from "./productDataSchema";
 
 export const userFormDataSchema = z.object({
+    _id: z.string().min(4, "Id is required"),
     email: z.string().email("Invalid email address"),
 
     name: z

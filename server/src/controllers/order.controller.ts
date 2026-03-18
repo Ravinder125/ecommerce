@@ -138,11 +138,61 @@ export const adminOrders = asyncHandler(async (req: Request, res: Response) => {
 
 export const getSingleOrder = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const order = await Order.findById(id);
-    console.log(order)
+    const order = await Order.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(id) } },
+        {
+            $lookup: {
+                from: "products",
+                localField: "orderItems.productId",
+                foreignField: "_id",
+                as: "products"
+            }
+        },
+        {
+            $addFields: {
+                "orderItems": {
+                    $map: {
+                        input: "$orderItems",
+                        as: "item",
+                        in: {
+                            $mergeObjects: [
+                                "$$item",
+                                {
+                                    image: {
+                                        $let: {
+                                            vars: {
+                                                matchedProduct: {
+                                                    $arrayElemAt: [
+                                                        {
+                                                            $filter: {
+                                                                input: "$products",
+                                                                as: "p",
+                                                                cond: { $eq: ["$$p._id", "$$item.productId"] }
+                                                            }
+                                                        },
+                                                        0
+                                                    ]
+                                                }
+                                            },
+                                            in: { $arrayElemAt: ["$$matchedProduct.images.image", 0] }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            $project: {
+                products: 0  // remove the products array, keeping everything else
+            }
+        }
+    ])
     if (!order) throw new ApiError(404, "Order not found")
     return res.status(200).json(
-        new ApiResponse(200, order, "Order successfully fetched")
+        new ApiResponse(200, order[0], "Order successfully fetched")
     )
 })
 

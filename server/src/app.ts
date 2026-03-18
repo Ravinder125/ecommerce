@@ -6,30 +6,22 @@ import Stripe from 'stripe';
 
 dotenv.config({ path: "./.env" })
 const app = express();
-
+const origin = "http://localhost:5173"
 const corsOptions: CorsOptions = {
-    origin: "http://localhost:5173",
+    origin,
     credentials: true
 }
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 // const STRIPE_KEY_PUBLISHABLE_KEY = process.env.STRIPE_KEY_PUBLISHABLE_KEY;
-const CLERK_PUBLISHABLE_KEY = process.env.CLERK_PUBLISHABLE_KEY as string
-const CLERK_SECRET_KEY = process.env.CLERK_SECRET_KEY as string
 
 if (!STRIPE_SECRET_KEY) {
     throw new Error("Stripe keys are missing")
-}
-
-if (!CLERK_SECRET_KEY || !CLERK_PUBLISHABLE_KEY) {
-    throw new Error("Clerk keys are missing")
 }
 
 export const stripe = new Stripe(STRIPE_SECRET_KEY, {
     apiVersion: "2026-02-25.clover"
 })
 
-app.use(clerkMiddleware({ secretKey: CLERK_SECRET_KEY, publishableKey: CLERK_PUBLISHABLE_KEY }))
-// app.use(requireAuth())
 app.use(cors(corsOptions))
 
 // Middlewares
@@ -38,7 +30,7 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }))
 app.use(morgan("dev"))
 
 // Health Check
-app.get("/api/v1/health", (_:Request, res:Response) => res.send("Api working with /api/v1"))
+app.get("/api/v1/health", (_: Request, res: Response) => res.send("Api working with /api/v1"))
 
 // Importing Routes
 import userRouter from './routes/user.routes.js'
@@ -57,7 +49,6 @@ app.use("/api/v1/dashboard", dashboardRouter);
 
 // DB and Caching connection
 import { connectDB } from "./config/db.js";
-import { clerkMiddleware } from "@clerk/express";
 import { connectToRedis } from "./config/redis.js";
 // import { connectToRedis } from './config/redis.js';
 

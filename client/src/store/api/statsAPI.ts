@@ -1,15 +1,20 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithClerk } from "./baseQueryWithAuth";
-import { getToken } from "../../utils/tokenManager";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { ApiResponse } from "../../types/api.type";
+import type { BarChart, LineChart, PieChart } from "../../types/commone.type";
 import type { DashboardStats } from "../../types/dashboard.type";
 import { apiPaths } from "../../utils/apiPath";
-import type { BarChart, LineChart, PieChart } from "../../types/commone.type";
 
+export const baseUrl = import.meta.env.VITE_BASE_URL
+
+if (!baseUrl) {
+    throw new Error("Base url is missing")
+}
 
 export const statsAPI = createApi({
     reducerPath: "statsAPI",
-    baseQuery: baseQueryWithClerk(getToken),
+    baseQuery: fetchBaseQuery({
+        baseUrl
+    }),
 
     endpoints: (builder) => ({
 
@@ -44,7 +49,7 @@ export const statsAPI = createApi({
             })
         }),
 
-        
+
     })
 
 })
