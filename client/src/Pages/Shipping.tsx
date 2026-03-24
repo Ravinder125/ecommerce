@@ -11,6 +11,7 @@ import type { ShippingInfo } from "../types/transaction.type"
 import { handleChangeHOC } from "../utils/handleInputChange"
 import { InitialShippingInfoData } from "../utils/InitialFormData"
 import { ReduxResponseHandle } from "../utils/ReduxResponseHandle"
+import { auth } from "../config/firebase"
 
 
 const Shipping = () => {
@@ -41,6 +42,7 @@ const Shipping = () => {
                 items,
                 shippingInfo,
                 coupon,
+                id: auth.currentUser?.uid!
             })
 
             const data = ReduxResponseHandle<{ clientSecret: string }>(res, null, null, true)

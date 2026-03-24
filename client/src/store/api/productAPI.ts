@@ -3,6 +3,7 @@ import type { ApiResponse, GetProductResponse, GetProductsQuery } from "../../ty
 import type { Product } from "../../types/product.type"
 import { apiPaths } from "../../utils/apiPath"
 import type { NewProductFormData, UpdateProductFormData } from "../../validations/productDataSchema"
+import { baseQueryWithAuth } from "./baseQueryWithAuth"
 
 
 export type AdminGetResponse = Omit<GetProductResponse, "categories">
@@ -22,9 +23,7 @@ if (!baseUrl) {
 
 export const productAPI = createApi({
   reducerPath: "productAPI",
-  baseQuery: fetchBaseQuery({
-    baseUrl
-  }),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ["Product"],
 
   endpoints: (builder) => ({

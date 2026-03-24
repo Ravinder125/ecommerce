@@ -1,9 +1,9 @@
-import mongoose from "mongoose";
-import validator from 'validator'
+import mongoose, { Types } from "mongoose";
+import validator, { trim } from 'validator'
 
 
 export interface IUser extends Document {
-    _id: string;
+    _id: Types.ObjectId
     name: string;
     avatar: string;
     avatarId: string;
@@ -13,15 +13,17 @@ export interface IUser extends Document {
     dob: Date;
     createdAt: Date;
     updatedAt: Date;
+    firebaseUID: string;
     // Virtual Attribute
     age: number;
 
 }
 
 const UserSchema = new mongoose.Schema({
-    _id: {
+    firebaseUID: {
         type: String,
         required: [true, "ID is required"],
+        trim: true
     },
     name: {
         type: String,
@@ -55,7 +57,7 @@ const UserSchema = new mongoose.Schema({
     dob: {
         type: Date,
         required: [true, "Date of birth is required"]
-    }
+    },
 },
     { timestamps: true }
 )

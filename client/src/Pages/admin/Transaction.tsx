@@ -54,7 +54,7 @@ const columns: ColumnDef<Order>[] = [
 const Transaction = () => {
 
   const { data, isLoading, error } = useAdminOrdersQuery()
-
+console.log(data)
   const Table = TableHOC<Order>(
     columns,
     data?.data ?? [],

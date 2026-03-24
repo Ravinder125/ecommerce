@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import { Dashboard, getBarCharts, getLineCharts, getPieCharts } from '../controllers/stats.controller.js';
-import { adminOnly } from '../middlewares/auth.middleware.js';
+import { adminOnly, protect, syncUser } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
-router.route("/stats").get(adminOnly, Dashboard);
-router.route("/pie").get(adminOnly, getPieCharts);
-router.route("/bar").get(adminOnly, getBarCharts);
-router.route("/line").get(adminOnly, getLineCharts);
+router.route("/stats").get(protect, syncUser, adminOnly, Dashboard);
+router.route("/pie").get(protect, syncUser, adminOnly, getPieCharts);
+router.route("/bar").get(protect, syncUser, adminOnly, getBarCharts);
+router.route("/line").get(protect, syncUser, adminOnly, getLineCharts);
 
 export default router;   

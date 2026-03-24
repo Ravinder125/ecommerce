@@ -1,12 +1,12 @@
-import { Types } from 'mongoose'
-import { IOrder, IOrderItem } from '../models/order.models.js';
+import { Types } from 'mongoose';
+import { IOrderItem } from '../models/order.models.js';
 export interface RegisterUserRequestBody {
     name: string;
     email: string;
     avatar: string;
     gender: string;
     role: string;
-    _id: string;
+    _id: Types.ObjectId;
     dob: Date;
 }
 
@@ -31,7 +31,7 @@ export type RequestProductQuery = {
 
 
 
-export type BaseQuery ={
+export type BaseQuery = {
     name?: {
         $regex: string;
         $options: string;

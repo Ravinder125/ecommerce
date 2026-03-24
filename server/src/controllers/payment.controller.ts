@@ -11,7 +11,8 @@ import { stripe } from "../app.js";
 
 
 export const createPaymentIntent = asyncHandler(async (req, res) => {
-    const userId = req.user?._id;
+    
+    const userId = req.query.id
 
     const user = await User.findById(userId).select("name");
 
@@ -108,9 +109,10 @@ export const applyDiscount = asyncHandler(async (req: Request, res: Response) =>
 })
 
 export const allCoupons = asyncHandler(async (req: Request, res: Response) => {
-    const id = req?.user?._id
+    const id = req.query?._id
 
     const coupons = await Coupon.findOne({ _id: id })
+
     if (!coupons) throw new ApiError(400, "Invalid coupon code")
 
     return res.status(200).json(
@@ -120,7 +122,9 @@ export const allCoupons = asyncHandler(async (req: Request, res: Response) => {
 
 export const deleteCoupon = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params
+
     const coupon = await Coupon.findByIdAndDelete(id)
+
     if (!coupon) throw new ApiError(400, "No coupon found")
 
     return res.status(200).json(

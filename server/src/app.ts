@@ -1,26 +1,44 @@
 import express, { Request, Response } from "express";
-import dotenv from 'dotenv'
 import morgan from 'morgan'
 import cors, { CorsOptions } from 'cors'
 import Stripe from 'stripe';
 
-dotenv.config({ path: "./.env" })
 const app = express();
 const origin = "http://localhost:5173"
 const corsOptions: CorsOptions = {
     origin,
     credentials: true
 }
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 // const STRIPE_KEY_PUBLISHABLE_KEY = process.env.STRIPE_KEY_PUBLISHABLE_KEY;
 
-if (!STRIPE_SECRET_KEY) {
-    throw new Error("Stripe keys are missing")
-}
-
-export const stripe = new Stripe(STRIPE_SECRET_KEY, {
+export const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
     apiVersion: "2026-02-25.clover"
 })
+
+// async function something() {
+//     const newId = new mongoose.Types.ObjectId("69c266d1286de87f6149d1ef");
+//     const oldId = "bgZ00VGHfgQ6ojK52MkwF5JobPu2"
+//     await mongoose
+//         .connection
+//         .collection("products")
+//         .updateMany(
+//             { owner: oldId },
+//             { $set: { owner: newId } }
+//         )
+
+//     await mongoose
+//         .connection
+//         .collection("orders")
+//         .updateMany(
+//             { buyer: oldId },
+//             { $set: { buyer: newId } }
+//         )
+
+//     console.log("Migration completed")
+// }
+
+// something()
+
 
 app.use(cors(corsOptions))
 
@@ -50,14 +68,17 @@ app.use("/api/v1/dashboard", dashboardRouter);
 // DB and Caching connection
 import { connectDB } from "./config/db.js";
 import { connectToRedis } from "./config/redis.js";
+import { env } from "./config/env.js";
+import { Order } from "./models/order.models.js";
+import { Product } from "./models/product.models.js";
+import mongoose from "mongoose";
 // import { connectToRedis } from './config/redis.js';
 
 connectDB();
 connectToRedis();
 
-const port = process.env.PORT;
-app.listen(port, () => {
-    console.log(`Server is listening on http://localhost:${port}`)
+app.listen(env.PORT, () => {
+    console.log(`Server is listening on http://localhost:${env.PORT}`)
 })
 
 export default app

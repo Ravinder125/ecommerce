@@ -19,6 +19,8 @@ const Login = () => {
 
     const navigate = useNavigate()
 
+    const redirectToHome = () => navigate("/");
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
@@ -52,6 +54,7 @@ const Login = () => {
         try {
             const provider = new GoogleAuthProvider()
             await signInWithPopup(auth, provider)
+            redirectToHome()
         } catch (error: any) {
             toast.error(error.message)
         }
@@ -60,6 +63,7 @@ const Login = () => {
         try {
             const provider = new GithubAuthProvider()
             await signInWithPopup(auth, provider)
+            redirectToHome()
         } catch (error: any) {
             toast.error(error.message)
         }

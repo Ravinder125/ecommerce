@@ -3,7 +3,7 @@ import { NewOrderRequestBody, OrderStatus } from '../types/types.js';
 
 export interface IOrder extends Document, NewOrderRequestBody {
     _id: Types.ObjectId;
-    buyer: string,
+    buyer: Types.ObjectId,
     deliveredAt: Date;
     orderStatus?: OrderStatus;
     createdAt: Date;
@@ -79,9 +79,9 @@ const OrderItemSchema = new mongoose.Schema<IOrderItem>({
 const OrderSchema = new mongoose.Schema<IOrder>(
     {
         buyer: {
-            type: String,
+            type: Schema.Types.ObjectId,
+            ref: "User",
             required: true,
-            trim: true,
         },
         orderItems: [OrderItemSchema],
         shippingInfo: ShippingSchema,

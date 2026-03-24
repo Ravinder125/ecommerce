@@ -10,6 +10,7 @@ import { InitialCompleteFormData } from "../../utils/InitialFormData"
 import { ReduxResponseHandle } from "../../utils/ReduxResponseHandle"
 import { validateData } from "../../utils/validateFields"
 import { userFormDataSchema, type UserPayload } from "../../validations/completeProfileSchema"
+import { useNavigate } from "react-router-dom"
 
 const InputBox = createTypedInput<CompleteFormData>()
 
@@ -17,7 +18,7 @@ const CompleteProfile = () => {
     const [formData, setFormData] = useState<CompleteFormData>(InitialCompleteFormData)
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
-
+    const navigate = useNavigate();
     const { onInput, handleInputChange } = handleChangeHOC<CompleteFormData>(setFormData)
     const syncProfileAPI = useSyncProfileMutation()[0]
 
@@ -35,8 +36,8 @@ const CompleteProfile = () => {
                 name: formData.name,
                 role: formData.role,
                 email: auth.currentUser?.email,
-                _id: auth.currentUser?.uid
             } as UserPayload
+
 
             const { success, data, message } = validateData(userFormDataSchema, payload)
 
@@ -48,7 +49,7 @@ const CompleteProfile = () => {
                 return;
             }
             const res = await syncProfileAPI(data!)
-            ReduxResponseHandle(res)
+            ReduxResponseHandle(res, navigate, "/")
 
         } catch (error: any) {
 

@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 import App from './App.tsx'
 import { store } from './store/index.ts'
 import "./styles/app.scss"
+import UserProvider from './providers/UserProvider.tsx'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -17,9 +18,12 @@ const queryClient = new QueryClient()
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
+      <UserProvider>
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
+      </UserProvider>
+
     </Provider>
   </StrictMode>,
 )

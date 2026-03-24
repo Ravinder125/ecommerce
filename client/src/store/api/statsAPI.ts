@@ -3,6 +3,7 @@ import type { ApiResponse } from "../../types/api.type";
 import type { BarChart, LineChart, PieChart } from "../../types/commone.type";
 import type { DashboardStats } from "../../types/dashboard.type";
 import { apiPaths } from "../../utils/apiPath";
+import { baseQueryWithAuth } from "./baseQueryWithAuth";
 
 export const baseUrl = import.meta.env.VITE_BASE_URL
 
@@ -12,9 +13,7 @@ if (!baseUrl) {
 
 export const statsAPI = createApi({
     reducerPath: "statsAPI",
-    baseQuery: fetchBaseQuery({
-        baseUrl
-    }),
+    baseQuery: baseQueryWithAuth,
 
     endpoints: (builder) => ({
 

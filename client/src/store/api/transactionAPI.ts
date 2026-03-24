@@ -1,7 +1,8 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { ApiResponse } from "../../types/api.type";
 import type { NewOrder, Order, PaymentInfo, PaymentMethod } from "../../types/transaction.type";
 import { apiPaths } from "../../utils/apiPath";
+import { baseQueryWithAuth } from "./baseQueryWithAuth";
 
 export const baseUrl = import.meta.env.VITE_BASE_URL
 
@@ -24,9 +25,7 @@ export type TableOrder = {
 
 export const transactionAPI = createApi({
     reducerPath: "transactionAPI",
-    baseQuery: fetchBaseQuery({
-        baseUrl: baseUrl
-    }),
+    baseQuery: baseQueryWithAuth,
     tagTypes: ["Transactions"],
 
     endpoints: (builder) => ({

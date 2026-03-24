@@ -2,36 +2,50 @@ import { useState } from "react"
 import { FaSearch, FaShoppingBag, FaSignInAlt, FaSignOutAlt } from "react-icons/fa"
 import { FaUser } from "react-icons/fa6"
 import { Link } from "react-router-dom"
+import { auth } from "../../config/firebase"
+import { useAppDispatch, useAppSelector } from "../../store/hooks"
+import { signOut } from 'firebase/auth'
+import toast from "react-hot-toast"
+import { clearUser } from "../../store/reducers/authSlice"
 
-const user = {
-    _id: "alsdjf",
-    role: "admin"
-}
 
 const Header = () => {
-    const [isOpen, setIsOpen] = useState<boolean>(false)
+    const dispatch = useAppDispatch()
+    const { user } = useAppSelector(state => state.user)
 
-    const logoutHandler = () => {
-        setIsOpen(false);
+    const [isOpen, setIsOpen] = useState<boolean>(false)
+    
+    const logoutHandler = async () => {
+        try {
+            await signOut(auth)
+            toast.success("User successfully logout")
+        } catch (error: any) {
+            toast.error(error.message || "Logout failed")
+        } finally {
+            setIsOpen(false);
+            dispatch(clearUser())
+        }
     }
+
+
     return (
         <header className="header">
             <nav>
-                <Link to={"/"} >HOME</Link>
-                <Link to={"/search"} >
+                <Link to="/" >HOME</Link>
+                <Link to="/search" >
                     <FaSearch />
                 </Link>
-                <Link to={"/cart"} >
+                <Link to="/cart" >
                     <FaShoppingBag />
                 </Link>
 
-                {user?._id
+                {auth?.currentUser
                     ? (
                         <>
                             <button onClick={() => setIsOpen(prev => !prev)}><FaUser /></button>
                             <dialog open={isOpen}>
                                 <div>
-                                    {user.role === "admin" && (
+                                    {user && user.role === "admin" && (
                                         <Link to="/admin/dashboard">Admin</Link>
                                     )}
                                     <Link to="/orders">Orders</Link>

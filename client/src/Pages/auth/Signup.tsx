@@ -42,14 +42,13 @@ export default function Signup() {
                     form.email,
                     form.password
                 )
-
             await sendEmailVerification(result.user)
 
             toast.success("Email verification code sent")
             redirectToVerifyEmail()
 
         } catch (error: any) {
-            const errMessage = error.errors?.[0]?.message
+            const errMessage = error?.message || "Login failed"
             toast.error(errMessage)
         } finally {
             setIsLoading(false)

@@ -7,8 +7,6 @@ import { ApiError } from "../utils/ApiError.js";
 import { IOrder, Order } from "../models/order.models.js";
 import { reduceStock } from "../utils/features.js";
 import mongoose, { isValidObjectId, ObjectId } from "mongoose";
-import { Product } from "../models/product.models.js";
-
 
 export const createOrder = asyncHandler(
     async (
@@ -16,13 +14,12 @@ export const createOrder = asyncHandler(
         res: Response
     ) => {
         const errors = validationResult(req);
-        console.log(errors)
         if (!errors.isEmpty()) {
             const errorMessages = errors.array().map(e => e.msg);
             throw new ApiError(400, "Validation Error", errorMessages);
         }
 
-        const buyer = req.user?._id;
+        const buyer = req.query?._id;
 
         const {
             discount,
@@ -129,7 +126,7 @@ export const adminOrders = asyncHandler(async (req: Request, res: Response) => {
         { $sort: { createdAt: -1 } }
     ])
     if (!orders) throw new ApiError(401, "No order Found")
-
+    console.log(orders)
     return res.status(200).json(
         new ApiResponse(200, orders, "Orders successfully fetched")
     )

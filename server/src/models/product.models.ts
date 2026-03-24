@@ -1,4 +1,4 @@
-import mongoose, { Document, Types } from 'mongoose';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 
 
 export interface IReview {
@@ -15,7 +15,7 @@ type ImagesType = {
 }
 
 export interface IProduct extends Document {
-    owner: string;
+    owner: Types.ObjectId;
     name: string;
     description: string;
     price: number;
@@ -33,7 +33,7 @@ export interface IProduct extends Document {
 
 const ReviewSchema = new mongoose.Schema<IReview>(
     {
-        user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: [true, "User ID is required"] },
+        user: { type: Schema.Types.ObjectId, ref: "User", required: [true, "User ID is required"] },
         name: { type: String, required: [true, "User name is required"] },
         comment: { type: String, required: [true, "Comment text is required"] },
         rating: { type: Number, required: [true, "Rating is required"] },
@@ -44,8 +44,8 @@ const ReviewSchema = new mongoose.Schema<IReview>(
 const ProductSchema = new mongoose.Schema<IProduct>(
     {
         owner: {
-            type: String,
-            trim: true,
+            type: Schema.Types.ObjectId,
+            ref: "User",
             required: [true, "Owner ID is required"]
         },
         name: {

@@ -5,7 +5,7 @@ import {
     getUser,
     registerUser,
 } from "../controllers/user.controller.js";
-import { adminOnly } from "../middlewares/auth.middleware.js";
+import { adminOnly, protect, syncUser } from "../middlewares/auth.middleware.js";
 import { validateRequest } from "../middlewares/validateRequest.middleware.js";
 import { createUser } from "../validators/userValidator.middleware.js";
 // import { auth } from "../middlewares/clerkAuth.middlewares.js";
@@ -15,6 +15,7 @@ const router = Router();
 // Routes
 router.route("/sync-profile").post(
     // upload.single("avatar"),
+    protect,
     createUser,
     validateRequest,
     registerUser,
@@ -22,13 +23,13 @@ router.route("/sync-profile").post(
 
 // router.route("/login").post()
 
-router.route("/profile").get(getUser)
+router.route("/profile").get(protect, syncUser, getUser)
 
-router.route("/all").get(adminOnly, getAllUsers)
+router.route("/all").get(protect, syncUser, adminOnly, getAllUsers)
 router
     .route("/:id")
-    .get(getUser)
-    .delete(deleteUser)
+    .get(protect, syncUser, getUser)
+    .delete(protect, syncUser, deleteUser)
 
 
 export default router;

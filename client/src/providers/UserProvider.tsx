@@ -28,13 +28,16 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
         if (data?.data) {
             dispatch(getUser(data.data));
-        } else dispatch(clearUser())
+        }
     }, [data, dispatch]);
 
-    if (authLoading) return <div>Loading...</div>;
+    useEffect(() => {
+        if (!firebaseUser) {
+            dispatch(clearUser())
+        }
+    }, [firebaseUser, dispatch])
 
-    if (isLoading) return <div>Loading...</div>;
-
+    if (authLoading || isLoading) return <div>Loading...</div>;
     return <>{children}</>;
 };
 

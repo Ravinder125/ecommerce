@@ -11,8 +11,11 @@ export const registerUser = asyncHandler(
         req: Request<{}, {}, RegisterUserRequestBody>,
         res: Response
     ) => {
-        const { name, email, gender, role, dob, _id } = req.body;
-        const isUserExists = await User.findById(_id)
+
+        const firebaseUID = req.firebaseUser?.uid
+        console.log(firebaseUID)
+        const { name, email, gender, role, dob } = req.body;
+        const isUserExists = await User.findOne({ email })
         if (isUserExists) throw new ApiError(400, "User already exists")
 
         const user = await User.create({
@@ -22,11 +25,10 @@ export const registerUser = asyncHandler(
             // avatarId: public_id,
             gender,
             role,
-            _id,
+            firebaseUID,
             dob: new Date(dob)
         });
 
-        console.log("it's working")
         return res
             .status(201)
             .json(new ApiResponse(
@@ -44,17 +46,7 @@ export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
 })
 
 export const getUser = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.params._id
-    if (!userId) {
-        throw new ApiError(400, "User Id is missing")
-    }
-    const user = await User.findById(userId)
-        .select("-updatedAt -createdAt -__v")
-        .lean()
-
-    if (!user) {
-        throw new ApiError(404, "No User Found")
-    }
+    const user = req.user
     return res.
         status(200)
         .json(

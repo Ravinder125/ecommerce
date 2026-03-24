@@ -1,33 +1,31 @@
-// // baseQueryWithClerk.ts
-// import { fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-// import { auth } from '../../config/firebase'
+import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { auth } from "../../config/firebase";
 
+const rawBaseQuery = fetchBaseQuery({
+    baseUrl: import.meta.env.VITE_BASE_URL
+})
 
+export const baseQueryWithAuth =
+    async (args: any, api: any, extraOptions: any) => {
+        let token = null;
 
-// const rawBaseQuery = fetchBaseQuery({
-//   baseUrl,
-//   credentials: "include"
-// })
+        if (auth.currentUser) {
+            token = await auth.currentUser.getIdToken()
+        }
 
-// export const baseQueryWithClerk =
-//   () =>
-//     async (args: any, api: any, extraOptions: any) => {
+        const headers = {
+            ...(args.headers || {}),
+            ...(token && {
 
-//       let token: string | null = null;
-//       if (auth?.currentUser) {
-//         token = await auth.currentUser.getIdToken()
-//       }
+                Authorization:
+                    `Bearer ${token}`
 
-//       const headers = {
-//         ...(args.headers || {}),
-//         ...(token ? { Authorization: `Bearer ${token}` } : {})
-//       }
+            })
+        }
 
-//       const result = await rawBaseQuery(
-//         { ...args, headers },
-//         api,
-//         extraOptions
-//       )
-
-//       return result
-//     }
+        return rawBaseQuery(
+            { ...args, headers },
+            api,
+            extraOptions
+        )
+    }

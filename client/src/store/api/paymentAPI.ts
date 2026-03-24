@@ -7,12 +7,13 @@ import { apiPaths } from "../../utils/apiPath";
 export const baseUrl = import.meta.env.VITE_BASE_URL
 
 if (!baseUrl) {
-  throw new Error("Base url is missing")
+    throw new Error("Base url is missing")
 }
 type CreatePaymentQuery = {
     items: CartItem[];
     shippingInfo: ShippingInfo;
     coupon: string | undefined
+    id: string;
 }
 
 export const paymentAPI = createApi({
@@ -25,11 +26,19 @@ export const paymentAPI = createApi({
     endpoints: (builder) => ({
         // Create Payment
         createPayment: builder.mutation<ApiResponse<{ clientSecret: string }>, CreatePaymentQuery>({
-            query: (order) => ({
-                url: apiPaths.payments.createPayment,
-                method: "POST",
-                body: order
-            }),
+            query: (order) => {
+                const orderData: Omit<CreatePaymentQuery, "id"> = {
+                    items: order.items,
+                    shippingInfo: order.shippingInfo,
+                    coupon: order.coupon
+                }
+
+                return {
+                    url: `${apiPaths.payments.createPayment}/?id=${order.id}`,
+                    method: "POST",
+                    body: orderData
+                }
+            },
             invalidatesTags: ["Payments"]
         })
     })

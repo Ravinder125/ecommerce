@@ -18,9 +18,9 @@ const images = [
 
 
 const Home = () => {
+    console.log("Home")
     const [showImageIndex, setShowImageIndex] = useState<number>(0)
     const { data, isLoading } = useLatestProductsQuery();
-    console.log(data)
     const dispatch = useAppDispatch();
     const addToCartHandler = (item: CartItem) => {
         if (item.stock < 1) {

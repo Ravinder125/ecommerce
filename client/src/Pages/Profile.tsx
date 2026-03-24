@@ -1,20 +1,11 @@
-import { useAuth } from '@clerk/clerk-react'
-import axios from 'axios'
-import { useEffect } from 'react'
+
+import { useGetProfileQuery } from '../store/api/syncProfileAPI'
 
 const Profile = () => {
-    const { getToken } = useAuth()
-
-    const fetchProfile = async () => {
-        const token = await getToken()
-        const res = await axios.get("http://localhost:5000/api/v1/users/profile", {
-            headers: { Authorization: `Bearer ${token}` }
-        })
-        console.log(res.data)
-    }
-
-    useEffect(() => { fetchProfile() }, [])
-
+    const { isError, data, isLoading } = useGetProfileQuery()
+    console.log(data)
+    if (isError) return <div>Something went wrong1</div>
+    if (isLoading) return <div>Loading...</div>
     return <div>Dashboard</div>
 }
 

@@ -10,7 +10,7 @@ export interface User {
   gender: Genders,
   // createdAt: string;
 }
-export type CompleteFormData = Omit<UserPayload, "email" | "gender" | "avatar"> & {
+export type CompleteFormData = Omit<UserPayload, "email" | "_id" | "gender" | "avatar"> & {
   gender: string;
   avatar: File | null
 }

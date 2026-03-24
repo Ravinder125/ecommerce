@@ -13,6 +13,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { clearCart } from '../store/reducers/cartSlice';
 import type { NewOrder } from '../types/transaction.type';
 import { ReduxResponseHandle } from '../utils/ReduxResponseHandle';
+import { auth } from '../config/firebase';
 
 const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string;
 const stripePromise = loadStripe(stripeKey);
@@ -72,7 +73,8 @@ const CheckoutForm = () => {
                     id: paymentIntent.id,
                     status: 'Succeeded'
                 },
-                paymentMethod: "Card"
+                paymentMethod: "Card",
+                id:auth.currentUser?.uid
             }
             );
             dispatch(clearCart());

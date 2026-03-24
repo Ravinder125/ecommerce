@@ -29,7 +29,6 @@ const NewProduct = () => {
     const { onInput, handleInputChange } = handleChangeHOC(setFormData)
 
     const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
-        console.log("working")
         e.preventDefault();
         setError("")
         const payload = {
@@ -63,7 +62,7 @@ const NewProduct = () => {
             setError(errMessage)
             // console.error("Sync error:", error)
         } finally {
-            setFormData(InitialProductFormData)
+            // setFormData(InitialProductFormData)
             setLoading(false)
         }
 
