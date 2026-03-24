@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 import type { ApiResponse } from '../../types/api.type';
 import type { User } from '../../types/user.type';
 import { apiPaths } from '../../utils/apiPath';
@@ -11,7 +11,7 @@ if (!baseUrl) {
     throw new Error("Base url is missing")
 }
 
-export type Customer = Omit<UserPayload, "role" | "avatar"> & { avatar: string | null }
+export type Customer = Omit<UserPayload, "role" | "avatar"> & { avatar: string | null, _id: string }
 
 export const syncProfileAPI = createApi({
     reducerPath: "userApi",

@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { ApiResponse } from "../../types/api.type";
 import type { BarChart, LineChart, PieChart } from "../../types/commone.type";
 import type { DashboardStats } from "../../types/dashboard.type";

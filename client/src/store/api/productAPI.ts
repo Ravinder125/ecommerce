@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
+import { createApi } from "@reduxjs/toolkit/query/react"
 import type { ApiResponse, GetProductResponse, GetProductsQuery } from "../../types/api.type"
 import type { Product } from "../../types/product.type"
 import { apiPaths } from "../../utils/apiPath"

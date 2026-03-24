@@ -6,6 +6,8 @@ config();
 const envSchema = z.object({
 
     PORT: z.string().default("5000"),
+    
+    ORIGIN: z.string(),
 
     DB_URI: z.string(),
 

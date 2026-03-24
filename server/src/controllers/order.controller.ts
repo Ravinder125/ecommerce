@@ -126,7 +126,6 @@ export const adminOrders = asyncHandler(async (req: Request, res: Response) => {
         { $sort: { createdAt: -1 } }
     ])
     if (!orders) throw new ApiError(401, "No order Found")
-    console.log(orders)
     return res.status(200).json(
         new ApiResponse(200, orders, "Orders successfully fetched")
     )
