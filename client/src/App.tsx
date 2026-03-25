@@ -6,8 +6,13 @@ import {
 } from "react-router-dom"
 // import { Loader } from './components'
 import { ThemeProvider } from "./context/themeContext"
-import ProtectedRoutes from "./pages/protectedRoutes"
-import PublicRoutes from "./pages/publicRoutes"
+// import ProtectedRoutes from "./pages/protectedRoutes"
+// import PublicRoutes from "./pages/publicRoutes"
+import {
+  AdminRoutes,
+  // PublicRoutes,
+  UserRoutes
+} from './pages/routesWrappers'
 
 import { Toaster } from 'react-hot-toast'
 // import AuthSync from "./components/AuthSync"
@@ -59,7 +64,7 @@ function App() {
 
   const firebaseUser = auth.currentUser
 
-  console.log(!!user, !!firebaseUser, isLoading)
+  console.log(user, firebaseUser, isLoading)
   if (isLoading) return <div>Loading...</div>
 
   return (
@@ -76,25 +81,25 @@ function App() {
             <Route path="/product-details/:id" element={<ProductDetails />} />
 
             {/* Auth Routes */}
-            <Route element={<PublicRoutes authenticated={!!firebaseUser} profileCompleted={!!user?.email} />}>
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/logout" element={<Signup />} />
-              <Route path="/verify-email" element={<VerifyEmail />} />
-              <Route path="/complete-profile" element={<CompleteProfile />} />
-            </Route>
 
-            {/* Public Routes */}
-            <Route element={<ProtectedRoutes authenticated={!!firebaseUser} isAdmin={user?.role === "admin"} profileCompleted={!!user} />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/logout" element={<Signup />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route path="/complete-profile" element={<CompleteProfile />} />
 
+            <Route element={<UserRoutes authenticated={!!firebaseUser} profileCompleted={!!user} />} >
+              <Route path="/orders" element={<Orders />} />
               <Route path="/profile" element={<Profile />} />
-
-              {/* Private Routes (Users) */}
               <Route path="/shipping" element={<Shipping />} />
               <Route path="/pay" element={<Checkout />} />
-              <Route path="/orders" element={<Orders />} />
               <Route path="/orders/:id" element={<OrderDetails />} />
+            </Route>
 
+
+            {/* Public Routes */}
+            <Route element={<AdminRoutes authenticated={!!firebaseUser} isAdmin={user?.role === "admin"} profileCompleted={!!user} />}>
+              {/* Private Routes (Users) */}
               <Route path="/admin/products" element={<Products />} />
               <Route path="/admin/dashboard" element={<Dashboard />} />
               <Route path="/admin/customers" element={<Customers />} />

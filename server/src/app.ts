@@ -4,7 +4,7 @@ import cors, { CorsOptions } from 'cors'
 import Stripe from 'stripe';
 
 const app = express();
-// const origin = "http://localhost:5173"
+// const origin = "http://localhost:4173"
 const corsOptions: CorsOptions = {
     origin: env.ORIGIN,
     credentials: true
