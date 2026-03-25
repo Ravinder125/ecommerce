@@ -4,7 +4,7 @@ import { NewOrderRequestBody } from "../types/types.js";
 import { validationResult } from "express-validator";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
-import { IOrder, Order } from "../models/order.models.js";
+import { Order } from "../models/order.models.js";
 import { reduceStock } from "../utils/features.js";
 import mongoose, { isValidObjectId, ObjectId } from "mongoose";
 
@@ -19,7 +19,7 @@ export const createOrder = asyncHandler(
             throw new ApiError(400, "Validation Error", errorMessages);
         }
 
-        const buyer = req.query?._id;
+        const buyer = req.user?._id;
 
         const {
             discount,
@@ -76,7 +76,7 @@ export const getMyOrders = asyncHandler(async (req: Request, res: Response) => {
 
 export const adminOrders = asyncHandler(async (req: Request, res: Response) => {
 
-    const userId = req?.user?._id
+    const userId = req.user?._id
     const orders = await Order.aggregate([
         // Step 1: unwind items
         { $unwind: "$orderItems" },
@@ -193,7 +193,7 @@ export const getSingleOrder = asyncHandler(async (req: Request, res: Response) =
 })
 
 export const processOrder = asyncHandler(async (req: Request, res: Response) => {
-    const { id } = req.params;
+    const id = req.params;
     const order = await Order.findById(id);
 
     if (!isValidObjectId(id)) {
@@ -231,7 +231,6 @@ export const processOrder = asyncHandler(async (req: Request, res: Response) => 
 
 
     await order.save();
-    console.log(order.orderStatus)
     return res.status(200).json(
         new ApiResponse(200, order, "Order processed successfully")
     )
