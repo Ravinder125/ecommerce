@@ -26,7 +26,7 @@ import { auth } from "./config/firebase"
 const Signup = lazy(() => import("./pages/auth/signup"))
 const Login = lazy(() => import("./pages/auth/login"))
 // const Logout = lazy(() => import("./pages/auth/Logout"))
-const VerifyEmail = lazy(() => import("./pages/auth/verifyEmail"))
+// const VerifyEmail = lazy(() => import("./pages/auth/verifyEmail"))
 const CompleteProfile = lazy(() => import("./pages/auth/completeProfile"))
 
 
@@ -64,7 +64,6 @@ function App() {
 
   const firebaseUser = auth.currentUser
 
-  console.log(user, firebaseUser, isLoading)
   if (isLoading) return <div>Loading...</div>
 
   return (
@@ -85,7 +84,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/logout" element={<Signup />} />
-            <Route path="/verify-email" element={<VerifyEmail />} />
+            {/* <Route path="/verify-email" element={<VerifyEmail />} /> */}
             <Route path="/complete-profile" element={<CompleteProfile />} />
 
             <Route element={<UserRoutes authenticated={!!firebaseUser} profileCompleted={!!user} />} >
