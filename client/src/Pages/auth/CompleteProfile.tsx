@@ -49,7 +49,7 @@ const CompleteProfile = () => {
                 return;
             }
             const res = await syncProfileAPI(data!)
-            ReduxResponseHandle(res, navigate, "/")
+            ReduxResponseHandle(res, navigate, "/login")
 
         } catch (error: any) {
 

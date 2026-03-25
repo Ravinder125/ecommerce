@@ -11,7 +11,6 @@ import {
     createUserWithEmailAndPassword,
     GithubAuthProvider,
     GoogleAuthProvider,
-    sendEmailVerification,
     signInWithPopup
 } from 'firebase/auth'
 import { auth } from "../../config/firebase"
@@ -29,26 +28,25 @@ export default function Signup() {
 
     const { onInput } = handleChangeHOC<AuthFormData>(setForm)
 
-    const redirectToVerifyEmail = () => navigate("/verify-email");
+    const redirectToCompleteProfile = () => navigate("/complete-profile");
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
         try {
             setIsLoading(false)
-            const result =
-                await createUserWithEmailAndPassword(
-                    auth,
-                    form.email,
-                    form.password
-                )
-            await sendEmailVerification(result.user)
 
-            toast.success("Email verification code sent")
-            redirectToVerifyEmail()
+            await createUserWithEmailAndPassword(
+                auth,
+                form.email,
+                form.password
+            )
+
+            toast.success("Successfully created the user")
+            redirectToCompleteProfile()
 
         } catch (error: any) {
-            const errMessage = error?.message || "Login failed"
+            const errMessage = error?.message || "Signup failed"
             toast.error(errMessage)
         } finally {
             setIsLoading(false)
@@ -60,9 +58,9 @@ export default function Signup() {
         try {
             const provider = new GoogleAuthProvider()
             const result = await signInWithPopup(auth, provider)
-            console.log(result)
+
             if (result.user) {
-                navigate("/complete-profile")
+                redirectToCompleteProfile()
             }
         } catch (error: any) {
             toast.error(error.message || "Login failed")
@@ -74,7 +72,7 @@ export default function Signup() {
             const provider = new GithubAuthProvider()
             const result = await signInWithPopup(auth, provider)
             if (result.user) {
-                navigate("/complete-profile")
+                redirectToCompleteProfile()
             }
         } catch (error: any) {
             toast.error(error.message || "Login failed")
