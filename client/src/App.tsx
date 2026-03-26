@@ -25,10 +25,10 @@ import { auth } from "./config/firebase"
 // Auth Routes 
 const Signup = lazy(() => import("./pages/auth/signup"))
 const Login = lazy(() => import("./pages/auth/login"))
+const Logout = lazy(() => import("./pages/auth/logout"))
 // const Logout = lazy(() => import("./pages/auth/Logout"))
 // const VerifyEmail = lazy(() => import("./pages/auth/verifyEmail"))
 const CompleteProfile = lazy(() => import("./pages/auth/completeProfile"))
-
 
 const Home = lazy(() => import("./pages/home"))
 const Profile = lazy(() => import("./pages/profile"))
@@ -83,7 +83,7 @@ function App() {
 
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/logout" element={<Signup />} />
+            <Route path="/logout" element={<Logout />} />
             {/* <Route path="/verify-email" element={<VerifyEmail />} /> */}
             <Route path="/complete-profile" element={<CompleteProfile />} />
 

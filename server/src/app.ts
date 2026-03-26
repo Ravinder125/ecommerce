@@ -4,12 +4,11 @@ import cors, { CorsOptions } from 'cors'
 import Stripe from 'stripe';
 
 const app = express();
-// const origin = "http://localhost:4173"
+// const origin = "http://localhost:5173"
 const corsOptions: CorsOptions = {
     origin: env.ORIGIN,
     credentials: true
 }
-// const STRIPE_KEY_PUBLISHABLE_KEY = process.env.STRIPE_KEY_PUBLISHABLE_KEY;
 
 export const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
     apiVersion: "2026-02-25.clover"

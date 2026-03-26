@@ -4,14 +4,15 @@ import {
     UploadApiResponse
 } from 'cloudinary';
 import { fileCleanup } from './fileCleanup.js';
+import { env } from '../config/env.js';
 
 
 
 // Configuration 
 cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME || "dsewrli3x",
-    api_key: process.env.CLOUDINARY_API_KEY || "293763815847446",
-    api_secret: process.env.CLOUDINARY_API_SECRET || "i8XBwOSQtzFUlFgQJ0oN84yyFBM",
+    cloud_name: env.CLOUD_NAME,
+    api_key: env.CLOUDINARY_API_KEY,
+    api_secret: env.CLOUDINARY_API_SECRET,
 })
 
 // Upload image 

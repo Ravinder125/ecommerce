@@ -1,10 +1,8 @@
-import { Link, useLocation, type Location } from "react-router-dom"
-import { ADMIN_SIDEBAR_DATA } from "../../utils/data"
+import type { ReactNode } from "react";
 import type { IconType } from "react-icons";
 import { MdOutlineClose } from "react-icons/md";
-import type { ReactNode } from "react";
-import { useAppDispatch } from "../../store/hooks";
-import { clearUser } from "../../store/reducers/authSlice";
+import { Link, useLocation, type Location } from "react-router-dom";
+import { ADMIN_SIDEBAR_DATA } from "../../utils/data";
 
 const AdminSideBar = ({ isOpen, onClose }: { isOpen: boolean, onClose: Function }) => {
     const location = useLocation();
@@ -12,7 +10,7 @@ const AdminSideBar = ({ isOpen, onClose }: { isOpen: boolean, onClose: Function 
         <aside style={{
             left: isOpen ? "0%" : "-100%"
         }}>
-            <div className="sidebar-btn--container">                                                                                                                                                                                            
+            <div className="sidebar-btn--container">
                 <button
                     className="sidebar-btn"
                     onClick={() => onClose()}
@@ -88,15 +86,7 @@ interface LiProps {
 }
 const Li = ({ url, label, location, Icon }: LiProps) => {
 
-    const dispatch = useAppDispatch()
-    const handleClick = () => {
-        if (url === "/logout") {
-            dispatch(clearUser())
-        }
-    }
     return <li
-        onClick={handleClick}
-
         style={{
             backgroundColor: location.pathname
                 .includes(url)
