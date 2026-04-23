@@ -1,24 +1,21 @@
 import { BsSearch } from "react-icons/bs"
+import { FaRegBell, FaRegUser } from "react-icons/fa6"
+import { HiTrendingDown, HiTrendingUp } from "react-icons/hi"
 import {
   BarChart,
   DashboardLayout,
   DoughnutChart,
   DashboardTable as Table
 } from "../../components"
-import { FaRegBell, FaRegUser } from "react-icons/fa6"
-import { HiTrendingDown, HiTrendingUp } from "react-icons/hi"
 // import AdminSideBar from "../components/layouts/AdminSideBar"
 // import data from '../assets/data.json'
-import { BiMaleFemale } from "react-icons/bi"
-import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md"
-import { useTheme } from "../../context/themeContext"
 import { useState } from "react"
+import { BiMaleFemale } from "react-icons/bi"
 import { useDashboardQuery } from "../../store/api/statsAPI"
 
 
 const Dashboard = () => {
   // console.log(Math.abs(40 / 100)* 360)
-  const { theme, toggleTheme } = useTheme()
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
 
   const { data, isLoading, error } = useDashboardQuery(undefined, {
@@ -47,20 +44,7 @@ const Dashboard = () => {
             onBlur={() => setIsSearchOpen(false)}
 
           />
-          <div
-            className="theme-switch"
-            onClick={() => toggleTheme()}
-          >
-            <div style={{
-              right: theme === "dark" ? "50%" : "10px"
-            }}
-            >
-              {theme === "dark"
-                ? <MdOutlineDarkMode />
-                : <MdOutlineLightMode />
-              }
-            </div>
-          </div >
+
           <FaRegBell />
           <div>
             <FaRegUser />

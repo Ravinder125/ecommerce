@@ -64,7 +64,7 @@ const Products = () => {
   const { error, isLoading, data } = useAdminProductsQuery({
     page: pagination.pageIndex + 1,
     search: debounceSearch?.trim(),
-    // sort,
+    sort:"desc",
     // category,
     // maxPrice: search,
     // limit

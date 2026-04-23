@@ -1,5 +1,4 @@
-import { FaPlus } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import type { CartItem } from "../types/cart.type";
 
 
@@ -8,19 +7,32 @@ type ProductsProps = Pick<CartItem, "image" | "name" | "price" | "stock"> & {
     handler: (carItem: CartItem) => void;
 }
 
-// const server = "jlajsdljf";
-const ProductCard = ({ _id, name, price, image, stock, handler }
-    : ProductsProps) => {
+const ProductCard = (
+    {
+        _id,
+        name,
+        price,
+        image,
+        stock,
+        handler
+    }
+        : ProductsProps) => {
+
+    const navigate = useNavigate()
+    const handlerRedirect = (id: string) => {
+        navigate(`/product-details/${id}`)
+    }
+
     return (
-        <div key={_id} className="product-card">
-            {/* <img src={`${server}/${image}`} alt={name} />
-             */}
-            <img src={image} alt={name} />
-            <p>{name}</p>
-            <span>₹{price}</span>
-            <Link to={`/product-details/${_id}`}>Read more </Link>
-            <div>
+        <div className="product-card" onClick={() => handlerRedirect(_id)}>
+            <div className="product-card--image">
+                <img src={image} alt={name} />
+            </div>
+            <div className="product-card--content">
+                <p>{name}</p>
+                <span>₹{price}</span>
                 <button
+                    className="submit-btn"
                     onClick={() => handler({
                         image,
                         name,
@@ -30,7 +42,7 @@ const ProductCard = ({ _id, name, price, image, stock, handler }
                         stock
                     })}
                 >
-                    <FaPlus />
+                    Add to Cart
                 </button>
             </div>
         </div>

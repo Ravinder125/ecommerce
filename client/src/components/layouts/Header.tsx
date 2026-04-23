@@ -7,6 +7,8 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import { signOut } from 'firebase/auth'
 import toast from "react-hot-toast"
 import { clearUser } from "../../store/reducers/authSlice"
+import ThemeSwitch from "../ThemeSwitch"
+import CustomDialog from "../CustomDialog"
 
 
 const Header = () => {
@@ -14,7 +16,7 @@ const Header = () => {
     const { user } = useAppSelector(state => state.user)
 
     const [isOpen, setIsOpen] = useState<boolean>(false)
-    
+
     const logoutHandler = async () => {
         try {
             await signOut(auth)
@@ -43,7 +45,7 @@ const Header = () => {
                     ? (
                         <>
                             <button onClick={() => setIsOpen(prev => !prev)}><FaUser /></button>
-                            <dialog open={isOpen}>
+                            <CustomDialog isOpen={isOpen} onClose={() => setIsOpen(false)}>
                                 <div>
                                     {user && user.role === "admin" && (
                                         <Link to="/admin/dashboard">Admin</Link>
@@ -51,9 +53,10 @@ const Header = () => {
                                     <Link to="/orders">Orders</Link>
                                     <button onClick={logoutHandler}><FaSignOutAlt /></button>
                                 </div>
-                            </dialog>
+                            </CustomDialog>
                         </>
                     ) : (<Link to={"/login"} ><FaSignInAlt /></Link>)}
+                <ThemeSwitch />
             </nav>
         </header>
     )

@@ -11,7 +11,7 @@ type AddToCartProps = {
     image: string,
     price: number,
     quantity: number,
-    isRemovable: boolean;
+    isRemovable?: boolean;
 }
 
 const AddToCart = (cartItem: AddToCartProps) => {

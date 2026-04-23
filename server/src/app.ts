@@ -1,18 +1,19 @@
+import cors, { CorsOptions } from "cors";
 import express, { Request, Response } from "express";
-import morgan from 'morgan'
-import cors, { CorsOptions } from 'cors'
-import Stripe from 'stripe';
+import morgan from "morgan";
+import Stripe from "stripe";
+import { env } from "./config/env.js";
 
 const app = express();
-// const origin = "http://localhost:5173"
+const origin = "http://localhost:5173"
 const corsOptions: CorsOptions = {
-    origin: env.ORIGIN,
-    credentials: true
-}
+  origin: origin,
+  credentials: true,
+};
 
 export const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-    apiVersion: "2026-02-25.clover"
-})
+  apiVersion: "2026-02-25.clover",
+});
 
 // async function something() {
 //     const newId = new mongoose.Types.ObjectId("69c266d1286de87f6149d1ef");
@@ -38,23 +39,24 @@ export const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
 
 // something()
 
-
-app.use(cors(corsOptions))
+app.use(cors(corsOptions));
 
 // Middlewares
-app.use(express.json({ limit: "10mb" }))
-app.use(express.urlencoded({ extended: true, limit: "10mb" }))
-app.use(morgan("dev"))
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(morgan("dev"));
 
 // Health Check
-app.get("/api/v1/health", (_: Request, res: Response) => res.send("Api working with /api/v1"))
+app.get("/api/v1/health", (_: Request, res: Response) =>
+  res.send("Api working with /api/v1"),
+);
 
 // Importing Routes
-import userRouter from './routes/user.routes.js'
-import productRouter from './routes/product.routes.js'
-import orderRouter from './routes/order.routes.js'
-import paymentRouter from './routes/payment.routes.js'
-import dashboardRouter from './routes/stats.routes.js'
+import dashboardRouter from "./modules/dashboard/dashboard.routes.js";
+import orderRouter from "./modules/order/order.routes.js";
+import paymentRouter from "./modules/payment/payment.routes.js";
+import productRouter from "./modules/product/product.routes.js";
+import userRouter from "./modules/user/user.routes.js";
 
 // route - /api/v1/users/register
 app.use("/api/v1/users", userRouter);
@@ -67,17 +69,13 @@ app.use("/api/v1/dashboard", dashboardRouter);
 // DB and Caching connection
 import { connectDB } from "./config/db.js";
 import { connectToRedis } from "./config/redis.js";
-import { env } from "./config/env.js";
-import { Order } from "./models/order.models.js";
-import { Product } from "./models/product.models.js";
-import mongoose from "mongoose";
 // import { connectToRedis } from './config/redis.js';
 
 connectDB();
 connectToRedis();
 
 app.listen(env.PORT, () => {
-    console.log(`Server is listening on http://localhost:${env.PORT}`)
-})
+  console.log(`Server is listening on http://localhost:${env.PORT}`);
+});
 
-export default app
+export default app;

@@ -28,7 +28,7 @@
 
 body {
     font-family: var(--font-family);
-    overflow: hidden;
+    overflow-x: hidden;
     // user-select: none;
 }
 
@@ -40,19 +40,23 @@ body {
 
 a {
     text-decoration: none;
-    color: black;
+    color: var(--foreground);
 }
 
 .layout {
-    height: 100vh;
     display: flex;
     flex-direction: column;
+    color: var(--foreground);
+    background-color: var(--background);
+    min-height: 100vh;
 }
+
 
 .layout-content {
     flex: 1;
-    overflow: hidden;
     padding: 2rem;
+    min-height: 0;
+    /* background-color: var(--secondary); */
 }
 
 p,
@@ -172,13 +176,6 @@ textarea {
     }
 }
 
-
-// select {
-//     @include inputStyle(100%, 1rem, white, 1px solid rgba(154, 154, 154, 0.38));
-//     border-radius: 4px;
-// margin: 0.5rem;
-// }
-
 .card {
     max-width: 30rem;
     width: 80vw;
@@ -241,20 +238,24 @@ textarea {
 // Components
 
 .theme-switch {
-    background-color: var(--card);
+    background-color: var(--secondary);
     color: var(--card-foreground);
     padding: 8px 8px;
-    width: 5rem;
-    height: 2.2rem;
+    width: 2.5rem;
+    height: 2.5rem;
     font-size: 23px;
     position: relative;
-    border-radius: 15px;
+    border-radius: 100%;
+
+    &:hover {
+        cursor: pointer;
+    }
 
     >div {
         position: absolute;
         transform: translateY(-50%);
         top: 58%;
-        right: 10px;
+        left: 10px;
         transition: all 0.3s;
 
     }
@@ -310,14 +311,17 @@ button {
 
 
 .header {
-    margin: 1rem 0;
+    z-index: 10;
+    position: relative;
+    padding: 1rem 0;
+    color: var(--secondary-foreground);
+    background-color: var(--secondary);
 
     >nav {
         padding: 0.5rem 1rem;
-        @include mixin.flex(row, flex-end, stretch, 1.2rem);
+        @include mixin.flex(row, flex-end, center, 1.2rem);
 
         a {
-            color: $color2;
             letter-spacing: 2px;
             font-size: 1.2rem;
 
@@ -331,20 +335,26 @@ button {
             font-size: 1.2rem;
             background-color: transparent;
 
+            >svg {
+                fill: var(--secondary-foreground);
+            }
+
             &:hover {
                 color: $color3;
             }
-
         }
 
         dialog {
-            border: 1px solid #ccc;
+            z-index: 20;
+            border: 1px solid var(--border);
             border-radius: 5px;
             padding: 10px;
             width: 100px;
             position: absolute;
             left: calc(100% - 100px);
             top: 3%;
+            background-color: var(--card);
+            color: var(--card-foreground);
 
             >div {
                 @include mixin.flex(column, flex-start, center, 0.25rem);
